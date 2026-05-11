@@ -42,7 +42,7 @@ export default function MentorsPage() {
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
           {MENTORS.map((mentor, idx) => (
-            <motion.div key={mentor.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0, y: [0, -8, 0] }} transition={{ opacity: { delay: idx * 0.1 }, y: { duration: 4, repeat: Infinity, delay: idx * 0.4, ease: "easeInOut" } }} onClick={() => setSelectedMentor(mentor)} className="cursor-pointer bg-[#031A2D]/80 backdrop-blur-md p-6 md:p-8 rounded-xl border border-white/10 hover:border-[#0DABAE] hover:shadow-[0_0_20px_rgba(13,171,174,0.3)] transition-all flex flex-col items-center justify-center text-center">
+            <motion.div key={mentor.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: [0, -8, 0] }} transition={{ opacity: { delay: idx * 0.1 }, y: { duration: 4, repeat: Infinity, delay: idx * 0.4, ease: "easeInOut" } }} onClick={() => setSelectedMentor(mentor)} className="cursor-pointer bg-[#031A2D]/80 backdrop-blur-md p-6 md:p-8 rounded-xl border border-white/10 hover:border-[#0DABAE] hover:shadow-[0_0_20px_rgba(13,171,174,0.3)] transition-all flex flex-col items-center justify-center text-center">
               <div className="w-20 h-20 bg-[#0DABAE]/10 text-[#0DABAE] rounded-full flex items-center justify-center text-3xl font-black mb-4 group-hover:scale-110 transition-transform">
                 {mentor.initials}
               </div>
