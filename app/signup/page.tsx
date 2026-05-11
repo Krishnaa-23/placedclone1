@@ -1,131 +1,185 @@
 'use client'
 
 import { useState } from 'react'
-import { supabase } from '../../utils/supabase'
 import Link from 'next/link'
+import Image from 'next/image'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Inter } from 'next/font/google'
+import { supabase } from '@/utils/supabase' // Connects to the file we just made
 
-export default function Signup() {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [phone, setPhone] = useState('')
-  // 1. Add state to track if submission was successful
-  const [isSubmitted, setIsSubmitted] = useState(false)
-  const [loading, setLoading] = useState(false)
+const inter = Inter({ subsets: ['latin'] })
 
+export default function SignupPage() {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSuccess, setIsSuccess] = useState(false)
+  
+  // State to hold the user's typed input
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    phone: '',
+    userType: ''
+  })
+
+  // The REAL Supabase submit function
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault() 
-    setLoading(true)
-    
-    if (!email && !phone) {
-      alert("Please provide either an email or a phone number!")
-      setLoading(false)
-      return
-    }
+    e.preventDefault()
+    setIsSubmitting(true)
 
+    // Send data to the 'leads' table in Supabase
     const { error } = await supabase
-      .from('contacts')
-      .insert([{ name, email, phone }])
+      .from('leads')
+      .insert([
+        { 
+          full_name: formData.fullName, 
+          email: formData.email, 
+          phone: formData.phone, 
+          user_type: formData.userType 
+        }
+      ])
+
+    setIsSubmitting(false)
 
     if (error) {
-      alert("Uh oh! Something went wrong: " + error.message)
-      setLoading(false)
+      alert("Something went wrong: " + error.message)
+      console.error(error)
     } else {
-      // 2. Instead of an alert, we trigger the success UI
-      setIsSubmitted(true)
-      setLoading(false)
+      setIsSuccess(true)
     }
-  }
-
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPhone(e.target.value.replace(/[^0-9]/g, ''))
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-4">
-      <div className="absolute top-8 left-8">
-        <Link href="/" className="text-teal-400 hover:text-teal-300 font-semibold flex items-center gap-2 transition-colors">
-          ← Back to Home
-        </Link>
+    <div className={`min-h-screen flex bg-slate-50 ${inter.className}`}>
+      
+      {/* LEFT SIDE - BRANDING */}
+      <div className="hidden lg:flex w-1/2 bg-[#052742] text-white flex-col justify-between p-16 relative overflow-hidden">
+        <motion.div 
+          animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute -top-40 -left-40 w-96 h-96 bg-[#0DABAE]/20 blur-[100px] rounded-full pointer-events-none"
+        />
+
+        <div className="relative z-10">
+          <Link href="/" className="inline-block mb-16 hover:opacity-80 transition-opacity">
+            <div className="relative w-32 h-10 bg-white rounded-lg p-2">
+               <Image src="/placed-logo.jpg" alt="Placed Logo" fill className="object-contain" priority />
+            </div>
+          </Link>
+
+          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-5xl font-black mb-6 leading-tight">
+            Bridge the gap to your <span className="text-[#0DABAE]">tech career.</span>
+          </motion.h1>
+          
+          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }} className="text-slate-300 text-lg mb-12 max-w-md font-medium">
+            Book an institutional demo or apply for our next cohort. Experience the curriculum that launches careers into the global top 1%.
+          </motion.p>
+
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="space-y-6">
+            {["Intensive 12-week training programs", "Mentorship from Meta, Google, and Visa experts", "Direct corporate referrals upon graduation"].map((feature, idx) => (
+              <div key={idx} className="flex items-center gap-4">
+                <div className="w-6 h-6 rounded-full bg-[#0DABAE]/20 flex items-center justify-center text-[#0DABAE] shrink-0 font-bold">✓</div>
+                <p className="text-sm font-bold tracking-wide">{feature}</p>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+
+        <div className="relative z-10 text-xs font-bold text-slate-500 uppercase tracking-widest">
+          © 2026 PLACED. Infinite Possibilities.
+        </div>
       </div>
 
-      <div className="w-full max-w-md bg-white rounded-3xl p-10 shadow-[0_0_50px_rgba(20,184,166,0.15)] relative overflow-hidden">
-        
-        {/* 3. CONDITIONAL RENDERING: If submitted, show Thank You. Otherwise, show Form. */}
-        {isSubmitted ? (
-          <div className="text-center py-10 animate-in fade-in zoom-in duration-500">
-            <div className="w-20 h-20 bg-teal-100 text-teal-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-6">
-              ✅
-            </div>
-            <h2 className="text-3xl font-black text-slate-900 mb-4 uppercase tracking-tighter">Application Received!</h2>
-            <p className="text-slate-500 leading-relaxed mb-8">
-              Thanks for applying, <span className="text-slate-900 font-bold">{name}</span>! Our admissions team will review your profile and contact you soon.
-            </p>
-            <Link 
-              href="/" 
-              className="inline-block bg-slate-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-teal-500 transition-all"
-            >
-              Back to Home
-            </Link>
-          </div>
-        ) : (
-          <>
-            <div className="text-center mb-8">
-              <div className="w-12 h-12 bg-teal-500 rounded-xl mx-auto flex items-center justify-center text-white font-bold text-2xl mb-4 shadow-lg shadow-teal-500/30">P</div>
-              <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tighter">Join the Cohort</h2>
-              <p className="text-gray-500 mt-2 font-medium">Start your journey to a tech career.</p>
-            </div>
-            
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div>
-                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Full Name</label>
-                <input
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full px-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all"
-                  placeholder="john doe"
-                />
-              </div>
+      {/* RIGHT SIDE - THE FORM */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 md:p-16 relative">
+        <Link href="/" className="absolute top-8 right-8 text-sm font-bold text-slate-400 hover:text-[#052742] transition-colors">
+          ✕ Close
+        </Link>
 
-              <div>
-                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Email Address</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all"
-                  placeholder="name@example.com"
-                />
-              </div>
+        <div className="w-full max-w-md">
+          <AnimatePresence mode="wait">
+            {!isSuccess ? (
+              <motion.div key="form" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+                <div className="mb-10 text-center lg:text-left">
+                  <h2 className="text-3xl font-black text-[#052742] mb-3">Get Started</h2>
+                  <p className="text-slate-500 text-sm font-medium">Fill out your details and our team will contact you shortly.</p>
+                </div>
 
-              <div className="relative flex items-center py-2">
-                <div className="flex-grow border-t border-slate-100"></div>
-                <span className="flex-shrink-0 mx-4 text-slate-300 text-[10px] font-black uppercase tracking-widest">Or</span>
-                <div className="flex-grow border-t border-slate-100"></div>
-              </div>
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div className="space-y-1">
+                    <label className="text-xs font-black text-[#052742] uppercase tracking-widest">Full Name</label>
+                    <input 
+                      required 
+                      type="text" 
+                      placeholder="John Doe" 
+                      value={formData.fullName}
+                      onChange={(e) => setFormData({...formData, fullName: e.target.value})}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:outline-none focus:border-[#0DABAE] focus:ring-2 focus:ring-[#0DABAE]/20 transition-all font-medium" 
+                    />
+                  </div>
 
-              <div>
-                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Phone Number</label>
-                <input
-                  type="text"
-                  value={phone}
-                  onChange={handlePhoneChange}
-                  className="w-full px-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all"
-                  placeholder="9876543210"
-                />
-              </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-black text-[#052742] uppercase tracking-widest">Email Address</label>
+                    <input 
+                      required 
+                      type="email" 
+                      placeholder="john@university.edu" 
+                      value={formData.email}
+                      onChange={(e) => setFormData({...formData, email: e.target.value})}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:outline-none focus:border-[#0DABAE] focus:ring-2 focus:ring-[#0DABAE]/20 transition-all font-medium" 
+                    />
+                  </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full mt-6 bg-slate-900 hover:bg-teal-500 text-white font-black py-5 px-4 rounded-2xl transition-all transform active:scale-95 shadow-xl disabled:opacity-50 uppercase tracking-widest text-sm"
-              >
-                {loading ? 'Processing...' : 'Submit Application'}
-              </button>
-            </form>
-          </>
-        )}
+                  <div className="space-y-1">
+                    <label className="text-xs font-black text-[#052742] uppercase tracking-widest">Phone Number</label>
+                    <input 
+                      required 
+                      type="tel" 
+                      placeholder="+91 98765 43210" 
+                      value={formData.phone}
+                      onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:outline-none focus:border-[#0DABAE] focus:ring-2 focus:ring-[#0DABAE]/20 transition-all font-medium" 
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-black text-[#052742] uppercase tracking-widest">I am a...</label>
+                    <select 
+                      required 
+                      value={formData.userType}
+                      onChange={(e) => setFormData({...formData, userType: e.target.value})}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:outline-none focus:border-[#0DABAE] focus:ring-2 focus:ring-[#0DABAE]/20 transition-all font-medium appearance-none"
+                    >
+                      <option value="" disabled>Select an option</option>
+                      <option value="student">Student looking to upskill</option>
+                      <option value="institution">College/Institution requesting a Demo</option>
+                    </select>
+                  </div>
+
+                  <button 
+                    type="submit" 
+                    disabled={isSubmitting}
+                    className="w-full bg-[#052742] text-white py-4 rounded-xl font-black text-sm hover:bg-[#0DABAE] transition-colors shadow-lg mt-4 flex justify-center items-center h-14 disabled:opacity-70"
+                  >
+                    {isSubmitting ? (
+                      <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      "SUBMIT APPLICATION"
+                    )}
+                  </button>
+                </form>
+              </motion.div>
+            ) : (
+              <motion.div key="success" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-10">
+                <div className="w-20 h-20 bg-[#0DABAE]/10 text-[#0DABAE] rounded-full flex items-center justify-center text-4xl mx-auto mb-6">✓</div>
+                <h2 className="text-3xl font-black text-[#052742] mb-4">Request Sent!</h2>
+                <p className="text-slate-500 font-medium mb-8">Thank you for your interest in PLACED. Our team will reach out to you within 24 hours.</p>
+                <Link href="/" className="inline-block bg-[#052742] text-white px-8 py-3 rounded-xl font-bold text-sm hover:bg-[#0DABAE] transition-colors shadow-lg">
+                  Return to Home
+                </Link>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   )
