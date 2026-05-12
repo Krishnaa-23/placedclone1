@@ -1,23 +1,19 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence, useMotionValue, useMotionTemplate } from 'framer-motion'
 import { Inter } from 'next/font/google'
+import { supabase } from '@/utils/supabase'
 
 const inter = Inter({ subsets: ['latin'] })
 
-const MENTORS = [
-  { id: 1, name: 'Alex Rivera', role: 'Senior Dev', company: 'Google', bio: 'Expert in Distributed Systems and Cloud Architecture.', initials: 'AR' },
-  { id: 2, name: 'Sarah Chen', role: 'Product lead', company: 'Meta', bio: 'Specializing in growth-driven product design.', initials: 'SC' },
-  { id: 3, name: 'Marcus Thorne', role: 'Security Architect', company: 'Visa', bio: 'Former pentester turned architect focusing on zero-trust frameworks.', initials: 'MT' },
-  { id: 4, name: 'Priya Sharma', role: 'Data Scientist', company: 'Amazon', bio: 'Specializes in predictive modeling and scalable data pipelines.', initials: 'PS' },
-  { id: 5, name: 'David Kim', role: 'Frontend Eng', company: 'Netflix', bio: 'Passionate about WebGL, animations, and micro-interactions.', initials: 'DK' },
-  { id: 6, name: 'Anita Patel', role: 'HR Lead', company: 'Microsoft', bio: '10+ years conducting technical recruitment and mock interviews.', initials: 'AP' },
-]
-
 export default function MentorsPage() {
+  const [mentorsData, setMentorsData] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [selectedMentor, setSelectedMentor] = useState<any>(null)
+
+  // Mouse Spotlight Effect
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
 
@@ -27,12 +23,33 @@ export default function MentorsPage() {
     mouseY.set(clientY - top)
   }
 
+  // Fetch from Supabase
+  useEffect(() => {
+    const fetchMentors = async () => {
+      const { data, error } = await supabase.from('mentors').select('*')
+      if (data) setMentorsData(data)
+      if (error) console.error("Error fetching mentors:", error)
+      setIsLoading(false)
+    }
+    fetchMentors()
+  }, [])
+
   return (
     <div onMouseMove={handleMouseMove} className={`min-h-screen bg-[#052742] text-white pt-24 pb-20 px-4 md:px-8 relative overflow-hidden group ${inter.className}`}>
-      <motion.div className="pointer-events-none absolute -inset-px transition duration-300 opacity-0 group-hover:opacity-100 z-0" style={{ background: useMotionTemplate`radial-gradient(800px circle at ${mouseX}px ${mouseY}px, rgba(13, 171, 174, 0.25), transparent 80%)` }} />
-      <motion.div animate={{ y: [0, -30, 0], rotate: [0, 15, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} className="absolute top-40 left-10 text-[#0DABAE]/10 text-8xl font-black pointer-events-none">{"{ }"}</motion.div>
-      <motion.div animate={{ y: [0, 40, 0], rotate: [0, -15, 0] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} className="absolute bottom-40 right-20 text-[#0DABAE]/10 text-9xl font-black pointer-events-none">{"</>"}</motion.div>
       
+      {/* Interactive Mouse Spotlight */}
+      <motion.div 
+        className="pointer-events-none absolute -inset-px transition duration-300 opacity-0 group-hover:opacity-100 z-0" 
+        style={{ background: useMotionTemplate`radial-gradient(800px circle at ${mouseX}px ${mouseY}px, rgba(13, 171, 174, 0.25), transparent 80%)` }} 
+      />
+      
+      {/* Floating Ambient Tech Symbols */}
+      <motion.div animate={{ y: [0, -30, 0], rotate: [0, 15, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} className="absolute top-40 left-10 text-[#0DABAE]/10 text-8xl font-black pointer-events-none z-0">{"{ }"}</motion.div>
+      <motion.div animate={{ y: [0, 40, 0], rotate: [0, -15, 0] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} className="absolute bottom-40 right-20 text-[#0DABAE]/10 text-9xl font-black pointer-events-none z-0">{"</>"}</motion.div>
+      <motion.div animate={{ y: [0, -20, 0], x: [0, 20, 0] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }} className="absolute top-1/2 left-1/4 text-[#0DABAE]/10 text-7xl font-black pointer-events-none z-0">{"[ ]"}</motion.div>
+      
+      <div className="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:32px_32px] opacity-[0.03] pointer-events-none z-0"></div>
+
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="mb-12 md:mb-16 text-center">
           <Link href="/" className="text-[#0DABAE] hover:text-white font-bold text-xs md:text-sm mb-6 inline-block transition-colors uppercase tracking-widest">← Back to Home</Link>
@@ -40,17 +57,28 @@ export default function MentorsPage() {
           <p className="text-slate-300 max-w-2xl mx-auto font-medium text-sm md:text-base">Industry experts bringing real-world corporate expectations directly to your campus.</p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
-          {MENTORS.map((mentor, idx) => (
-            <motion.div key={mentor.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: [0, -8, 0] }} transition={{ opacity: { delay: idx * 0.1 }, y: { duration: 4, repeat: Infinity, delay: idx * 0.4, ease: "easeInOut" } }} onClick={() => setSelectedMentor(mentor)} className="cursor-pointer bg-[#031A2D]/80 backdrop-blur-md p-6 md:p-8 rounded-xl border border-white/10 hover:border-[#0DABAE] hover:shadow-[0_0_20px_rgba(13,171,174,0.3)] transition-all flex flex-col items-center justify-center text-center">
-              <div className="w-20 h-20 bg-[#0DABAE]/10 text-[#0DABAE] rounded-full flex items-center justify-center text-3xl font-black mb-4 group-hover:scale-110 transition-transform">
-                {mentor.initials}
-              </div>
-              <h3 className="text-lg md:text-xl font-black text-white leading-tight">{mentor.name}</h3>
-              <p className="text-[#0DABAE] font-bold text-[10px] md:text-xs uppercase mt-2">{mentor.role} @ {mentor.company}</p>
-            </motion.div>
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="text-center text-[#0DABAE] font-black animate-pulse py-20 uppercase tracking-widest">Loading Mentors...</div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
+            {mentorsData.map((mentor, idx) => (
+              <motion.div 
+                key={mentor.id} 
+                initial={{ opacity: 0, y: 20 }} 
+                animate={{ opacity: 1, y: [0, -8, 0] }} 
+                transition={{ opacity: { delay: idx * 0.1 }, y: { duration: 4, repeat: Infinity, delay: idx * 0.4, ease: "easeInOut" } }} 
+                onClick={() => setSelectedMentor(mentor)} 
+                className="cursor-pointer bg-[#031A2D]/80 backdrop-blur-md p-6 md:p-8 rounded-xl border border-white/10 hover:border-[#0DABAE] hover:shadow-[0_0_20px_rgba(13,171,174,0.3)] transition-all group flex flex-col items-center justify-center text-center relative overflow-hidden"
+              >
+                <div className="w-20 h-20 bg-[#0DABAE]/10 text-[#0DABAE] rounded-full flex items-center justify-center text-3xl font-black mb-4 group-hover:scale-110 group-hover:bg-[#0DABAE] group-hover:text-[#052742] transition-all duration-300 relative z-10">
+                  {mentor.initials}
+                </div>
+                <h3 className="text-lg md:text-xl font-black text-white leading-tight relative z-10">{mentor.name}</h3>
+                <p className="text-[#0DABAE] font-bold text-[10px] md:text-xs uppercase mt-2 relative z-10">{mentor.role} @ {mentor.company}</p>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </div>
 
       <AnimatePresence>

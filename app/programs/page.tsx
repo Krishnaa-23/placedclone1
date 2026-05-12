@@ -56,21 +56,26 @@ export default function ProgramsPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {ECOSYSTEM_PILLARS.map((course, idx) => (
-            <motion.div key={course.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.1 }} className="flex flex-col">
-              <div className="group bg-[#052742] rounded-xl text-white relative overflow-hidden h-[300px] flex flex-col justify-end p-8 border border-white/10 shadow-2xl">
+            <motion.div key={course.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.1 }} className="flex flex-col h-full">
+              {/* Wrapped the card in a Link to make it clickable */}
+              <Link href={`/programs/${course.id}`} className="group bg-[#052742] rounded-xl text-white relative overflow-hidden h-[300px] flex flex-col justify-end p-8 border border-white/10 shadow-2xl hover:-translate-y-2 transition-transform duration-300 block cursor-pointer">
                 <div className="absolute inset-0 z-0 opacity-40 group-hover:opacity-60 transition-opacity duration-500">
                   <Image src={course.imagePath} alt={course.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-[#031A2D] via-[#052742]/80 to-transparent z-10"></div>
                 <div className="relative z-20">
                   <span className="text-[10px] font-bold text-[#0DABAE] uppercase tracking-widest block mb-2">{course.level}</span>
-                  <h3 className="text-2xl font-black mb-2 leading-tight">{course.title}</h3>
+                  <h3 className="text-2xl font-black mb-2 leading-tight group-hover:text-[#0DABAE] transition-colors">{course.title}</h3>
                   <span className="text-slate-300 font-medium text-xs block border-t border-white/20 pt-4">{course.duration}</span>
                 </div>
-              </div>
-              <div className="mt-6 px-2">
-                <p className="text-slate-400 text-sm leading-relaxed">{course.desc}</p>
-                <button className="mt-4 text-[#0DABAE] text-xs font-black uppercase tracking-widest hover:text-white transition-colors">Download Syllabus ↓</button>
+              </Link>
+              
+              <div className="mt-6 px-2 flex flex-col h-full">
+                <p className="text-slate-400 text-sm leading-relaxed mb-4 flex-grow">{course.desc}</p>
+                {/* Updated button to act as a Link to the specific program page */}
+                <Link href={`/programs/${course.id}`} className="text-[#0DABAE] text-xs font-black uppercase tracking-widest hover:text-white transition-colors w-max">
+                  Explore Program →
+                </Link>
               </div>
             </motion.div>
           ))}
