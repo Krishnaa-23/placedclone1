@@ -68,15 +68,14 @@ export default function CorporateReadinessPage() {
 
         <motion.div variants={staggerContainer} className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-16">
           {MODULES.map((mod, idx) => (
-            <motion.div key={idx} variants={fadeUp} className="bg-white/5 border border-white/10 p-8 rounded-2xl backdrop-blur-sm hover:border-[#0DABAE]/50 transition-colors shadow-xl">
-              <div className="w-12 h-12 bg-[#0DABAE]/10 text-[#0DABAE] font-black rounded-full flex items-center justify-center text-lg mb-6">0{idx + 1}</div>
-              <h3 className="text-xl font-black text-white mb-3">{mod.title}</h3>
+            <motion.div key={idx} variants={fadeUp} className="bg-white/5 border border-white/10 p-8 rounded-2xl backdrop-blur-sm hover:border-[#0DABAE] hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(13,171,174,0.15)] transition-all duration-300 shadow-xl relative z-10 group cursor-default">
+              <h3 className="text-xl font-black text-white mb-3 group-hover:text-[#0DABAE] transition-colors">{mod.title}</h3>
               <p className="text-slate-400 text-sm leading-relaxed">{mod.desc}</p>
             </motion.div>
           ))}
         </motion.div>
 
-        <motion.div variants={fadeUp} className="bg-[#0DABAE] rounded-2xl p-8 md:p-12 text-[#052742] flex flex-col md:flex-row items-center justify-between gap-8 shadow-[0_0_40px_rgba(13,171,174,0.3)]">
+        <motion.div variants={fadeUp} className="bg-[#0DABAE] rounded-2xl p-8 md:p-12 text-[#052742] flex flex-col md:flex-row items-center justify-between gap-8 shadow-[0_0_40px_rgba(13,171,174,0.3)] relative z-10">
           <div>
             <h3 className="text-2xl md:text-4xl font-black uppercase tracking-tight mb-2">Ready to transform your campus?</h3>
             <p className="font-medium text-[#052742]/80 max-w-xl">Integrate the Corporate Readiness framework into your institution's curriculum.</p>
