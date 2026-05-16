@@ -7,12 +7,15 @@ import { motion, AnimatePresence, useMotionValue, useTransform, useMotionTemplat
 import { Inter } from 'next/font/google'
 import { supabase } from '@/utils/supabase'
 
+// IMPORT YOUR NEW CHATBOT COMPONENT HERE:
+import Chatbot from '@/components/Chatbot'
+
 const inter = Inter({ subsets: ['latin'] })
 
 // ==========================================
 // 🛠️ WHATSAPP SETTINGS
 // ==========================================
-const WHATSAPP_NUMBER = "918927653209" 
+const WHATSAPP_NUMBER = "917907597197" 
 const WHATSAPP_MESSAGE = "Hi PLACED team! I would like to know more about the institutional programs."
 
 // --- THE 7-PHASE METHODOLOGY ---
@@ -31,13 +34,6 @@ const ECOSYSTEM_PILLARS = [
   { id: 'corporate-readiness', title: 'Corporate Readiness', duration: 'Placement Focus', level: 'Aptitude & Soft Skills', imagePath: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
   { id: 'public-exam', title: 'Public Exam Foundation', duration: 'Govt. Exam Focus', level: 'SSC, RRB & Banking', imagePath: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
   { id: 'academic-navigator', title: 'Academic Navigator', duration: 'Higher Studies', level: 'PG & Professional', imagePath: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
-]
-
-const MENTORS = [
-  { id: 1, name: 'Alex Rivera', role: 'Senior Dev', company: 'Google', bio: 'Expert in Distributed Systems and Cloud Architecture with 10+ years of experience.', initials: 'AR' },
-  { id: 2, name: 'Sarah Chen', role: 'Product lead', company: 'Meta', bio: 'Specializing in growth-driven product design and high-velocity engineering teams.', initials: 'SC' },
-  { id: 3, name: 'Marcus Thorne', role: 'Security Architect', company: 'Visa', bio: 'Former pentester turned architect focusing on zero-trust frameworks.', initials: 'MT' },
-  { id: 4, name: 'Priya Sharma', role: 'Data Scientist', company: 'Amazon', bio: 'Specializes in predictive modeling, scalable data pipelines, and AI systems.', initials: 'PS' },
 ]
 
 // TEAM DATA
@@ -81,12 +77,12 @@ const InteractiveCube = () => {
         whileDrag={{ scale: 1.1, transition: { duration: 0.2 } }}
         className="relative w-40 h-40 md:w-48 md:h-48 z-10"
       >
-        <div className="absolute inset-0 border-4 border-[#0DABAE] bg-[#052742]/90 flex items-center justify-center font-black text-white text-xl md:text-2xl backdrop-blur-md shadow-[0_0_30px_rgba(13,171,174,0.3)]" style={{ transform: "translateZ(96px)" }}>APTITUDE</div>
-        <div className="absolute inset-0 border-4 border-[#0DABAE] bg-[#031A2D]/90 flex items-center justify-center font-black text-[#0DABAE] text-xl md:text-2xl backdrop-blur-md" style={{ transform: "rotateY(180deg) translateZ(96px)" }}>SKILLS</div>
-        <div className="absolute inset-0 border-4 border-[#0DABAE] bg-[#0DABAE]/90 flex items-center justify-center font-black text-[#052742] text-xl md:text-2xl backdrop-blur-md" style={{ transform: "rotateY(90deg) translateZ(96px)" }}>CAREERS</div>
-        <div className="absolute inset-0 border-4 border-[#0DABAE] bg-[#0DABAE]/90 flex items-center justify-center font-black text-[#052742] text-xl md:text-2xl backdrop-blur-md" style={{ transform: "rotateY(-90deg) translateZ(96px)" }}>EXAMS</div>
-        <div className="absolute inset-0 border-4 border-[#0DABAE] bg-white/95 flex items-center justify-center font-black text-[#052742] text-xl md:text-2xl backdrop-blur-md" style={{ transform: "rotateX(90deg) translateZ(96px)" }}>SUCCESS</div>
-        <div className="absolute inset-0 border-4 border-[#0DABAE] bg-white/95 flex items-center justify-center font-black text-[#052742] text-xl md:text-2xl backdrop-blur-md" style={{ transform: "rotateX(-90deg) translateZ(96px)" }}>PLACED</div>
+        <div className="absolute inset-0 border-4 border-[#0DABAE] bg-[#052742]/90 flex items-center justify-center font-black text-white text-xl md:text-2xl backdrop-blur-md shadow-[0_0_30px_rgba(13,171,174,0.3)]" style={{ transform: "translateZ(96px)" }}>EXPLORE</div>
+        <div className="absolute inset-0 border-4 border-[#0DABAE] bg-[#031A2D]/90 flex items-center justify-center font-black text-[#0DABAE] text-xl md:text-2xl backdrop-blur-md" style={{ transform: "rotateY(180deg) translateZ(96px)" }}>BUILD</div>
+        <div className="absolute inset-0 border-4 border-[#0DABAE] bg-[#0DABAE]/90 flex items-center justify-center font-black text-[#052742] text-xl md:text-2xl backdrop-blur-md" style={{ transform: "rotateY(90deg) translateZ(96px)" }}>PREPARE</div>
+        <div className="absolute inset-0 border-4 border-[#0DABAE] bg-[#0DABAE]/90 flex items-center justify-center font-black text-[#052742] text-xl md:text-2xl backdrop-blur-md" style={{ transform: "rotateY(-90deg) translateZ(96px)" }}>ADVANCE</div>
+        <div className="absolute inset-0 border-4 border-[#0DABAE] bg-white/95 flex items-center justify-center font-black text-[#052742] text-xl md:text-2xl backdrop-blur-md" style={{ transform: "rotateX(90deg) translateZ(96px)" }}>PERFORM</div>
+        <div className="absolute inset-0 border-4 border-[#0DABAE] bg-white/95 flex items-center justify-center font-black text-[#052742] text-xl md:text-2xl backdrop-blur-md" style={{ transform: "rotateX(-90deg) translateZ(96px)" }}>ACHIEVE</div>
       </motion.div>
     </div>
   )
@@ -121,10 +117,10 @@ const WorkflowSection = () => {
         {/* 2 items per row on Mobile */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 relative">
           {[ 
-            { step: '01', title: 'Apply', desc: 'Submit profile and pass the diagnostic assessment.' },
-            { step: '02', title: 'Upskill', desc: 'Progressive learning mapped to real corporate needs.' },
-            { step: '03', title: 'Simulate', desc: 'Experience end-to-end mock recruitment pressure.' },
-            { step: '04', title: 'Outcome', desc: 'Achieve success in placements or higher education.' }
+            { step: '', title: 'Apply', desc: 'Submit profile and pass the diagnostic assessment.' },
+            { step: '', title: 'Upskill', desc: 'Progressive learning mapped to real corporate needs.' },
+            { step: '', title: 'Simulate', desc: 'Experience end-to-end mock recruitment pressure.' },
+            { step: '', title: 'Outcome', desc: 'Achieve success in placements or higher education.' }
           ].map((item, idx) => (
             <motion.div key={idx} variants={fadeUp} className="bg-white/90 backdrop-blur-xl p-4 md:p-8 rounded-xl border border-slate-200 shadow-xl hover:border-[#0DABAE] transition-all hover:-translate-y-2 relative overflow-hidden">
               <span className="text-4xl md:text-6xl font-black text-[#0DABAE]/30 transition-colors block mb-1 md:mb-4">{item.step}</span>
@@ -209,7 +205,7 @@ const InteractiveInfinity = () => {
 }
 
 // ==========================================
-// 🎓 MENTORS SECTION (CMS DRIVEN)
+// 🎓 MENTORS SECTION (RESTORED ORIGINAL LAYOUT WITH IMAGE WORKAROUND)
 // ==========================================
 const MentorsSection = ({ mentorsData, setSelectedMentor }: { mentorsData: any[], setSelectedMentor: (mentor: any) => void }) => {
   const mouseX = useMotionValue(0);
@@ -250,9 +246,17 @@ const MentorsSection = ({ mentorsData, setSelectedMentor }: { mentorsData: any[]
                 onClick={() => setSelectedMentor(mentor)} 
                 className="cursor-pointer bg-[#031A2D]/80 backdrop-blur-md p-6 md:p-8 rounded-xl border border-white/10 hover:border-[#0DABAE] hover:shadow-[0_0_20px_rgba(13,171,174,0.3)] transition-all group flex flex-col items-center justify-center text-center relative overflow-hidden"
               >
-                <div className="w-16 h-16 md:w-20 md:h-20 bg-[#0DABAE]/10 text-[#0DABAE] rounded-full flex items-center justify-center text-2xl md:text-3xl font-black mb-3 md:mb-4 group-hover:scale-110 group-hover:bg-[#0DABAE] group-hover:text-[#052742] transition-all duration-300 relative z-10">
-                  {mentor.initials}
+                {/* Fixed Circular Avatar Layering & sizing */}
+                <div className="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center mb-3 md:mb-4 group-hover:scale-110 transition-all duration-300 relative z-10 overflow-hidden border-2 border-transparent group-hover:border-[#0DABAE] shrink-0">
+                  {mentor.image_url ? (
+                     <img src={mentor.image_url} alt={mentor.name} className="w-full h-full object-cover" />
+                  ) : (
+                     <div className="w-full h-full bg-[#0DABAE]/10 text-[#0DABAE] flex items-center justify-center text-2xl md:text-3xl font-black group-hover:bg-[#0DABAE] group-hover:text-[#052742] transition-colors">
+                       {mentor.initials}
+                     </div>
+                  )}
                 </div>
+                
                 <h3 className="text-sm md:text-2xl font-black text-white leading-tight relative z-10">{mentor.name}</h3>
                 <p className="text-[#0DABAE] font-bold text-[9px] md:text-sm uppercase mt-1 md:mt-2 relative z-10">{mentor.company}</p>
               </motion.div>
@@ -267,7 +271,7 @@ const MentorsSection = ({ mentorsData, setSelectedMentor }: { mentorsData: any[]
 }
 
 // ==========================================
-// 👥 MEET THE TEAM (WHITE + DARK MOUSE SPOTLIGHT)
+// 👥 MEET THE TEAM
 // ==========================================
 const TeamSection = ({ setSelectedFounder }: { setSelectedFounder: (founder: any) => void }) => {
   const mouseX = useMotionValue(0);
@@ -292,12 +296,11 @@ const TeamSection = ({ setSelectedFounder }: { setSelectedFounder: (founder: any
           Meet the <span className="text-[#0DABAE]">Team</span>
         </motion.h2>
         
-        {/* FIXED 3-COLUMN GRID WITH CONSTRAINED CARD WIDTHS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
           {COFOUNDERS.map((founder) => (
             <motion.div key={founder.id} variants={fadeUp} className="group cursor-pointer bg-white/90 backdrop-blur-xl p-4 md:p-6 rounded-xl shadow-xl shadow-slate-200/50 hover:-translate-y-2 transition-all duration-300 border border-slate-100 hover:border-[#0DABAE] max-w-[300px] mx-auto w-full" onClick={() => setSelectedFounder(founder)}>
               <div className="relative w-full aspect-square rounded-lg overflow-hidden mb-4 md:mb-6 border border-slate-100 transition-all group-hover:shadow-[0_0_20px_rgba(13,171,174,0.2)] bg-slate-100">
-                <Image src={founder.imagePath} alt={founder.name} fill sizes="(max-width: 768px) 300px, 300px" className="object-cover object-top transition-transform duration-700 group-hover:scale-105" />
+                <Image src={founder.imagePath} alt={founder.name} fill sizes="(max-width: 768px) 300px, 300px" className="object-cover object-top transition-transform duration-700 group-hover:scale-105" priority />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#052742]/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center p-4">
                   <span className="text-white font-bold text-[10px] md:text-sm tracking-widest uppercase">Profile</span>
                 </div>
@@ -313,7 +316,7 @@ const TeamSection = ({ setSelectedFounder }: { setSelectedFounder: (founder: any
 }
 
 // ==========================================
-// 🎓 ALUMNI SECTION (2-COL MOBILE + BLOBS)
+// 🎓 ALUMNI SECTION 
 // ==========================================
 const AlumniSection = ({ alumniData, alumniIndex, displayedAlumni }: any) => {
   const mouseX = useMotionValue(0);
@@ -351,7 +354,6 @@ const AlumniSection = ({ alumniData, alumniIndex, displayedAlumni }: any) => {
          
          {alumniData.length > 0 ? (
            <AnimatePresence mode="wait">
-             {/* 2 items per row on Mobile */}
              <motion.div key={alumniIndex} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.5 }} className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-8">
                {displayedAlumni.map((alumni: any, index: number) => (
                   alumni && (
@@ -383,30 +385,31 @@ const AlumniSection = ({ alumniData, alumniIndex, displayedAlumni }: any) => {
 }
 
 // ==========================================
-// 🚀 MAIN PAGE
+// 🚀 MAIN HOME PAGE COMPONENT
 // ==========================================
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [selectedMentor, setSelectedMentor] = useState<any>(null)
   const [selectedFounder, setSelectedFounder] = useState<any>(null)
-  
   const [showPopup, setShowPopup] = useState(false)
-  const hasTriggeredPopup = useRef(false) // Physically prevents the popup from firing twice
+  const [isChatOpen, setIsChatOpen] = useState(false) 
+
+  const hasTriggeredPopup = useRef(false) 
   
   // CMS STATE
   const [alumniData, setAlumniData] = useState<any[]>([])
   const [mentorsData, setMentorsData] = useState<any[]>([])
   const [alumniIndex, setAlumniIndex] = useState(0)
 
-  // POPUP LOGIC: Triggers strictly ONCE per page load
+  // POPUP LOGIC
   useEffect(() => {
     const timer = setTimeout(() => { setIsLoading(false) }, 1000)
     
     const handleScroll = () => { 
       if (window.scrollY > 600 && !hasTriggeredPopup.current) {
         setShowPopup(true)
-        hasTriggeredPopup.current = true; // Flips the switch permanently for this session
+        hasTriggeredPopup.current = true; 
         window.removeEventListener('scroll', handleScroll) 
       }
     }
@@ -458,54 +461,65 @@ export default function Home() {
       {/* LOADING SCREEN */}
       <AnimatePresence>
         {isLoading && (
-          <motion.div initial={{ opacity: 1 }} exit={{ opacity: 0, y: "-100%", transition: { duration: 0.6, ease: "easeInOut" } }} className="fixed inset-0 z-[999] bg-white flex flex-col items-center justify-center">
-            <motion.svg viewBox="0 0 1000 400" className="w-40 md:w-56 h-auto" preserveAspectRatio="xMidYMid meet">
-              <motion.path
-                d="M 100 200 C 100 50, 400 50, 500 200 C 600 350, 900 350, 900 200 C 900 50, 600 50, 500 200 C 400 350, 100 350, 100 200 Z"
-                fill="none" stroke="rgba(13, 171, 174, 0.1)" strokeWidth="24" strokeLinecap="round"
-              />
-              <motion.path
-                d="M 100 200 C 100 50, 400 50, 500 200 C 600 350, 900 350, 900 200 C 900 50, 600 50, 500 200 C 400 350, 100 350, 100 200 Z"
-                fill="none" stroke="#0DABAE" strokeWidth="24" strokeLinecap="round"
-                initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1, ease: "easeInOut" }}
-                style={{ filter: 'drop-shadow(0 0 15px rgba(13, 171, 174, 0.8))' }}
-              />
-            </motion.svg>
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mt-6 text-[#052742] font-black tracking-widest uppercase text-sm md:text-base">PLACED</motion.div>
+          <motion.div 
+            initial={{ opacity: 1 }} 
+            exit={{ opacity: 0, y: "-100%", transition: { duration: 0.6, ease: "easeInOut" } }} 
+            className="fixed inset-0 z-[999] bg-white flex flex-col items-center justify-center gap-6"
+          >
+            <div className="w-24 md:w-32 h-auto relative">
+                <svg viewBox="0 0 100 50" className="w-full h-auto drop-shadow-[0_0_8px_rgba(13,171,174,0.5)]">
+                  <path 
+                    d="M 50 25 C 65 5, 95 5, 95 25 C 95 45, 65 45, 50 25 C 35 5, 5 5, 5 25 C 5 45, 35 45, 50 25 Z" 
+                    fill="none" stroke="rgba(13,171,174,0.15)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round"
+                  />
+                  <motion.path 
+                    d="M 50 25 C 65 5, 95 5, 95 25 C 95 45, 65 45, 50 25 C 35 5, 5 5, 5 25 C 5 45, 35 45, 50 25 Z" 
+                    fill="none" stroke="#0DABAE" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round"
+                    initial={{ pathLength: 0, pathOffset: 0 }}
+                    animate={{ pathLength: [0, 0.5, 0], pathOffset: [0, 0.5, 1] }}
+                    transition={{ duration: 1.8, repeat: Infinity, ease: "linear" }}
+                  />
+                </svg>
+            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="relative w-32 md:w-40 h-8 md:h-10 mt-2"
+            >
+               <Image src="/placeduplogo.jpg" alt="Placed Logo" fill sizes="(max-width: 768px) 128px, 160px" className="object-contain object-center" priority />
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
       <div className="min-h-screen bg-white text-[#052742] scroll-smooth overflow-x-hidden">
         
-        {/* UPDATED NAVIGATION - FIXED SIZE */}
+        {/* NAVIGATION DESKTOP BAR - ABOUT LINK ROUTED TO DEDICATED ABOUT PAGE */}
         <motion.nav 
           initial={{ y: -100 }} animate={{ y: 0 }} transition={{ duration: 0.5, delay: isLoading ? 1.1 : 0 }} 
           className="flex items-center justify-between px-4 md:px-8 py-4 bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100"
         >
-          {/* Logo (Original Container Size, Image Scaled Visually) */}
           <div className="flex items-center gap-4">
             <Link href="/" className="relative w-32 md:w-40 h-10 md:h-12 flex items-center justify-start overflow-visible">
                <Image src="/placeduplogo.jpg" alt="Placed Logo" fill sizes="(max-width: 768px) 128px, 160px" className="object-contain object-left md:object-center scale-125 md:scale-150 origin-left" priority />
             </Link>
           </div>
 
-          {/* Desktop Horizontal Menu */}
           <div className="hidden md:flex items-center gap-8 font-black text-[11px] lg:text-xs uppercase tracking-widest text-[#052742]">
             <Link href="/" className="hover:text-[#0DABAE] transition-colors">Home</Link>
+            <Link href="/about" className="hover:text-[#0DABAE] transition-colors">About Us</Link>
             <Link href="/programs" className="hover:text-[#0DABAE] transition-colors">Programs</Link>
-            <Link href="/mentors" className="hover:text-[#0DABAE] transition-colors">Mentors</Link>
+            <Link href="/mentors" className="hover:text-[#0DABAE] transition-colors">Metors</Link>
             <a href="#leadership" className="hover:text-[#0DABAE] transition-colors">Leadership</a>
             <Link href="/alumni" className="hover:text-[#0DABAE] transition-colors">Alumni</Link>
           </div>
 
-          {/* CTA & Mobile Hamburger */}
           <div className="flex items-center gap-4">
             <Link href="/signup" className="bg-[#052742] text-white px-5 py-2 md:px-6 md:py-2.5 rounded-xl font-bold hover:bg-[#0DABAE] transition-all shadow-xl text-xs md:text-sm">
               <span className="hidden sm:inline">Book Demo</span>
               <span className="sm:hidden">Book</span>
             </Link>
-            
             <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden w-10 h-10 bg-slate-50 rounded-full flex flex-col justify-center items-center gap-1 hover:bg-slate-100 border border-slate-200 transition-colors z-50 relative">
               <motion.span animate={isMenuOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }} className="w-4 h-0.5 bg-[#052742] block transition-transform"></motion.span>
               <motion.span animate={isMenuOpen ? { opacity: 0 } : { opacity: 1 }} className="w-4 h-0.5 bg-[#052742] block transition-opacity"></motion.span>
@@ -514,13 +528,14 @@ export default function Home() {
           </div>
         </motion.nav>
 
-        {/* MOBILE DROPDOWN MENU */}
+        {/* MOBILE DROPDOWN MENU - ABOUT LINK ROUTED TO DEDICATED ABOUT PAGE */}
         <AnimatePresence>
           {isMenuOpen && (
             <>
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsMenuOpen(false)} className="fixed inset-0 bg-[#052742]/30 backdrop-blur-sm z-40 md:hidden" />
               <motion.div initial={{ opacity: 0, scale: 0.95, x: 20 }} animate={{ opacity: 1, scale: 1, x: 0 }} exit={{ opacity: 0, scale: 0.95, x: 20 }} transition={{ duration: 0.2, ease: "easeOut" }} className="fixed top-20 right-4 w-56 bg-white/95 backdrop-blur-xl shadow-2xl rounded-xl p-6 border border-slate-100 flex flex-col gap-5 z-50 text-left md:hidden origin-top-right">
                 <Link href="/" onClick={() => setIsMenuOpen(false)} className="text-lg font-black text-[#052742] hover:text-[#0DABAE] transition-colors uppercase tracking-widest">Home</Link>
+                <Link href="/about" onClick={() => setIsMenuOpen(false)} className="text-lg font-black text-[#052742] hover:text-[#0DABAE] transition-colors uppercase tracking-widest">About Us</Link>
                 <Link href="/programs" onClick={() => setIsMenuOpen(false)} className="text-lg font-black text-[#052742] hover:text-[#0DABAE] transition-colors uppercase tracking-widest">Programs</Link>
                 <Link href="/mentors" onClick={() => setIsMenuOpen(false)} className="text-lg font-black text-[#052742] hover:text-[#0DABAE] transition-colors uppercase tracking-widest">Mentors</Link>
                 <a href="#leadership" onClick={() => setIsMenuOpen(false)} className="text-lg font-black text-[#052742] hover:text-[#0DABAE] transition-colors uppercase tracking-widest">Leadership</a>
@@ -564,7 +579,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto relative z-10 grid lg:grid-cols-2 gap-8 items-center">
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} className="text-center lg:text-left">
               <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-4">
-                Our 7-Phase <span className="text-[#0DABAE] block mt-2">Architecture</span>
+                Our 7-Phase <span className="text-[#0DABAE]">Architecture</span>
               </h2>
               <p className="text-slate-300 font-medium text-base md:text-lg max-w-lg mx-auto lg:mx-0">
                 We don't just teach. We utilize a highly structured, interactive learning framework designed to build problem-solving ability and real-world readiness from day one.
@@ -608,13 +623,8 @@ export default function Home() {
           </motion.div>
         </section>
 
-        {/* CMS CONNECTED MENTORS */}
         <MentorsSection mentorsData={mentorsData} setSelectedMentor={setSelectedMentor} />
-
-        {/* TEAM */}
         <TeamSection setSelectedFounder={setSelectedFounder} />
-
-        {/* ALUMNI (2-COL MOBILE) */}
         <AlumniSection alumniData={alumniData} alumniIndex={alumniIndex} displayedAlumni={displayedAlumni} />
 
         {/* FOOTER */}
@@ -623,7 +633,6 @@ export default function Home() {
           
           <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-8 relative z-10">
             <div className="flex flex-col md:items-start md:text-left">
-              {/* Bigger Footer Logo */}
               <div className="relative w-40 md:w-56 h-12 md:h-16 mb-6 md:mb-8 overflow-visible flex items-center justify-start">
                  <Image src="/placeddownlogo.png" alt="Placed Logo" fill sizes="(max-width: 768px) 160px, 224px" className="object-contain object-left scale-125 md:scale-150 origin-left" />
               </div>
@@ -637,6 +646,7 @@ export default function Home() {
               <h4 className="font-black mb-4 uppercase text-[10px] md:text-xs tracking-widest text-white">Explore</h4>
               <ul className="space-y-2 md:space-y-3 text-[10px] md:text-sm font-medium">
                 <li><Link href="/" className="hover:text-[#0DABAE] transition-colors">Home</Link></li>
+                <li><Link href="/about" className="hover:text-[#0DABAE] transition-colors">About Us</Link></li>
                 <li><Link href="/programs" className="hover:text-[#0DABAE] transition-colors">Programs</Link></li>
                 <li><Link href="/mentors" className="hover:text-[#0DABAE] transition-colors">Mentors</Link></li>
                 <li><Link href="/alumni" className="hover:text-[#0DABAE] transition-colors">Alumni Success</Link></li>
@@ -644,13 +654,15 @@ export default function Home() {
             </div>
             
             <div className="flex flex-col md:items-start md:text-left">
-              <h4 className="font-black mb-4 uppercase text-[10px] md:text-xs tracking-widest text-white">Support</h4>
-              <ul className="space-y-2 md:space-y-3 text-[10px] md:text-sm font-medium">
+              <h4 className="font-black mb-4 uppercase text-[10px] md:text-xs tracking-widest text-white">Support & Contact</h4>
+              <ul className="space-y-2 md:space-y-3 text-[10px] md:text-sm font-medium mb-4">
                 <li><a href="#" className="hover:text-[#0DABAE] transition-colors">Contact Us</a></li>
                 <li><a href="#" className="hover:text-[#0DABAE] transition-colors">Help Center & FAQ</a></li>
                 <li><a href="#" className="hover:text-[#0DABAE] transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-[#0DABAE] transition-colors">Terms of Service</a></li>
               </ul>
+              <div className="text-[10px] md:text-xs font-black uppercase text-white tracking-widest pt-2">
+                Call: <a href="tel:+918927653209" className="text-[#0DABAE] hover:underline font-bold font-mono tracking-wide">+91 89276 53209</a>
+              </div>
             </div>
             
             <div className="flex flex-col md:items-start md:text-left w-full pl-4 md:pl-0">
@@ -662,13 +674,14 @@ export default function Home() {
               </div>
               
               <div className="flex gap-2 md:gap-4">
-                {/* Official LinkedIn */}
                 <a href="https://www.linkedin.com/company/placedtech/" target="_blank" rel="noopener noreferrer" className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#0DABAE] hover:text-[#052742] transition-all border border-white/10">
                   <svg className="w-3 h-3 md:w-3.5 md:h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
                 </a>
-                {/* Official Instagram */}
                 <a href="https://www.instagram.com/placed.official?igsh=MTU5ZzBiOGtyYzRneQ==" target="_blank" rel="noopener noreferrer" className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#0DABAE] hover:text-[#052742] transition-all border border-white/10">
-                  <svg className="w-3 h-3 md:w-3.5 md:h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                  <svg className="w-3 h-3 md:w-3.5 md:h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0 3.259-.014 3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                </a>
+                <a href="https://t.me/placed_community" target="_blank" rel="noopener noreferrer" className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#0DABAE] hover:text-[#052742] transition-all border border-white/10 shrink-0" aria-label="Join our Telegram Community">
+                  <svg className="w-3 h-3 md:w-3.5 md:h-3.5 pl-[1px] pb-[0.5px]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.87 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.458c.536-.204.1.13.136.708z"/></svg>
                 </a>
               </div>
             </div>
@@ -686,8 +699,7 @@ export default function Home() {
             <span className="absolute inline-flex h-full w-full rounded-full bg-[#25D366] opacity-40 animate-ping"></span>
             <svg className="w-8 h-8 md:w-10 md:h-10 relative z-10" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
           </a>
-
-          <button className="flex items-center justify-center w-14 h-14 md:w-16 md:h-16 bg-[#052742] text-[#0DABAE] rounded-full shadow-[0_0_20px_rgba(13,171,174,0.3)] hover:scale-110 transition-transform cursor-pointer border-2 border-[#0DABAE]/50" aria-label="Open Chatbot">
+          <button onClick={() => setIsChatOpen(true)} className="flex items-center justify-center w-14 h-14 md:w-16 md:h-16 bg-[#052742] text-[#0DABAE] rounded-full shadow-[0_0_20px_rgba(13,171,174,0.3)] hover:scale-110 transition-transform cursor-pointer border-2 border-[#0DABAE]/50" aria-label="Open Chatbot">
             <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>
           </button>
         </div>
@@ -699,10 +711,18 @@ export default function Home() {
               <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }} className="bg-white rounded-xl p-8 md:p-10 max-w-md w-full shadow-2xl relative">
                 <button onClick={() => setSelectedMentor(null)} className="absolute top-5 right-5 text-slate-400 hover:text-[#052742] transition-colors">✕</button>
                 <div className="text-center">
-                  <div className="w-20 h-20 md:w-24 md:h-24 mx-auto bg-[#0DABAE]/10 text-[#0DABAE] rounded-full flex items-center justify-center text-3xl md:text-4xl font-black mb-4 md:mb-6">{selectedMentor.initials}</div>
-                  <h3 className="text-2xl md:text-3xl font-black mb-1 text-[#052742]">{selectedMentor.name}</h3>
-                  <p className="text-[#0DABAE] font-black uppercase tracking-widest text-xs md:text-sm mb-4 md:mb-6">{selectedMentor.role} @ {selectedMentor.company}</p>
-                  <p className="text-slate-600 leading-relaxed mb-6 md:mb-8 text-sm md:text-base">{selectedMentor.bio}</p>
+                  <div className="w-24 h-24 mx-auto rounded-full flex items-center justify-center mb-6 relative overflow-hidden border-2 border-[#0DABAE]">
+                    {selectedMentor.image_url ? (
+                       <img src={selectedMentor.image_url} alt={selectedMentor.name} className="w-full h-full object-cover" />
+                    ) : (
+                       <div className="w-full h-full bg-[#0DABAE]/10 text-[#0DABAE] flex items-center justify-center text-4xl font-black">
+                         {selectedMentor.initials}
+                       </div>
+                    )}
+                  </div>
+                  <h3 className="text-3xl font-black mb-1 text-[#052742]">{selectedMentor.name}</h3>
+                  <p className="text-[#0DABAE] font-black uppercase tracking-widest text-sm mb-6">{selectedMentor.role} @ {selectedMentor.company}</p>
+                  <p className="text-slate-600 leading-relaxed mb-8">{selectedMentor.bio}</p>
                   <button className="w-full bg-[#052742] text-white py-3 md:py-4 rounded-xl font-bold hover:bg-[#0DABAE] transition-colors text-sm md:text-base">Book a Session</button>
                 </div>
               </motion.div>
@@ -710,38 +730,25 @@ export default function Home() {
           )}
         </AnimatePresence>
 
-        {/* PERFECTLY LOCKED MODAL SIZE */}
         <AnimatePresence>
           {selectedFounder && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-[#052742]/90 backdrop-blur-md">
               <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-white rounded-xl p-6 md:p-8 max-w-2xl w-full shadow-2xl relative overflow-y-auto max-h-[85vh]">
                 <button onClick={() => setSelectedFounder(null)} className="absolute top-4 right-4 text-slate-400 hover:text-[#052742] w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 z-50 transition-colors">✕</button>
-                
                 <div className="flex flex-col md:flex-row gap-6 items-center md:items-start pt-2">
-                  {/* HARD-CODED MAX SIZES FOR IMAGE SO IT CAN NEVER GROW HUGE */}
                   <div className="w-32 h-32 md:w-48 md:h-48 shrink-0 relative rounded-2xl overflow-hidden shadow-lg border border-slate-100 bg-slate-100">
-                     <Image src={selectedFounder.imagePath} alt={selectedFounder.name} fill sizes="(max-width: 768px) 128px, 192px" className="object-cover object-top" />
+                     <Image src={selectedFounder.imagePath} alt={selectedFounder.name} fill sizes="(max-width: 768px) 128px, 192px" className="object-cover object-top" priority />
                   </div>
                   <div className="w-full text-center md:text-left">
                      <h3 className="text-xl md:text-3xl font-black text-[#052742] leading-tight">{selectedFounder.name}</h3>
                      <p className="text-[10px] md:text-xs font-extrabold text-[#0DABAE] mt-1 md:mt-2 uppercase tracking-widest mb-3 md:mb-4">{selectedFounder.role}</p>
                      <div className="w-10 h-1 bg-[#0DABAE] mb-3 md:mb-4 rounded-full mx-auto md:mx-0"></div>
                      <p className="text-slate-600 leading-relaxed text-xs md:text-sm font-medium whitespace-pre-line">{selectedFounder.bio}</p>
-                     
                      <div className="mt-4 md:mt-6 pt-3 md:pt-4 border-t border-slate-100">
                         {selectedFounder.linkedin ? (
-                          <a 
-                            href={selectedFounder.linkedin} 
-                            target="_blank" 
-                            rel="noopener noreferrer" 
-                            className="text-[10px] md:text-xs font-black text-[#0DABAE] hover:text-[#052742] uppercase tracking-widest transition-colors inline-block"
-                          >
-                            LinkedIn Profile ↗
-                          </a>
+                          <a href={selectedFounder.linkedin} target="_blank" rel="noopener noreferrer" className="text-[10px] md:text-xs font-black text-[#0DABAE] hover:text-[#052742] uppercase tracking-widest transition-colors inline-block">LinkedIn Profile ↗</a>
                         ) : (
-                          <span className="text-[10px] md:text-xs font-black text-slate-300 uppercase tracking-widest cursor-not-allowed">
-                            LinkedIn Not Available
-                          </span>
+                          <span className="text-[10px] md:text-xs font-black text-slate-300 uppercase tracking-widest cursor-not-allowed">LinkedIn Not Available</span>
                         )}
                      </div>
                   </div>
@@ -752,20 +759,27 @@ export default function Home() {
         </AnimatePresence>
 
         <AnimatePresence>
+          {isChatOpen && (
+            <motion.div initial={{ opacity: 0, y: 50, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 50, scale: 0.9 }} className="fixed bottom-24 left-6 md:bottom-28 md:left-8 z-[120] w-[350px] h-[500px] max-w-[calc(100vw-3rem)] bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-200">
+              <button onClick={() => setIsChatOpen(false)} className="absolute top-3 right-3 z-50 bg-[#0DABAE]/20 hover:bg-[#0DABAE]/40 text-[#052742] rounded-full p-1.5 transition-colors">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+              </button>
+              <Chatbot /> 
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
           {showPopup && (
              <motion.div initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 100, opacity: 0 }} className="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-[110]">
                 <div className="bg-white text-[#052742] p-5 rounded-xl shadow-2xl w-[240px] md:w-[260px] border border-slate-100 flex flex-col gap-3">
-                   
                    <div className="flex justify-between items-start w-full">
                       <p className="font-black text-sm md:text-base leading-tight pt-1">Ready to level up?</p>
                       <button onClick={() => setShowPopup(false)} className="text-slate-400 hover:text-red-500 bg-slate-100 hover:bg-red-50 p-1.5 rounded-full shrink-0 transition-colors" aria-label="Close popup">
                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                       </button>
                    </div>
-                   
-                   <Link href="/signup" onClick={() => setShowPopup(false)} className="bg-[#052742] text-white py-2.5 rounded-lg font-bold text-xs md:text-sm hover:bg-[#0DABAE] transition-colors text-center w-full shadow-md mt-1">
-                     Partner With PLACED
-                   </Link>
+                   <Link href="/signup" onClick={() => setShowPopup(false)} className="bg-[#052742] text-white py-2.5 rounded-lg font-bold text-xs md:text-sm hover:bg-[#0DABAE] transition-colors text-center w-full shadow-md mt-1">Partner With PLACED</Link>
                 </div>
              </motion.div>
           )}

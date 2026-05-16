@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+// Keeping Image import just in case, but we are using <img> below to bypass strict rules!
+import Image from 'next/image' 
 import { motion, AnimatePresence, useMotionValue, useMotionTemplate } from 'framer-motion'
 import { Inter } from 'next/font/google'
 import { supabase } from '@/utils/supabase'
@@ -12,6 +14,9 @@ export default function MentorsPage() {
   const [mentorsData, setMentorsData] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [selectedMentor, setSelectedMentor] = useState<any>(null)
+  
+  // 🚨 NEW: This will catch and display silent database errors
+  const [dbError, setDbError] = useState<string | null>(null)
 
   // Mouse Spotlight Effect
   const mouseX = useMotionValue(0)
@@ -23,13 +28,35 @@ export default function MentorsPage() {
     mouseY.set(clientY - top)
   }
 
-  // Fetch from Supabase
+  // Fetch from Supabase with Strict Error Catching
   useEffect(() => {
     const fetchMentors = async () => {
-      const { data, error } = await supabase.from('mentors').select('*')
-      if (data) setMentorsData(data)
-      if (error) console.error("Error fetching mentors:", error)
-      setIsLoading(false)
+      try {
+        // 1. Check if keys even exist in your .env.local file
+        if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+           setDbError("Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY in your .env.local file.")
+           setIsLoading(false)
+           return
+        }
+
+        // 2. Try to fetch the data
+        const { data, error } = await supabase.from('mentors').select('*')
+        
+        // 🕵️ SPY TRACKER: Let's see exactly what Supabase is sending!
+        console.log("🕵️ DATA FROM SUPABASE:", data)
+        
+        if (error) {
+          setDbError(`Supabase Error: ${error.message}`)
+        } else if (data && data.length > 0) {
+          setMentorsData(data) // Success!
+        } else {
+          setDbError("Connection successful, but the 'mentors' table is currently empty (0 rows found).")
+        }
+      } catch (err: any) {
+        setDbError(`System Exception: ${err.message}`)
+      } finally {
+        setIsLoading(false)
+      }
     }
     fetchMentors()
   }, [])
@@ -57,8 +84,17 @@ export default function MentorsPage() {
           <p className="text-slate-300 max-w-2xl mx-auto font-medium text-sm md:text-base">Industry experts bringing real-world corporate expectations directly to your campus.</p>
         </div>
 
+        {/* 🚨 ERROR DIAGNOSTICS DISPLAY */}
         {isLoading ? (
           <div className="text-center text-[#0DABAE] font-black animate-pulse py-20 uppercase tracking-widest">Loading Mentors...</div>
+        ) : dbError ? (
+          <div className="max-w-2xl mx-auto bg-red-500/10 border border-red-500/30 rounded-2xl p-8 text-center backdrop-blur-md">
+            <h3 className="text-2xl font-black text-red-400 mb-4">Database Connection Issue</h3>
+            <p className="text-slate-300 font-mono bg-black/40 p-4 rounded-xl border border-red-500/20 mb-6 inline-block text-left break-all">
+              {dbError}
+            </p>
+            <p className="text-sm font-bold text-slate-400">Please fix this issue in your Supabase dashboard or .env.local file.</p>
+          </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
             {mentorsData.map((mentor, idx) => (
@@ -70,9 +106,17 @@ export default function MentorsPage() {
                 onClick={() => setSelectedMentor(mentor)} 
                 className="cursor-pointer bg-[#031A2D]/80 backdrop-blur-md p-6 md:p-8 rounded-xl border border-white/10 hover:border-[#0DABAE] hover:shadow-[0_0_20px_rgba(13,171,174,0.3)] transition-all group flex flex-col items-center justify-center text-center relative overflow-hidden"
               >
-                <div className="w-20 h-20 bg-[#0DABAE]/10 text-[#0DABAE] rounded-full flex items-center justify-center text-3xl font-black mb-4 group-hover:scale-110 group-hover:bg-[#0DABAE] group-hover:text-[#052742] transition-all duration-300 relative z-10">
-                  {mentor.initials}
+                {/* --- CIRCULAR AVATAR WITH HTML IMG BYPASS --- */}
+                <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-all duration-300 relative z-10 overflow-hidden border-2 border-transparent group-hover:border-[#0DABAE]">
+                  {mentor.image_url ? (
+                     <img src={mentor.image_url} alt={mentor.name} className="w-full h-full object-cover" />
+                  ) : (
+                     <div className="w-full h-full bg-[#0DABAE]/10 text-[#0DABAE] flex items-center justify-center text-3xl font-black group-hover:bg-[#0DABAE] group-hover:text-[#052742] transition-colors">
+                       {mentor.initials}
+                     </div>
+                  )}
                 </div>
+                
                 <h3 className="text-lg md:text-xl font-black text-white leading-tight relative z-10">{mentor.name}</h3>
                 <p className="text-[#0DABAE] font-bold text-[10px] md:text-xs uppercase mt-2 relative z-10">{mentor.role} @ {mentor.company}</p>
               </motion.div>
@@ -87,7 +131,18 @@ export default function MentorsPage() {
             <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }} className="bg-white rounded-xl p-8 md:p-10 max-w-md w-full shadow-2xl relative">
               <button onClick={() => setSelectedMentor(null)} className="absolute top-5 right-5 text-slate-400 hover:text-[#052742] transition-colors">✕</button>
               <div className="text-center">
-                <div className="w-24 h-24 mx-auto bg-[#0DABAE]/10 text-[#0DABAE] rounded-full flex items-center justify-center text-4xl font-black mb-6">{selectedMentor.initials}</div>
+                
+                {/* --- CIRCULAR MODAL AVATAR WITH HTML IMG BYPASS --- */}
+                <div className="w-24 h-24 mx-auto rounded-full flex items-center justify-center mb-6 relative overflow-hidden border-2 border-[#0DABAE]">
+                  {selectedMentor.image_url ? (
+                     <img src={selectedMentor.image_url} alt={selectedMentor.name} className="w-full h-full object-cover" />
+                  ) : (
+                     <div className="w-full h-full bg-[#0DABAE]/10 text-[#0DABAE] flex items-center justify-center text-4xl font-black">
+                       {selectedMentor.initials}
+                     </div>
+                  )}
+                </div>
+
                 <h3 className="text-3xl font-black mb-1 text-[#052742]">{selectedMentor.name}</h3>
                 <p className="text-[#0DABAE] font-black uppercase tracking-widest text-sm mb-6">{selectedMentor.role} @ {selectedMentor.company}</p>
                 <p className="text-slate-600 leading-relaxed mb-8">{selectedMentor.bio}</p>

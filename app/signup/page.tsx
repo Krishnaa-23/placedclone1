@@ -67,15 +67,15 @@ export default function SignupPage() {
           </Link>
 
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-5xl font-black mb-6 leading-tight">
-            Bridge the gap to your <span className="text-[#0DABAE]">tech career.</span>
+            Empowering Institutions. <span className="text-[#0DABAE]">Advancing Student Outcomes.</span>
           </motion.h1>
           
           <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }} className="text-slate-300 text-lg mb-12 max-w-md font-medium">
-            Book an institutional demo or apply for our next cohort. Experience the curriculum that launches careers into the global top 1%.
+            PLACED partners with colleges and academic institutions to deliver structured career readiness programs, competitive exam preparation frameworks, and industry-oriented student development initiatives designed for long-term student success.
           </motion.p>
 
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="space-y-6">
-            {["Intensive 12-week training programs", "Mentorship from Meta, Google, and Visa experts", "Direct corporate referrals upon graduation"].map((feature, idx) => (
+            {["Corporate Readiness & Employability Training", "Competitive Exam & Aptitude Development", " Industry-Aligned Career Progression Support"].map((feature, idx) => (
               <div key={idx} className="flex items-center gap-4">
                 <div className="w-6 h-6 rounded-full bg-[#0DABAE]/20 flex items-center justify-center text-[#0DABAE] shrink-0 font-bold">✓</div>
                 <p className="text-sm font-bold tracking-wide">{feature}</p>
@@ -100,8 +100,8 @@ export default function SignupPage() {
             {!isSuccess ? (
               <motion.div key="form" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
                 <div className="mb-10 text-center lg:text-left">
-                  <h2 className="text-3xl font-black text-[#052742] mb-3">Get Started</h2>
-                  <p className="text-slate-500 text-sm font-medium">Fill out your details and our team will contact you shortly.</p>
+                  <h2 className="text-3xl font-black text-[#052742] mb-3">Partner With Us</h2>
+                  <p className="text-slate-500 text-sm font-medium">Share your institution details and our partnership team will connect with you to explore collaboration opportunities.</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
@@ -110,7 +110,7 @@ export default function SignupPage() {
                     <input 
                       required 
                       type="text" 
-                      placeholder="John Doe" 
+                      placeholder="" 
                       value={formData.fullName}
                       onChange={(e) => setFormData({...formData, fullName: e.target.value})}
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:outline-none focus:border-[#0DABAE] focus:ring-2 focus:ring-[#0DABAE]/20 transition-all font-medium" 
@@ -118,11 +118,11 @@ export default function SignupPage() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-black text-[#052742] uppercase tracking-widest">Email Address</label>
+                    <label className="text-xs font-black text-[#052742] uppercase tracking-widest">OFFICIAL Email Address</label>
                     <input 
                       required 
                       type="email" 
-                      placeholder="john@university.edu" 
+                      placeholder="" 
                       value={formData.email}
                       onChange={(e) => setFormData({...formData, email: e.target.value})}
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:outline-none focus:border-[#0DABAE] focus:ring-2 focus:ring-[#0DABAE]/20 transition-all font-medium" 
@@ -130,16 +130,17 @@ export default function SignupPage() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-black text-[#052742] uppercase tracking-widest">Phone Number</label>
+                    <label className="text-xs font-black text-[#052742] uppercase tracking-widest">cONTACT Number</label>
                     <input 
                       required 
                       type="tel" 
-                      placeholder="+91 98765 43210" 
+                      placeholder="" 
                       value={formData.phone}
                       onChange={(e) => setFormData({...formData, phone: e.target.value})}
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:outline-none focus:border-[#0DABAE] focus:ring-2 focus:ring-[#0DABAE]/20 transition-all font-medium" 
                     />
                   </div>
+                  
 
                   <div className="space-y-1">
                     <label className="text-xs font-black text-[#052742] uppercase tracking-widest">I am a...</label>
@@ -150,8 +151,12 @@ export default function SignupPage() {
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:outline-none focus:border-[#0DABAE] focus:ring-2 focus:ring-[#0DABAE]/20 transition-all font-medium appearance-none"
                     >
                       <option value="" disabled>Select an option</option>
-                      <option value="student">Student looking to upskill</option>
-                      <option value="institution">College/Institution requesting a Demo</option>
+                      <option value="student">College Representative</option>
+                      <option value="Training">Training & Placement Officer</option>
+                      <option value="institution">Institution Administrator</option>
+                      <option value="faculty">Faculty coordinator</option>
+                      <option value="academic">Academic Partner</option>
+                      <option value="Corporate">Corporate Partner</option>
                     </select>
                   </div>
 
