@@ -13,10 +13,17 @@ import Chatbot from '@/components/Chatbot'
 const inter = Inter({ subsets: ['latin'] })
 
 // ==========================================
-// 🛠️ WHATSAPP SETTINGS
+// 🛠️ EMBEDDED SETTINGS & GLOBAL HELPERS
 // ==========================================
 const WHATSAPP_NUMBER = "917907597197" 
 const WHATSAPP_MESSAGE = "Hi PLACED team! I would like to know more about the institutional programs."
+const PLAYSTORE_LINK = "https://lynde.page.link/ofUJ"
+
+// Global helper to safely clean roles/companies of trailing '@' symbols
+const getCleanRole = (mentor: any) => {
+  const rawRole = mentor?.company || mentor?.role || ""
+  return rawRole.replace(/@\s*$/, '').trim()
+}
 
 // --- THE 7-PHASE METHODOLOGY ---
 const PHASES = [
@@ -89,11 +96,11 @@ const InteractiveCube = () => {
 }
 
 // ==========================================
-// 🖱️ WORKFLOW SECTION
+// 🖱️ WORKFLOW SECTION (With strict local tracking glow)
 // ==========================================
 const WorkflowSection = () => {
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
+  const mouseX = useMotionValue(-1000);
+  const mouseY = useMotionValue(-1000);
 
   function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
     const { left, top } = currentTarget.getBoundingClientRect();
@@ -102,19 +109,20 @@ const WorkflowSection = () => {
   }
 
   return (
-    <section id="workflow" onMouseMove={handleMouseMove} className="py-20 md:py-28 px-4 md:px-8 bg-slate-50 relative overflow-hidden group">
+    <section id="workflow" onMouseMove={handleMouseMove} onMouseLeave={() => { mouseX.set(-1000); mouseY.set(-1000); }} className="py-20 md:py-28 px-4 md:px-8 bg-slate-50 relative overflow-hidden group">
+      
+      {/* Targeted Mouse Glow Effect */}
       <motion.div
-        className="pointer-events-none absolute -inset-px transition duration-300 opacity-0 group-hover:opacity-100 z-0"
-        style={{ background: useMotionTemplate`radial-gradient(800px circle at ${mouseX}px ${mouseY}px, rgba(9, 115, 117, 0.45), transparent 70%)` }}
+        className="pointer-events-none absolute -inset-px transition duration-300 z-0"
+        style={{ background: useMotionTemplate`radial-gradient(600px circle at ${mouseX}px ${mouseY}px, rgba(13, 171, 174, 0.12), transparent 70%)` }}
       />
-      <div className="absolute inset-0 bg-[radial-gradient(#052742_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.03] mix-blend-multiply z-0"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(#052742_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.03] pointer-events-none z-0"></div>
       
       <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} className="max-w-7xl mx-auto relative z-10">
         <motion.h2 variants={fadeUp} className="text-center text-4xl md:text-5xl font-black mb-12 md:mb-16 uppercase tracking-tighter text-[#052742]">
           The Placed <span className="text-[#0DABAE]">Journey</span>
         </motion.h2>
         
-        {/* 2 items per row on Mobile */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 relative">
           {[ 
             { step: '', title: 'Apply', desc: 'Submit profile and pass the diagnostic assessment.' },
@@ -122,7 +130,7 @@ const WorkflowSection = () => {
             { step: '', title: 'Simulate', desc: 'Experience end-to-end mock recruitment pressure.' },
             { step: '', title: 'Outcome', desc: 'Achieve success in placements or higher education.' }
           ].map((item, idx) => (
-            <motion.div key={idx} variants={fadeUp} className="bg-white/90 backdrop-blur-xl p-4 md:p-8 rounded-xl border border-slate-200 shadow-xl hover:border-[#0DABAE] transition-all hover:-translate-y-2 relative overflow-hidden">
+            <motion.div key={idx} variants={fadeUp} className="bg-white/80 backdrop-blur-xl p-4 md:p-8 rounded-xl border border-slate-200 shadow-xl hover:border-[#0DABAE] transition-all hover:-translate-y-2 relative overflow-hidden">
               <span className="text-4xl md:text-6xl font-black text-[#0DABAE]/30 transition-colors block mb-1 md:mb-4">{item.step}</span>
               <h3 className="text-sm md:text-xl font-bold mb-1 md:mb-2 text-[#052742] leading-tight">{item.title}</h3>
               <p className="text-slate-600 text-[9px] md:text-sm font-medium leading-relaxed">{item.desc}</p>
@@ -140,26 +148,23 @@ const WorkflowSection = () => {
 const InteractiveInfinity = () => {
   const [activePhase, setActivePhase] = useState(0);
 
-  // Faster Auto-Play (2 seconds)
   useEffect(() => {
     const timer = setInterval(() => { setActivePhase((prev) => (prev + 1) % PHASES.length) }, 2000);
     return () => clearInterval(timer);
   }, []);
 
-  // Precise positions mapped to the SVG path
   const nodePositions = [
-    { top: '50%', left: '10%' },    // 1. Left Edge
-    { top: '22.5%', left: '25%' },  // 2. Top Left
-    { top: '50%', left: '45%' },    // 3. Center (Offset slightly left)
-    { top: '77.5%', left: '75%' },  // 4. Bottom Right
-    { top: '50%', left: '90%' },    // 5. Right Edge
-    { top: '22.5%', left: '75%' },  // 6. Top Right
-    { top: '77.5%', left: '25%' },  // 7. Bottom Left
+    { top: '50%', left: '10%' },
+    { top: '22.5%', left: '25%' },
+    { top: '50%', left: '45%' },
+    { top: '77.5%', left: '75%' },
+    { top: '50%', left: '90%' },
+    { top: '22.5%', left: '75%' },
+    { top: '77.5%', left: '25%' },
   ];
 
   return (
     <div className="w-full relative h-[350px] md:h-[400px]">
-      {/* The SVG Infinity Path */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1000 400" preserveAspectRatio="none">
         <motion.path
           d="M 100 200 C 100 50, 400 50, 500 200 C 600 350, 900 350, 900 200 C 900 50, 600 50, 500 200 C 400 350, 100 350, 100 200 Z"
@@ -173,7 +178,6 @@ const InteractiveInfinity = () => {
         />
       </svg>
 
-      {/* The Expanding Nodes Inside The Loop */}
       {PHASES.map((phase, idx) => {
         const isActive = activePhase === idx;
         return (
@@ -185,7 +189,8 @@ const InteractiveInfinity = () => {
             <motion.div
               layout
               onClick={() => setActivePhase(idx)}
-              className={`cursor-pointer overflow-hidden flex flex-col items-center justify-center rounded-2xl border-2 transition-colors ${isActive ? 'bg-[#052742] border-[#0DABAE] p-4 w-48 md:w-56 shadow-[0_0_25px_rgba(13,171,174,0.4)]' : 'bg-[#031A2D] border-white/20 w-8 h-8 md:w-10 md:h-10 hover:border-[#0DABAE]'}`}
+              className="cursor-pointer overflow-hidden flex flex-col items-center justify-center rounded-2xl border-2 transition-colors bg-[#031A2D] border-white/20 w-8 h-8 md:w-10 md:h-10 hover:border-[#0DABAE]"
+              animate={isActive ? { width: '12rem', height: 'auto', padding: '1rem', backgroundColor: '#052742', borderColor: '#0DABAE', boxShadow: '0 0 25px rgba(13,171,174,0.4)' } : {}}
             >
               {isActive ? (
                 <motion.div layoutId={`content-${phase.id}`} className="text-center w-full">
@@ -205,77 +210,97 @@ const InteractiveInfinity = () => {
 }
 
 // ==========================================
-// 🎓 MENTORS SECTION (RESTORED ORIGINAL LAYOUT WITH IMAGE WORKAROUND)
+// 🎓 FACULTY POOL SECTION 
 // ==========================================
 const MentorsSection = ({ mentorsData, setSelectedMentor }: { mentorsData: any[], setSelectedMentor: (mentor: any) => void }) => {
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
+  const [facultyOffset, setFacultyOffset] = useState(0);
 
-  function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
-    const { left, top } = currentTarget.getBoundingClientRect();
-    mouseX.set(clientX - left);
-    mouseY.set(clientY - top);
-  }
+  useEffect(() => {
+    if (mentorsData.length === 0) return;
+    const interval = setInterval(() => {
+      setFacultyOffset((prev) => (prev + 1) % mentorsData.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [mentorsData]);
+
+  const filteredMentors = mentorsData.length > 0 ? [
+    mentorsData[facultyOffset % mentorsData.length],
+    mentorsData[(facultyOffset + 1) % mentorsData.length],
+    mentorsData[(facultyOffset + 2) % mentorsData.length],
+    mentorsData[(facultyOffset + 3) % mentorsData.length],
+  ] : [];
 
   return (
-    <section id="mentors" onMouseMove={handleMouseMove} className="py-20 md:py-28 px-4 md:px-8 bg-[#052742] relative overflow-hidden text-white group border-t border-white/5">
-      <motion.div
-        className="pointer-events-none absolute -inset-px transition duration-300 opacity-0 group-hover:opacity-100 z-0"
-        style={{ background: useMotionTemplate`radial-gradient(600px circle at ${mouseX}px ${mouseY}px, rgba(13, 171, 174, 0.25), transparent 80%)` }}
-      />
-      
-      <motion.div animate={{ y: [0, -30, 0], rotate: [0, 15, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} className="absolute top-20 left-10 text-[#0DABAE]/10 text-7xl font-black pointer-events-none">{"{ }"}</motion.div>
-      <motion.div animate={{ y: [0, 40, 0], rotate: [0, -15, 0] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} className="absolute bottom-20 right-20 text-[#0DABAE]/10 text-8xl font-black pointer-events-none">{"</>"}</motion.div>
-      <motion.div animate={{ y: [0, -20, 0], x: [0, 20, 0] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }} className="absolute top-1/2 left-1/4 text-[#0DABAE]/10 text-6xl font-black pointer-events-none">{"[ ]"}</motion.div>
-
+    <section id="mentors" className="py-20 md:py-28 bg-[#052742] relative overflow-hidden text-white group border-t border-white/5">
+      {/* Aptitude & Soft Skills Background Elements */}
+      <motion.div animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }} transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }} className="absolute top-20 left-10 text-[#0DABAE]/10 text-9xl font-serif font-black pointer-events-none z-0">"</motion.div>
+      <motion.div animate={{ y: [0, 30, 0], rotate: [0, -10, 0] }} transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }} className="absolute bottom-20 right-20 text-[#0DABAE]/10 text-9xl font-black pointer-events-none z-0">?</motion.div>
+      <motion.div animate={{ y: [0, -15, 0], scale: [1, 1.05, 1] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} className="absolute top-1/2 left-1/4 text-[#0DABAE]/10 text-8xl font-black pointer-events-none z-0">!</motion.div>
       <div className="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:32px_32px] opacity-[0.03] pointer-events-none z-0"></div>
 
-      <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} className="max-w-7xl mx-auto text-center relative z-10">
-        <motion.h2 variants={fadeUp} className="text-center text-4xl md:text-5xl font-black mb-10 md:mb-16 uppercase tracking-tighter text-white">
-          LEARN FROM THE <span className="text-[#0DABAE]">BEST.</span>
-        </motion.h2>
-        
-        {mentorsData.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-            {mentorsData.map((mentor, idx) => (
-              <motion.div 
-                key={mentor.id} 
-                variants={fadeUp} 
-                animate={{ y: [0, -8, 0] }} 
-                transition={{ duration: 4, repeat: Infinity, delay: idx * 0.4, ease: "easeInOut" }}
-                onClick={() => setSelectedMentor(mentor)} 
-                className="cursor-pointer bg-[#031A2D]/80 backdrop-blur-md p-6 md:p-8 rounded-xl border border-white/10 hover:border-[#0DABAE] hover:shadow-[0_0_20px_rgba(13,171,174,0.3)] transition-all group flex flex-col items-center justify-center text-center relative overflow-hidden"
-              >
-                {/* Fixed Circular Avatar Layering & sizing */}
-                <div className="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center mb-3 md:mb-4 group-hover:scale-110 transition-all duration-300 relative z-10 overflow-hidden border-2 border-transparent group-hover:border-[#0DABAE] shrink-0">
-                  {mentor.image_url ? (
-                     <img src={mentor.image_url} alt={mentor.name} className="w-full h-full object-cover" />
-                  ) : (
-                     <div className="w-full h-full bg-[#0DABAE]/10 text-[#0DABAE] flex items-center justify-center text-2xl md:text-3xl font-black group-hover:bg-[#0DABAE] group-hover:text-[#052742] transition-colors">
-                       {mentor.initials}
-                     </div>
-                  )}
-                </div>
-                
-                <h3 className="text-sm md:text-2xl font-black text-white leading-tight relative z-10">{mentor.name}</h3>
-                <p className="text-[#0DABAE] font-bold text-[9px] md:text-sm uppercase mt-1 md:mt-2 relative z-10">{mentor.company}</p>
-              </motion.div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center text-[#0DABAE] font-bold animate-pulse py-10">Loading mentors...</div>
-        )}
-      </motion.div>
+      <div className="max-w-7xl mx-auto relative z-10">
+         <div className="flex flex-col md:flex-row justify-between items-center mb-10 md:mb-16 gap-6 w-full text-center md:text-left">
+           <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter w-full md:w-auto">
+             LEARN FROM THE <span className="text-[#0DABAE]">BEST.</span>
+           </h2>
+           <Link href="/mentors" className="bg-[#0DABAE] hover:bg-white hover:text-[#052742] text-white px-6 md:px-8 py-3 rounded-xl font-bold transition-all uppercase tracking-widest text-[10px] md:text-xs shrink-0 shadow-lg shadow-[#0DABAE]/20 hover:scale-105">
+             Show More →
+           </Link>
+         </div>
+         
+         <div className="w-full relative min-h-[290px] md:min-h-[350px]">
+           <AnimatePresence mode="wait">
+             <motion.div 
+               key={facultyOffset} 
+               initial={{ opacity: 0, x: 20 }} 
+               animate={{ opacity: 1, x: 0 }} 
+               exit={{ opacity: 0, x: -20 }} 
+               transition={{ duration: 0.5 }} 
+               className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-8 items-stretch auto-rows-fr w-full"
+             >
+               {filteredMentors.map((mentor: any, index: number) => (
+                  mentor && (
+                    <div 
+                      key={`${mentor.id}-${index}`} 
+                      onClick={() => setSelectedMentor(mentor)}
+                      className="bg-[#031A2D]/80 backdrop-blur-md p-4 md:p-6 rounded-xl border border-white/10 hover:border-[#0DABAE] hover:shadow-[0_0_20px_rgba(13,171,174,0.3)] transition-colors flex flex-col justify-between group h-full shadow-2xl cursor-pointer"
+                    >
+                      <div className="relative w-full aspect-square rounded-lg overflow-hidden mb-4 border border-white/5 bg-slate-900 shrink-0 shadow-md">
+                        {mentor.image_url ? (
+                          <img src={mentor.image_url} alt={mentor.name} className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105 pointer-events-none" />
+                        ) : (
+                          <div className="w-full h-full bg-[#0DABAE]/10 text-[#0DABAE] flex items-center justify-center text-3xl font-black">
+                            {mentor.initials}
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#052742]/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center p-3">
+                          <span className="text-white font-bold text-[9px] tracking-widest uppercase">Profile</span>
+                        </div>
+                      </div>
+                      
+                      <div className="w-full text-center mt-2">
+                        <div className="font-black text-white text-sm md:text-lg leading-tight tracking-tight drop-shadow-sm truncate">{mentor.name}</div>
+                        <div className="text-[8px] md:text-[10px] text-[#0DABAE] font-black uppercase tracking-widest leading-tight mt-1.5 opacity-90 truncate">
+                          {getCleanRole(mentor)}
+                        </div>
+                      </div>
+                    </div>
+                  )
+               ))}
+             </motion.div>
+           </AnimatePresence>
+         </div>
+      </div>
     </section>
   )
 }
 
 // ==========================================
-// 👥 MEET THE TEAM
+// 👥 MEET THE LEADERSHIP (With strict local tracking glow)
 // ==========================================
 const TeamSection = ({ setSelectedFounder }: { setSelectedFounder: (founder: any) => void }) => {
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
+  const mouseX = useMotionValue(-1000);
+  const mouseY = useMotionValue(-1000);
 
   function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
     const { left, top } = currentTarget.getBoundingClientRect();
@@ -284,22 +309,24 @@ const TeamSection = ({ setSelectedFounder }: { setSelectedFounder: (founder: any
   }
 
   return (
-    <section id="leadership" onMouseMove={handleMouseMove} className="py-20 md:py-28 px-4 md:px-8 bg-slate-50 relative overflow-hidden group border-t border-slate-200">
+    <section id="leadership" onMouseMove={handleMouseMove} onMouseLeave={() => { mouseX.set(-1000); mouseY.set(-1000); }} className="py-20 md:py-28 px-4 md:px-8 bg-slate-50 relative overflow-hidden group border-t border-slate-200">
+      
+      {/* Targeted Mouse Glow Effect */}
       <motion.div
-        className="pointer-events-none absolute -inset-px transition duration-300 opacity-0 group-hover:opacity-100 z-0"
-        style={{ background: useMotionTemplate`radial-gradient(800px circle at ${mouseX}px ${mouseY}px, rgba(9, 115, 117, 0.45), transparent 70%)` }}
+        className="pointer-events-none absolute -inset-px transition duration-300 z-0"
+        style={{ background: useMotionTemplate`radial-gradient(600px circle at ${mouseX}px ${mouseY}px, rgba(13, 171, 174, 0.12), transparent 70%)` }}
       />
       <div className="absolute inset-0 bg-[radial-gradient(#052742_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.03] pointer-events-none z-0"></div>
 
       <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} className="max-w-7xl mx-auto text-center relative z-10">
         <motion.h2 variants={fadeUp} className="text-center text-4xl md:text-5xl font-black mb-10 md:mb-16 uppercase tracking-tighter text-[#052742]">
-          Meet the <span className="text-[#0DABAE]">Team</span>
+          Meet the <span className="text-[#0DABAE]">Leadership</span>
         </motion.h2>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
           {COFOUNDERS.map((founder) => (
-            <motion.div key={founder.id} variants={fadeUp} className="group cursor-pointer bg-white/90 backdrop-blur-xl p-4 md:p-6 rounded-xl shadow-xl shadow-slate-200/50 hover:-translate-y-2 transition-all duration-300 border border-slate-100 hover:border-[#0DABAE] max-w-[300px] mx-auto w-full" onClick={() => setSelectedFounder(founder)}>
-              <div className="relative w-full aspect-square rounded-lg overflow-hidden mb-4 md:mb-6 border border-slate-100 transition-all group-hover:shadow-[0_0_20px_rgba(13,171,174,0.2)] bg-slate-100">
+            <motion.div key={founder.id} variants={founder.id} className="group cursor-pointer bg-white/90 backdrop-blur-xl p-4 md:p-6 rounded-xl shadow-xl shadow-slate-200/50 hover:-translate-y-2 transition-all duration-300 border border-slate-100 hover:border-[#0DABAE] max-w-[300px] mx-auto w-full" onClick={() => setSelectedFounder(founder)}>
+              <div className="relative w-full aspect-square rounded-lg overflow-hidden mb-4 md:mb-6 border border-slate-100 bg-slate-100">
                 <Image src={founder.imagePath} alt={founder.name} fill sizes="(max-width: 768px) 300px, 300px" className="object-cover object-top transition-transform duration-700 group-hover:scale-105" priority />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#052742]/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center p-4">
                   <span className="text-white font-bold text-[10px] md:text-sm tracking-widest uppercase">Profile</span>
@@ -331,20 +358,23 @@ const AlumniSection = ({ alumniData, alumniIndex, displayedAlumni }: any) => {
     mouseY.set(y);
   }
 
+  // Animated Background Blobs
   const blob1X = useTransform(mouseX, [-0.5, 0.5], [80, -80]);
   const blob1Y = useTransform(mouseY, [-0.5, 0.5], [80, -80]);
   const blob2X = useTransform(mouseX, [-0.5, 0.5], [-60, 60]);
   const blob2Y = useTransform(mouseY, [-0.5, 0.5], [-60, 60]);
 
   return (
-    <section id="alumni" onMouseMove={handleMouseMove} className="py-20 md:py-28 bg-[#031A2D] text-white overflow-hidden relative px-4 md:px-8 border-t border-white/5">
-      <motion.div style={{ x: blob1X, y: blob1Y }} className="absolute top-0 left-0 w-[400px] h-[400px] bg-[#0DABAE]/10 rounded-full blur-[100px] pointer-events-none transition-transform ease-out duration-500" />
-      <motion.div style={{ x: blob2X, y: blob2Y }} className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none transition-transform ease-out duration-500" />
+    <section id="alumni" onMouseMove={handleMouseMove} className="py-20 md:py-28 bg-[#031A2D] relative overflow-hidden text-white group border-t border-white/5">
+      
+      {/* Dynamic Animated Blobs Background Restored */}
+      <motion.div style={{ x: blob1X, y: blob1Y }} className="absolute top-0 left-0 w-[400px] h-[400px] bg-[#0DABAE]/10 rounded-full blur-[100px] pointer-events-none transition-transform ease-out duration-500 z-0" />
+      <motion.div style={{ x: blob2X, y: blob2Y }} className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none transition-transform ease-out duration-500 z-0" />
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none z-0"></div>
 
       <div className="max-w-7xl mx-auto relative z-10">
          <div className="flex flex-col md:flex-row justify-between items-center mb-10 md:mb-16 gap-6">
-           <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter text-center md:text-left">
+           <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter text-center md:text-left text-white">
              Alumni <span className="text-[#0DABAE]">Success</span>
            </h2>
            <Link href="/alumni" className="bg-[#0DABAE] hover:bg-white hover:text-[#052742] text-white px-6 md:px-8 py-3 rounded-xl font-bold transition-all uppercase tracking-widest text-[10px] md:text-xs shrink-0 shadow-lg shadow-[#0DABAE]/20 hover:scale-105">
@@ -385,7 +415,7 @@ const AlumniSection = ({ alumniData, alumniIndex, displayedAlumni }: any) => {
 }
 
 // ==========================================
-// 🚀 MAIN HOME PAGE COMPONENT
+// 🚀 MAIN RUNTIME CONTROLLER
 // ==========================================
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true)
@@ -397,12 +427,10 @@ export default function Home() {
 
   const hasTriggeredPopup = useRef(false) 
   
-  // CMS STATE
   const [alumniData, setAlumniData] = useState<any[]>([])
   const [mentorsData, setMentorsData] = useState<any[]>([])
   const [alumniIndex, setAlumniIndex] = useState(0)
 
-  // POPUP LOGIC
   useEffect(() => {
     const timer = setTimeout(() => { setIsLoading(false) }, 1000)
     
@@ -421,7 +449,6 @@ export default function Home() {
     }
   }, [])
 
-  // FETCH ALUMNI AND MENTORS FROM SUPABASE
   useEffect(() => {
     const fetchData = async () => {
       const [alumniRes, mentorsRes] = await Promise.all([
@@ -431,9 +458,6 @@ export default function Home() {
       
       if (alumniRes.data) setAlumniData(alumniRes.data)
       if (mentorsRes.data) setMentorsData(mentorsRes.data)
-        
-      if (alumniRes.error) console.error("Error fetching alumni:", alumniRes.error)
-      if (mentorsRes.error) console.error("Error fetching mentors:", mentorsRes.error)
     }
     fetchData()
   }, [])
@@ -456,9 +480,7 @@ export default function Home() {
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
 
   return (
-    <div className={inter.className}>
-      
-      {/* LOADING SCREEN */}
+    <div className={`relative overflow-hidden ${inter.className}`}>
       <AnimatePresence>
         {isLoading && (
           <motion.div 
@@ -493,12 +515,12 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      <div className="min-h-screen bg-white text-[#052742] scroll-smooth overflow-x-hidden">
+      <div className="min-h-screen bg-white text-[#052742] scroll-smooth overflow-x-hidden relative z-20">
         
-        {/* NAVIGATION DESKTOP BAR - ABOUT LINK ROUTED TO DEDICATED ABOUT PAGE */}
+        {/* SOLID FIXED NAVIGATION BAR: Remains perfectly opaque and pinned at top */}
         <motion.nav 
           initial={{ y: -100 }} animate={{ y: 0 }} transition={{ duration: 0.5, delay: isLoading ? 1.1 : 0 }} 
-          className="flex items-center justify-between px-4 md:px-8 py-4 bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100"
+          className="fixed w-full top-0 left-0 right-0 flex items-center justify-between px-4 md:px-8 py-4 bg-white z-[100] border-b border-slate-100 shadow-sm"
         >
           <div className="flex items-center gap-4">
             <Link href="/" className="relative w-32 md:w-40 h-10 md:h-12 flex items-center justify-start overflow-visible">
@@ -510,15 +532,14 @@ export default function Home() {
             <Link href="/" className="hover:text-[#0DABAE] transition-colors">Home</Link>
             <Link href="/about" className="hover:text-[#0DABAE] transition-colors">About Us</Link>
             <Link href="/programs" className="hover:text-[#0DABAE] transition-colors">Programs</Link>
-            <Link href="/mentors" className="hover:text-[#0DABAE] transition-colors">Metors</Link>
+            <Link href="/mentors" className="hover:text-[#0DABAE] transition-colors">Mentors</Link>
             <a href="#leadership" className="hover:text-[#0DABAE] transition-colors">Leadership</a>
             <Link href="/alumni" className="hover:text-[#0DABAE] transition-colors">Alumni</Link>
           </div>
 
           <div className="flex items-center gap-4">
             <Link href="/signup" className="bg-[#052742] text-white px-5 py-2 md:px-6 md:py-2.5 rounded-xl font-bold hover:bg-[#0DABAE] transition-all shadow-xl text-xs md:text-sm">
-              <span className="hidden sm:inline">Book Demo</span>
-              <span className="sm:hidden">Book</span>
+              <span className="whitespace-nowrap">Book Demo</span>
             </Link>
             <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden w-10 h-10 bg-slate-50 rounded-full flex flex-col justify-center items-center gap-1 hover:bg-slate-100 border border-slate-200 transition-colors z-50 relative">
               <motion.span animate={isMenuOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }} className="w-4 h-0.5 bg-[#052742] block transition-transform"></motion.span>
@@ -528,12 +549,11 @@ export default function Home() {
           </div>
         </motion.nav>
 
-        {/* MOBILE DROPDOWN MENU - ABOUT LINK ROUTED TO DEDICATED ABOUT PAGE */}
         <AnimatePresence>
           {isMenuOpen && (
             <>
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsMenuOpen(false)} className="fixed inset-0 bg-[#052742]/30 backdrop-blur-sm z-40 md:hidden" />
-              <motion.div initial={{ opacity: 0, scale: 0.95, x: 20 }} animate={{ opacity: 1, scale: 1, x: 0 }} exit={{ opacity: 0, scale: 0.95, x: 20 }} transition={{ duration: 0.2, ease: "easeOut" }} className="fixed top-20 right-4 w-56 bg-white/95 backdrop-blur-xl shadow-2xl rounded-xl p-6 border border-slate-100 flex flex-col gap-5 z-50 text-left md:hidden origin-top-right">
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsMenuOpen(false)} className="fixed inset-0 bg-[#052742]/30 backdrop-blur-sm z-[90] md:hidden" />
+              <motion.div initial={{ opacity: 0, scale: 0.95, x: 20 }} animate={{ opacity: 1, scale: 1, x: 0 }} exit={{ opacity: 0, scale: 0.95, x: 20 }} transition={{ duration: 0.2, ease: "easeOut" }} className="fixed top-20 right-4 w-56 bg-white/95 backdrop-blur-xl shadow-2xl rounded-xl p-6 border border-slate-100 flex flex-col gap-5 z-[100] text-left md:hidden origin-top-right">
                 <Link href="/" onClick={() => setIsMenuOpen(false)} className="text-lg font-black text-[#052742] hover:text-[#0DABAE] transition-colors uppercase tracking-widest">Home</Link>
                 <Link href="/about" onClick={() => setIsMenuOpen(false)} className="text-lg font-black text-[#052742] hover:text-[#0DABAE] transition-colors uppercase tracking-widest">About Us</Link>
                 <Link href="/programs" onClick={() => setIsMenuOpen(false)} className="text-lg font-black text-[#052742] hover:text-[#0DABAE] transition-colors uppercase tracking-widest">Programs</Link>
@@ -545,9 +565,8 @@ export default function Home() {
           )}
         </AnimatePresence>
 
-        {/* HERO */}
-        <section className="bg-[#052742] pt-16 pb-16 md:pt-20 md:pb-24 px-4 md:px-8 relative overflow-hidden bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:40px_40px]">
-          <motion.div animate={{ scale: [1, 1.05, 1], opacity: [0.3, 0.5, 0.3] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} className="absolute top-0 right-0 w-full md:w-1/2 h-full bg-[#0DABAE]/20 blur-[120px] md:blur-[150px] rounded-full pointer-events-none" />
+        {/* HERO SECTION - Margin adjusted so content isn't hidden under the fixed nav */}
+        <section className="bg-[#052742] mt-[72px] md:mt-[80px] pt-16 pb-16 md:pt-20 md:pb-24 px-4 md:px-8 relative overflow-hidden bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:40px_40px]">
           <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 md:gap-12 items-center relative z-10">
             <div className="text-center md:text-left">
               <motion.h1 initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: isLoading ? 1.3 : 0.2 }} className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-tight mb-6 md:mb-8 uppercase tracking-tighter">
@@ -673,15 +692,26 @@ export default function Home() {
                 <button className="bg-[#0DABAE] text-[#052742] px-3 md:px-4 py-2 rounded-r-lg font-black text-[10px] md:text-sm hover:bg-white transition-colors">Join</button>
               </div>
               
-              <div className="flex gap-2 md:gap-4">
-                <a href="https://www.linkedin.com/company/placedtech/" target="_blank" rel="noopener noreferrer" className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#0DABAE] hover:text-[#052742] transition-all border border-white/10">
-                  <svg className="w-3 h-3 md:w-3.5 md:h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+              <div className="flex gap-2 md:gap-4 items-center">
+                <a href="https://www.linkedin.com/company/placedtech/" target="_blank" rel="noopener noreferrer" className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-white/5 flex items-center justify-center hover:scale-110 transition-transform border border-white/10">
+                  <svg className="w-3 h-3 md:w-3.5 md:h-3.5" fill="#0A66C2" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
                 </a>
-                <a href="https://www.instagram.com/placed.official?igsh=MTU5ZzBiOGtyYzRneQ==" target="_blank" rel="noopener noreferrer" className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#0DABAE] hover:text-[#052742] transition-all border border-white/10">
-                  <svg className="w-3 h-3 md:w-3.5 md:h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0 3.259-.014 3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                <a href="https://www.instagram.com/placed.official?igsh=MTU5ZzBiOGtyYzRneQ==" target="_blank" rel="noopener noreferrer" className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-white/5 flex items-center justify-center hover:scale-110 transition-transform border border-white/10">
+                  <svg className="w-3 h-3 md:w-3.5 md:h-3.5" viewBox="0 0 24 24" fill="none"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.259-.014-3.668-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.689-.072-4.948-.072-3.259 0-3.668-.014-4.948-.072 4.354-.2 6.782-2.618 6.979-6.98-.059-1.28.073-1.689-.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98-.059-1.28.073-1.689-.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" fill="url(#ig-grad)"/><defs><linearGradient id="ig-grad" x1="12" y1="0" x2="12" y2="24" gradientUnits="userSpaceOnUse"><stop offset="0" stopColor="#833AB4"/><stop offset="0.5" stopColor="#FD1D1D"/><stop offset="1" stopColor="#F56040"/></linearGradient></defs></svg>
                 </a>
-                <a href="https://t.me/placed_community" target="_blank" rel="noopener noreferrer" className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#0DABAE] hover:text-[#052742] transition-all border border-white/10 shrink-0" aria-label="Join our Telegram Community">
-                  <svg className="w-3 h-3 md:w-3.5 md:h-3.5 pl-[1px] pb-[0.5px]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.87 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.458c.536-.204.1.13.136.708z"/></svg>
+                <a href="https://www.youtube.com/@placed.official" target="_blank" rel="noopener noreferrer" className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-white/5 flex items-center justify-center hover:scale-110 transition-transform border border-white/10 shrink-0" aria-label="Visit our YouTube Channel">
+                  <svg className="w-3 h-3 md:w-3.5 md:h-3.5" fill="#FF0000" viewBox="0 0 24 24"><path d="M23.498 6.163a3.003 3.003 0 0 0-2.11-2.11C19.517 3.545 12 3.545 12 3.545s-7.517 0-9.388.508a3.003 3.003 0 0 0-2.11 2.11C0 8.033 0 12 0 12s0 3.967.502 5.837a3.003 3.003 0 0 0 2.11 2.11c1.871.508 9.388.508 9.388.508s7.517 0 9.388-.508a3.003 3.003 0 0 0 2.11-2.11C24 15.967 24 12 24 12s0-3.967-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                </a>
+                <a href="https://t.me/placed_community" target="_blank" rel="noopener noreferrer" className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-white/5 flex items-center justify-center hover:scale-110 transition-transform border border-white/10 shrink-0" aria-label="Join our Telegram Community">
+                  <svg className="w-3 h-3 md:w-3.5 md:h-3.5 pl-[0.5px]" fill="#0088cc" viewBox="0 0 24 24"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.87 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.458c.536-.204.1.13.136.708z"/></svg>
+                </a>
+              </div>
+              
+              {/* Play Store Download Button */}
+              <div className="mt-8">
+                <p className="font-black mb-3 uppercase text-[10px] md:text-xs tracking-widest text-white">Get Our App</p>
+                <a href={PLAYSTORE_LINK} target="_blank" rel="noopener noreferrer" className="inline-block hover:scale-105 transition-transform">
+                  <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" className="h-10 md:h-12 w-auto object-contain" />
                 </a>
               </div>
             </div>
@@ -711,9 +741,9 @@ export default function Home() {
               <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }} className="bg-white rounded-xl p-8 md:p-10 max-w-md w-full shadow-2xl relative">
                 <button onClick={() => setSelectedMentor(null)} className="absolute top-5 right-5 text-slate-400 hover:text-[#052742] transition-colors">✕</button>
                 <div className="text-center">
-                  <div className="w-24 h-24 mx-auto rounded-full flex items-center justify-center mb-6 relative overflow-hidden border-2 border-[#0DABAE]">
+                  <div className="w-24 h-24 mx-auto rounded-xl flex items-center justify-center mb-6 relative overflow-hidden border-2 border-[#0DABAE] aspect-square shadow-md bg-[#052742]">
                     {selectedMentor.image_url ? (
-                       <img src={selectedMentor.image_url} alt={selectedMentor.name} className="w-full h-full object-cover" />
+                       <img src={selectedMentor.image_url} alt={selectedMentor.name} className="w-full h-full object-cover object-top" />
                     ) : (
                        <div className="w-full h-full bg-[#0DABAE]/10 text-[#0DABAE] flex items-center justify-center text-4xl font-black">
                          {selectedMentor.initials}
@@ -721,8 +751,7 @@ export default function Home() {
                     )}
                   </div>
                   <h3 className="text-3xl font-black mb-1 text-[#052742]">{selectedMentor.name}</h3>
-                  <p className="text-[#0DABAE] font-black uppercase tracking-widest text-sm mb-6">{selectedMentor.role} @ {selectedMentor.company}</p>
-                  <p className="text-slate-600 leading-relaxed mb-8">{selectedMentor.bio}</p>
+                  <p className="text-[#0DABAE] font-black uppercase tracking-widest text-sm mb-6">{getCleanRole(selectedMentor)}</p>
                   <button className="w-full bg-[#052742] text-white py-3 md:py-4 rounded-xl font-bold hover:bg-[#0DABAE] transition-colors text-sm md:text-base">Book a Session</button>
                 </div>
               </motion.div>
@@ -769,17 +798,23 @@ export default function Home() {
           )}
         </AnimatePresence>
 
+        {/* BOTTOM SCROLL POP-UP CARD */}
         <AnimatePresence>
           {showPopup && (
              <motion.div initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 100, opacity: 0 }} className="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-[110]">
-                <div className="bg-white text-[#052742] p-5 rounded-xl shadow-2xl w-[240px] md:w-[260px] border border-slate-100 flex flex-col gap-3">
+                <div className="bg-white text-[#052742] p-5 rounded-xl shadow-2xl w-[280px] md:w-[320px] border border-slate-100 flex flex-col gap-3">
                    <div className="flex justify-between items-start w-full">
-                      <p className="font-black text-sm md:text-base leading-tight pt-1">Ready to level up?</p>
+                      <div className="flex flex-col pr-4">
+                        <p className="font-black text-sm md:text-base leading-tight pt-1">Ready to accelerate your career?</p>
+                        <p className="text-[10px] md:text-xs text-slate-500 font-medium mt-1 leading-relaxed">Download the PLACED app to access mock tests, expert mentorship, and premium placement resources.</p>
+                      </div>
                       <button onClick={() => setShowPopup(false)} className="text-slate-400 hover:text-red-500 bg-slate-100 hover:bg-red-50 p-1.5 rounded-full shrink-0 transition-colors" aria-label="Close popup">
                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                       </button>
                    </div>
-                   <Link href="/signup" onClick={() => setShowPopup(false)} className="bg-[#052742] text-white py-2.5 rounded-lg font-bold text-xs md:text-sm hover:bg-[#0DABAE] transition-colors text-center w-full shadow-md mt-1">Partner With PLACED</Link>
+                   <a href={PLAYSTORE_LINK} target="_blank" rel="noopener noreferrer" onClick={() => setShowPopup(false)} className="bg-[#052742] text-white py-2.5 rounded-lg font-bold text-xs md:text-sm hover:bg-[#0DABAE] transition-colors text-center w-full shadow-md mt-1">
+                     Download Now
+                   </a>
                 </div>
              </motion.div>
           )}
