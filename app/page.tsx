@@ -736,7 +736,7 @@ export default function Home() {
           
           <div className="max-w-7xl mx-auto mt-10 pt-6 border-t border-white/10 text-center flex flex-col md:flex-row justify-between items-center gap-4 text-[8px] md:text-[10px] font-bold text-slate-500 uppercase tracking-widest relative z-10">
             <p>© 2026 PLACED. All rights reserved.</p>
-            <p>Designed for the future.</p>
+            <p>Designed for the future by NOVA.</p>
           </div>
         </footer>
 
