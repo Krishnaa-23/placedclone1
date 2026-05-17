@@ -325,7 +325,7 @@ const TeamSection = ({ setSelectedFounder }: { setSelectedFounder: (founder: any
         
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
           {COFOUNDERS.map((founder) => (
-            <motion.div key={founder.id} variants={founder.id} className="group cursor-pointer bg-white/90 backdrop-blur-xl p-4 md:p-6 rounded-xl shadow-xl shadow-slate-200/50 hover:-translate-y-2 transition-all duration-300 border border-slate-100 hover:border-[#0DABAE] max-w-[300px] mx-auto w-full" onClick={() => setSelectedFounder(founder)}>
+            <motion.div key={founder.id} variants={fadeUp} className="group cursor-pointer bg-white/90 backdrop-blur-xl p-4 md:p-6 rounded-xl shadow-xl shadow-slate-200/50 hover:-translate-y-2 transition-all duration-300 border border-slate-100 hover:border-[#0DABAE] max-w-[300px] mx-auto w-full" onClick={() => setSelectedFounder(founder)}>
               <div className="relative w-full aspect-square rounded-lg overflow-hidden mb-4 md:mb-6 border border-slate-100 bg-slate-100">
                 <Image src={founder.imagePath} alt={founder.name} fill sizes="(max-width: 768px) 300px, 300px" className="object-cover object-top transition-transform duration-700 group-hover:scale-105" priority />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#052742]/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center p-4">
