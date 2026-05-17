@@ -76,7 +76,7 @@ export default function SignupPage() {
             Empowering Institutions. <br className="hidden xl:block"/><span className="text-[#0DABAE]">Advancing Student Outcomes.</span>
           </motion.h1>
           
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }} className="text-slate-300 text-base xl:text-lg mb-8 max-w-md font-medium text-justify">
+          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }} className="text-slate-300 text-base xl:text-lg mb-8 max-w-md font-medium ">
             PLACED partners with colleges and academic institutions to deliver structured career readiness programs, competitive exam preparation frameworks, and industry-oriented student development initiatives designed for long-term student success.
           </motion.p>
 
