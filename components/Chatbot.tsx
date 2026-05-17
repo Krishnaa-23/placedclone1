@@ -28,16 +28,16 @@ export default function Chatbot() {
     setIsTyping(true)
 
     try {
-      // Calling your coworker's FastAPI backend!
-      const response = await fetch('/api/chat', {
+      // 🚀 UPDATED: Pointing to your live Render backend!
+      // Note: Make sure '/chat' matches the exact route in your friend's app_fastapi.py
+      const response = await fetch('https://edubuddy-api-0wsz.onrender.com/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        // Adjust the key below ("message") if your coworker used a different variable name in app_fastapi.py
         body: JSON.stringify({ message: userMessage }), 
       })
 
       const data = await response.json()
-      // Adjust the key below ("answer") if your coworker's API returns a different variable name
+      
       const botReply = data.answer || data.response || "I received your message, but my response format needs a quick tweak!"
 
       setMessages(prev => [...prev, { sender: 'bot', text: botReply }])
@@ -53,7 +53,7 @@ export default function Chatbot() {
     <div className="flex flex-col h-full bg-slate-50 relative">
       {/* Header */}
       <div className="bg-[#052742] text-white p-4 flex items-center gap-3 shrink-0">
-        <div className="w-10 h-10 bg-[#0DABAE] rounded-full flex items-center justify-center font-black text-[#052742] text-xl border-2 border-white/20">
+        <div className="w-10 h-10 bg-[#0DABAE] rounded-full flex items-center justify-center font-black text-[#052742] text-xl border-2 border-[rgba(255,255,255,0.2)]">
           E
         </div>
         <div>
