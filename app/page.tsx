@@ -647,7 +647,7 @@ export default function Home() {
                     </div>
                     <div className="absolute inset-0 bg-gradient-to-t from-[#031A2D] via-[#052742]/80 to-transparent z-10"></div>
                     <div className="relative z-20">
-                      <span className="text-[10px] md:text-xs font-bold text-[#0DABAE] group-hover:text-white uppercase tracking-widest block mb-2 transition-colors">{course.level}</span>
+                      <span className="text-[10px] md:text-xs font-bold text-[#0DABAE] group-hover:text-white uppercase tracking-widest block mb-2 transition-colors"></span>
                       <h3 className="text-2xl md:text-3xl font-black mb-2 leading-tight">{course.title}</h3>
                       <div className="flex justify-between items-center text-slate-300 group-hover:text-white font-medium text-xs md:text-sm mt-4 pt-4 border-t border-white/20">
                         <span>{course.duration}</span>

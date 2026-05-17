@@ -162,7 +162,7 @@ export default function ProgramsPage() {
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-[#031A2D] via-[#052742]/80 to-transparent z-10"></div>
                   <div className="relative z-20">
-                    <span className="text-[10px] md:text-xs font-bold text-[#0DABAE] group-hover:text-white uppercase tracking-widest block mb-2 transition-colors">{course.level}</span>
+                    <span className="text-[10px] md:text-xs font-bold text-[#0DABAE] group-hover:text-white uppercase tracking-widest block mb-2 transition-colors"></span>
                     <h3 className="text-2xl md:text-3xl font-black mb-2 leading-tight group-hover:text-[#0DABAE] transition-colors">{course.title}</h3>
                     <span className="text-slate-300 font-medium text-xs block border-t border-white/20 pt-4 mt-4">{course.duration}</span>
                   </div>
