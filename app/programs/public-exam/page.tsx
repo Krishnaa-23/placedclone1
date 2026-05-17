@@ -109,7 +109,7 @@ const MODULES = [
         items: ['Formation of Constitution', 'Fundamental Rights', 'Union & State Executives', 'Judiciary, etc']
       },
       {
-        name: 'Economy',
+        name: 'Economics',
         items: ['Basics of Economy', 'National Income and GDP', 'Budget & Taxes', 'Inflation & Banking']
       }
     ]
@@ -281,7 +281,7 @@ export default function PublicExamPage() {
             Public Exam <span className="text-[#0DABAE]">Foundation</span>
           </motion.h1>
           <motion.p variants={fadeUp} className="text-slate-400 max-w-3xl text-base md:text-lg leading-relaxed font-medium">
-            A significant number of students aim for secure careers through competitive government examinations like <span className="text-[#0DABAE] font-bold">SSC, RRB, and central banking tracks (IBPS/SBI)</span>. PLACED's Public Exam Foundation Program addresses preparation gaps early by combining tech-enabled timed drills, data-oriented concept evaluation, and robust simulated baseline test frameworks.
+            A significant number of students aim for secure careers through competitive government examinations like <span className="text-[#0DABAE] font-bold">SSC, RRB, and central banking tracks (IBPS/SBI), UPSC(CSAT), PSC and many more</span>. PLACED's Public Exam Foundation Program addresses preparation gaps early by combining tech-enabled timed drills, data-oriented concept evaluation, and robust simulated baseline test frameworks.
           </motion.p>
         </div>
 

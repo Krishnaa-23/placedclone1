@@ -206,7 +206,7 @@ export default function AboutPage() {
               Education will continue to evolve, and PLACED is committed to evolving alongside it. By staying grounded in purpose while adapting to emerging needs, we work toward making outcome-driven education accessible to all, without losing sight of structure, responsibility, or long-term impact.
             </p>
             <div className="font-black uppercase text-[#0DABAE] tracking-[0.25em] text-sm md:text-lg pt-2">
-              Infinite Possibilities, Definitive Outcome.
+              Infinite Possibilities, Definite Outcome.
             </div>
           </motion.div>
 

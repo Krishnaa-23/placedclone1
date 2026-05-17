@@ -24,7 +24,6 @@ const ECOSYSTEM_PILLARS = [
     id: 'corporate-readiness', 
     title: 'Corporate Readiness', 
     duration: 'Placement Focus', 
-    level: 'Aptitude & Soft Skills', 
     imagePath: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
     desc: 'Preparing students for real placement success. We bring aptitude, communication, and interview preparation into one structured learning process. Focuses on Quantitative Aptitude, Logical Reasoning, Verbal Ability, and Mock Simulations.'
   },
@@ -32,7 +31,6 @@ const ECOSYSTEM_PILLARS = [
     id: 'public-exam', 
     title: 'Public Exam Foundation', 
     duration: 'Govt. Exam Focus', 
-    level: 'SSC, RRB & Banking', 
     imagePath: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
     desc: 'Designed to help students build a strong foundation for highly competitive exams. Introduces students early to the structure and demands of national-level government careers through timed drills and concept-based exercises.'
   },
@@ -40,7 +38,6 @@ const ECOSYSTEM_PILLARS = [
     id: 'academic-navigator', 
     title: 'Academic Navigator', 
     duration: 'Higher Studies', 
-    level: 'PG & Professional', 
     imagePath: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
     desc: 'Not every student takes the same path. We guide students through postgraduate programs, professional courses, and flexible learning pathways so they can make informed academic decisions without confusion.'
   },
