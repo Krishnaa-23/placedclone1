@@ -73,7 +73,7 @@ export default function AcademicNavigatorPage() {
             <p className="font-bold text-[#052742]/80 text-sm max-w-xl">Access your personal mapping parameters to discover your optimal higher education or professional path.</p>
           </div>
           <a 
-            href="https://form-placed.vercel.app/profiling.html" 
+            href="https://suggest.indianeduhub.in/?id=IEHPPLAC-00880" 
             target="_blank" 
             rel="noopener noreferrer" 
             className="bg-[#052742] text-white px-8 py-4 rounded-xl font-black text-sm uppercase tracking-widest hover:bg-white hover:text-[#052742] transition-colors shrink-0 text-center shadow-xl"
