@@ -702,7 +702,7 @@ export default function Home() {
                 <li><a href="#" className="hover:text-[#0DABAE] transition-colors">Privacy Policy</a></li>
               </ul>
               <div className="text-[10px] md:text-xs font-black uppercase text-white tracking-widest pt-2">
-                Call: <a href="tel:+918927653209" className="text-[#0DABAE] hover:underline font-bold font-mono tracking-wide">+91 79075 97197</a>
+                Call: <a href="https://wa.me/917907597197" className="text-[#0DABAE] hover:underline font-bold font-mono tracking-wide">+91 79075 97197</a>
               </div>
             </div>
             
