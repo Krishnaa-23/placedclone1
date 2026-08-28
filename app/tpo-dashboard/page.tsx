@@ -44,6 +44,17 @@ import {
 import { INITIAL_STUDENTS, INITIAL_DRIVES, Student, Drive } from './data'
 import { supabase } from '@/utils/supabase'
 
+// ==============================================================================
+// HARDCODED TPO INSTITUTION & OFFICER CONFIGURATION (EASILY EDITABLE HERE)
+// ==============================================================================
+export const TPO_CONFIG = {
+  institutionName: "Campus Placement Office",
+  batchYear: "Batch 2026",
+  officerName: "Placement Officer",
+  officerRole: "Head Placement Officer",
+  officerInitials: "TPO"
+}
+
 export default function TPODashboard() {
   // Admin Login Authentication State (Bypassed for Direct Access)
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true)
@@ -835,8 +846,8 @@ export default function TPODashboard() {
                   TPO
                 </div>
                 <div className="hidden lg:flex flex-col text-left">
-                  <span className="text-xs font-black text-[#052742]">Dr. Rajesh V.</span>
-                  <span className="text-[10px] text-[#00A79D] font-bold">Head Placement Officer</span>
+                  <span className="text-xs font-black text-[#052742]">{TPO_CONFIG.officerName}</span>
+                  <span className="text-[10px] text-[#00A79D] font-bold">{TPO_CONFIG.officerRole}</span>
                 </div>
                 <button
                   onClick={handleLogout}
@@ -862,7 +873,7 @@ export default function TPODashboard() {
                   Placement <span className="text-[#00A79D]">Command Center</span>
                 </h1>
                 <span className="px-3 py-1 rounded-full bg-gradient-to-r from-[#00A79D] to-[#00D2C4] text-[#052742] font-black text-[12px] shadow-xs">
-                  St. Xavier's TPO • Batch 2026
+                  {TPO_CONFIG.institutionName} • {TPO_CONFIG.batchYear}
                 </span>
               </div>
             </div>

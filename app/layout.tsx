@@ -7,10 +7,10 @@ import { Analytics } from "@vercel/analytics/react";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'PLACED | Empowering Institutions & Advancing Student Outcomes',
-  description: 'PLACED partners with colleges and academic institutions to deliver structured career readiness programs, competitive exam preparation frameworks, and industry-oriented student development initiatives.',
+  title: 'PLACED — Placement & Assessment Intelligence',
+  description: 'PLACED Command Center & Placement Intelligence Dashboard',
   metadataBase: new URL('https://www.placededu.com'),
-  keywords: ['Career Readiness', 'Placement Training', 'Student Outcomes', 'Institution Partner', 'Campus Placements'],
+  keywords: ['Career Readiness', 'Placement Training', 'Student Outcomes', 'TPO Dashboard', 'Campus Placements'],
   openGraph: {
     title: 'PLACED | Empowering Institutions',
     description: 'Delivering structured career readiness and competitive exam preparation for long-term student success.',

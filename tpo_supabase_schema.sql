@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS tpo_admin_credentials (
     username VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     role VARCHAR(50) DEFAULT 'Head Placement Officer',
-    officer_name VARCHAR(255) DEFAULT 'Dr. Rajesh V.',
+    officer_name VARCHAR(255) DEFAULT 'Placement Officer',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS tpo_bootcamp_remediation (
     student_name VARCHAR(255) NOT NULL,
     initial_score INT NOT NULL,
     current_score INT NOT NULL,
-    assigned_mentor VARCHAR(255) DEFAULT 'Dr. Rajesh V.',
+    assigned_mentor VARCHAR(255) DEFAULT 'Placement Officer',
     bootcamp_status VARCHAR(50) DEFAULT 'Enrolled',
     enrolled_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS tpo_reports_audit (
     report_title VARCHAR(255) NOT NULL,
     file_format VARCHAR(20) NOT NULL, -- 'PDF', 'CSV'
     file_size VARCHAR(50) NOT NULL,
-    generated_by VARCHAR(255) DEFAULT 'Dr. Rajesh V.',
+    generated_by VARCHAR(255) DEFAULT 'Placement Officer',
     download_url TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -94,7 +94,7 @@ CREATE POLICY "Allow public all access on tpo_reports_audit" ON tpo_reports_audi
 
 -- 1. Seed Hardcoded Admin Credentials
 INSERT INTO tpo_admin_credentials (username, password_hash, role, officer_name)
-VALUES ('admin', 'admin123', 'Head Placement Officer', 'Dr. Rajesh V.')
+VALUES ('admin', 'admin123', 'Head Placement Officer', 'Placement Officer')
 ON CONFLICT (username) DO NOTHING;
 
 -- 2. Seed Whitelisted Students (Connected with Student Dashboard Mock Scores)

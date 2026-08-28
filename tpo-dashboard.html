@@ -74,7 +74,14 @@
     
     const supabase = (window.supabase && window.supabase.createClient)
       ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-      : null;
+    // HARDCODED TPO INSTITUTION & OFFICER CONFIGURATION (EASILY EDITABLE HERE)
+    const TPO_CONFIG = {
+      institutionName: "Campus Placement Office",
+      batchYear: "Batch 2026",
+      officerName: "Placement Officer",
+      officerRole: "Head Placement Officer",
+      officerInitials: "TPO"
+    };
 
     // INLINE SVG ICONS
     const Icons = {
