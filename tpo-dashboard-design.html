@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PLACED - Placement Command Center Dashboard (Admin Secured)</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+  <!-- React 18 & ReactDOM 18 CDN -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+  <!-- Babel for inline JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #F5F7FA;
+      color: #052742;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #F5F7FA;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 9999px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #00A79D;
+    }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+
+      #printable-pdf,
+      #printable-pdf * {
+        visibility: visible;
+      }
+
+      #printable-pdf {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    // INLINE SVG ICONS
+    const Icons = {
+      ChevronLeft: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>,
+      ChevronRight: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>,
+      User: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>,
+      Building: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>,
+      Shield: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>,
+      Dashboard: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>,
+      ShieldCheck: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+      GraduationCap: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l9-5-9-5-9 5 9 5z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 01-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" /></svg>,
+      AlertTriangle: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>,
+      FileText: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>,
+      Search: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>,
+      Bell: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>,
+      Plus: () => <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>,
+      Users: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>,
+      CheckCircle: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+      Award: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>,
+      PieChart: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" /></svg>,
+      BarChart: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>,
+      LineChart: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>,
+      Upload: () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>,
+      Download: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>,
+      Send: () => <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>,
+      Printer: () => <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 0 0-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v4h10z" /></svg>,
+      Lock: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 0 0-8 0v4h8z" /></svg>,
+      Menu: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" /></svg>,
+      Sparkles: () => <svg className="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>
+    };
+
+    const INITIAL_STUDENTS = [
+      { id: '1', name: 'Aarav Sharma', rollNo: 'CS2026-001', department: 'Computer Science', cgpa: 9.4, readinessScore: 94, readinessStatus: 'Super Coder', email: 'aarav.sharma@stxaviers.edu', bootcampEnrolled: false, mockScore: 96, weaknessAreas: [] },
+      { id: '2', name: 'Ananya Iyer', rollNo: 'CS2026-014', department: 'Computer Science', cgpa: 9.1, readinessScore: 92, readinessStatus: 'Super Coder', email: 'ananya.iyer@stxaviers.edu', bootcampEnrolled: false, mockScore: 94, weaknessAreas: [] },
+      { id: '3', name: 'Rohan Verma', rollNo: 'IT2026-008', department: 'Information Technology', cgpa: 8.7, readinessScore: 82, readinessStatus: 'Interview Ready', email: 'rohan.verma@stxaviers.edu', bootcampEnrolled: false, mockScore: 85, weaknessAreas: ['System Design'] },
+      { id: '4', name: 'Priya Patel', rollNo: 'ECE2026-022', department: 'Electronics', cgpa: 8.2, readinessScore: 74, readinessStatus: 'Interview Ready', email: 'priya.patel@stxaviers.edu', bootcampEnrolled: false, mockScore: 78, weaknessAreas: ['Data Structures'] },
+      { id: '5', name: 'Siddharth Rao', rollNo: 'ME2026-005', department: 'Mechanical', cgpa: 6.8, readinessScore: 48, readinessStatus: 'At Risk', email: 'siddharth.rao@stxaviers.edu', bootcampEnrolled: false, mockScore: 42, weaknessAreas: ['Aptitude Reasoning', 'Coding Logic'] },
+      { id: '6', name: 'Kavya Nair', rollNo: 'EEE2026-011', department: 'Electrical', cgpa: 6.5, readinessScore: 44, readinessStatus: 'At Risk', email: 'kavya.nair@stxaviers.edu', bootcampEnrolled: false, mockScore: 39, weaknessAreas: ['Verbal Ability', 'Dynamic Programming'] },
+      { id: '7', name: 'Vikram Singh', rollNo: 'CS2026-045', department: 'Computer Science', cgpa: 7.9, readinessScore: 78, readinessStatus: 'Interview Ready', email: 'vikram.singh@stxaviers.edu', bootcampEnrolled: false, mockScore: 81, weaknessAreas: ['SQL Queries'] },
+      { id: '8', name: 'Sneha Gupta', rollNo: 'IT2026-031', department: 'Information Technology', cgpa: 6.2, readinessScore: 46, readinessStatus: 'At Risk', email: 'sneha.gupta@stxaviers.edu', bootcampEnrolled: false, mockScore: 44, weaknessAreas: ['Mock Technical HR'] }
+    ];
+
+    const INITIAL_DRIVES = [
+      { id: 'DRV-001', companyName: 'TCS Digital', logoText: 'TCS', logoBg: 'bg-blue-600', roleTitle: 'System Engineer / Developer', ctc: '₹9.0 LPA', minReadinessScore: 70, minCgpa: 7.0, eligibleDepts: ['Computer Science', 'Information Technology'], deadline: '2026-08-15', totalInvited: 420, shortlistedCount: 140, placedCount: 68, status: 'Active' },
+      { id: 'DRV-002', companyName: 'Amazon AWS', logoText: 'AWS', logoBg: 'bg-amber-600', roleTitle: 'Cloud Solution Engineer', ctc: '₹22.0 LPA', minReadinessScore: 85, minCgpa: 8.0, eligibleDepts: ['Computer Science', 'Information Technology', 'Electronics'], deadline: '2026-08-20', totalInvited: 280, shortlistedCount: 62, placedCount: 18, status: 'Active' },
+      { id: 'DRV-003', companyName: 'Goldman Sachs', logoText: 'GS', logoBg: 'bg-cyan-700', roleTitle: 'Engineering Analyst', ctc: '₹28.0 LPA', minReadinessScore: 90, minCgpa: 8.5, eligibleDepts: ['Computer Science'], deadline: '2026-08-25', totalInvited: 120, shortlistedCount: 35, placedCount: 12, status: 'Active' },
+      { id: 'DRV-004', companyName: 'Infosys Power Coder', logoText: 'INF', logoBg: 'bg-indigo-600', roleTitle: 'Specialist Programmer', ctc: '₹9.5 LPA', minReadinessScore: 75, minCgpa: 7.0, eligibleDepts: ['All Departments'], deadline: '2026-08-30', totalInvited: 510, shortlistedCount: 190, placedCount: 84, status: 'Active' }
+    ];
+
+    function App() {
+      // PAGE 1 LOGIN & PAGE 2 DASHBOARD STATE
+      const [isLoggedIn, setIsLoggedIn] = useState(false);
+      const [usernameInput, setUsernameInput] = useState('');
+      const [passwordInput, setPasswordInput] = useState('');
+      const [loginError, setLoginError] = useState('');
+
+      const handleAdminLogin = (e) => {
+        e.preventDefault();
+        if (usernameInput === 'admin' && passwordInput === 'admin123') {
+          setIsLoggedIn(true);
+          setLoginError('');
+          showToast('Successfully logged in as Admin Officer!');
+        } else {
+          setLoginError('Invalid username or password. Try admin / admin123');
+        }
+      };
+
+      const handleLogout = () => {
+        setIsLoggedIn(false);
+        setUsernameInput('');
+        setPasswordInput('');
+        showToast('Logged out of Admin Officer Session');
+      };
+
+      // SLIDE-OVER SIDEBAR DRAWER STATE
+      const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+      const [currentTrack, setCurrentTrack] = useState('tpo');
+      const [activeTab, setActiveTab] = useState('command');
+
+      const [students, setStudents] = useState(INITIAL_STUDENTS);
+      const [drives, setDrives] = useState(INITIAL_DRIVES);
+      const [selectedDept, setSelectedDept] = useState('All');
+      const [searchQuery, setSearchQuery] = useState('');
+
+      const [activeLinePoint, setActiveLinePoint] = useState(6);
+      const [selectedStudent, setSelectedStudent] = useState(null);
+
+      const [isCreateDriveOpen, setIsCreateDriveOpen] = useState(false);
+      const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
+      const [toastMessage, setToastMessage] = useState(null);
+
+      const [newDrive, setNewDrive] = useState({
+        companyName: '',
+        roleTitle: '',
+        ctc: '',
+        minReadinessScore: 60,
+        minCgpa: 6.5,
+        eligibleDepts: ['Computer Science', 'Information Technology']
+      });
+
+      const showToast = (msg) => {
+        setToastMessage(msg);
+        setTimeout(() => setToastMessage(null), 3500);
+      };
+
+      const handleMockDownload = (filename) => {
+        showToast(`Downloading file: ${filename}...`);
+        const element = document.createElement('a');
+        const file = new Blob([`PLACED Placement Report: ${filename}\nGenerated Timestamp: ${new Date().toISOString()}\nTotal Registered: 1480\nPlaced Students: 342`], { type: 'text/plain' });
+        element.href = URL.createObjectURL(file);
+        element.download = filename;
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+      };
+
+      const filteredStudents = students.filter(s => {
+        const matchesDept = selectedDept === 'All' || s.department === selectedDept;
+        const matchesSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          s.rollNo.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          s.email.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesDept && matchesSearch;
+      });
+
+      const lowPerformers = students.filter(s => s.readinessScore < 50);
+
+      const handleEnrollBootcamp = (studentId) => {
+        setStudents(prev =>
+          prev.map(s => s.id === studentId ? {
+            ...s,
+            bootcampEnrolled: true,
+            readinessStatus: 'Moderate',
+            readinessScore: Math.min(s.readinessScore + 20, 68)
+          } : s)
+        );
+        showToast('Student enrolled in Placement Recovery Bootcamp!');
+      };
+
+      const handleBatchEnrollBootcamp = () => {
+        setStudents(prev =>
+          prev.map(s => s.readinessScore < 50 ? {
+            ...s,
+            bootcampEnrolled: true,
+            readinessStatus: 'Moderate',
+            readinessScore: Math.min(s.readinessScore + 18, 65)
+          } : s)
+        );
+        showToast('All low-performing candidates enrolled in Bootcamp!');
+      };
+
+      const handleCreateDriveSubmit = (e) => {
+        e.preventDefault();
+        if (!newDrive.companyName || !newDrive.roleTitle) return;
+
+        const eligibleCount = students.filter(s => s.readinessScore >= newDrive.minReadinessScore && s.cgpa >= newDrive.minCgpa).length;
+
+        const created = {
+          id: `DRV-2026-0${drives.length + 1}`,
+          companyName: newDrive.companyName,
+          logoText: newDrive.companyName.substring(0, 3).toUpperCase(),
+          logoBg: 'bg-[#00A79D]',
+          roleTitle: newDrive.roleTitle,
+          ctc: newDrive.ctc || '₹12.0 LPA',
+          minReadinessScore: Number(newDrive.minReadinessScore),
+          minCgpa: Number(newDrive.minCgpa),
+          eligibleDepts: newDrive.eligibleDepts,
+          deadline: '2026-09-20',
+          totalInvited: eligibleCount * 14,
+          shortlistedCount: 0,
+          placedCount: 0,
+          status: 'Active'
+        };
+
+        setDrives([created, ...drives]);
+        setIsCreateDriveOpen(false);
+        setNewDrive({
+          companyName: '',
+          roleTitle: '',
+          ctc: '',
+          minReadinessScore: 60,
+          minCgpa: 6.5,
+          eligibleDepts: ['Computer Science', 'Information Technology']
+        });
+        showToast(`Hiring Drive "${created.companyName}" created & invitations sent!`);
+      };
+
+      const TIER_COLORS = {
+        placed: '#00A79D',
+        ready: '#10B981',
+        training: '#F59E0B',
+        risk: '#EF4444'
+      };
+
+      const donutData = [
+        { label: 'Placed Students', count: 342, percentage: '23.1%', color: TIER_COLORS.placed },
+        { label: 'Interview Ready', count: 842, percentage: '56.9%', color: TIER_COLORS.ready },
+        { label: 'Need Training', count: 178, percentage: '12.0%', color: TIER_COLORS.training },
+        { label: 'At Risk Candidates', count: 118, percentage: '8.0%', color: TIER_COLORS.risk }
+      ];
+
+      const deptBarData = [
+        { dept: 'Computer Science', count: 420, placed: 342, rate: '81.4%', offers: 412, percentage: 84 },
+        { dept: 'Information Tech', count: 266, placed: 198, rate: '74.4%', offers: 235, percentage: 76 },
+        { dept: 'Electronics (ECE)', count: 186, placed: 112, rate: '60.2%', offers: 128, percentage: 65 },
+        { dept: 'Electrical (EEE)', count: 112, placed: 58, rate: '51.8%', offers: 64, percentage: 52 },
+        { dept: 'Mechanical', count: 94, placed: 38, rate: '40.4%', offers: 42, percentage: 45 }
+      ];
+
+      const lineData = [
+        { month: 'Jan', offers: 32 },
+        { month: 'Feb', offers: 64 },
+        { month: 'Mar', offers: 120 },
+        { month: 'Apr', offers: 185 },
+        { month: 'May', offers: 240 },
+        { month: 'Jun', offers: 310 },
+        { month: 'Jul', offers: 342 }
+      ];
+
+      const recentReportsList = [
+        { name: 'Executive Dean Report Batch 2026.pdf', format: 'PDF', date: '2026-08-01 19:42', size: '2.4 MB', generatedBy: 'Dr. Rajesh V.' },
+        { name: 'Master Student Placement Roster.csv', format: 'CSV', date: '2026-08-01 14:15', size: '840 KB', generatedBy: 'TPO Gatekeeper' },
+        { name: 'Low-Performer Remediation Audit.pdf', format: 'PDF', date: '2026-07-31 11:20', size: '1.8 MB', generatedBy: 'Dr. Rajesh V.' },
+        { name: 'TCS Digital Recruitment Summary.pdf', format: 'PDF', date: '2026-07-28 16:05', size: '3.1 MB', generatedBy: 'Placement System' }
+      ];
+
+      // PAGE 1: ELEGANT RESPONSIVE ADMIN LOGIN SCREEN WITH NAVY BLUEPRINT GRID BACKGROUND
+      if (!isLoggedIn) {
+        return (
+          <div className="min-h-screen bg-[#052742] bg-[linear-gradient(to_right,#0c3659_1px,transparent_1px),linear-gradient(to_bottom,#0c3659_1px,transparent_1px)] bg-[size:3.5rem_3.5rem] text-[#052742] flex items-center justify-center p-4 sm:p-6 font-sans relative overflow-y-auto">
+            {/* Subtle Center Glow Accent */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-[#00A79D]/15 rounded-full blur-3xl pointer-events-none"></div>
+
+            {/* Expanded Crisp White Executive Box */}
+            <div className="w-full max-w-[480px] bg-white rounded-3xl p-7 sm:p-9 shadow-[0_30px_70px_-15px_rgba(0,0,0,0.6)] border border-slate-200/90 space-y-5 my-auto relative z-10 text-[#052742]">
+
+              {/* Header & Brand Mark */}
+              <div className="text-center space-y-2.5">
+                <div className="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-[#00A79D] to-[#00D2C4] text-[#052742] font-black text-3xl flex items-center justify-center shadow-lg shadow-[#00A79D]/30 ring-4 ring-[#00A79D]/15">
+                  P
+                </div>
+
+                <div className="space-y-1">
+                  <span className="px-3 py-1 rounded-full bg-[#00A79D]/10 text-[#00A79D] font-extrabold text-[10px] uppercase tracking-widest border border-[#00A79D]/25 inline-block mb-1">
+                    Secured Admin Access
+                  </span>
+                  <h1 className="text-2xl font-black tracking-tight text-[#052742] uppercase font-sans">
+                    Placement <span className="text-[#00A79D]">Command Center</span>
+                  </h1>
+                  <p className="text-xs text-slate-500 font-semibold">
+                    St. Xavier's Institute of Technology • TPO Governance
+                  </p>
+                </div>
+              </div>
+
+              {/* Login Form */}
+              <form onSubmit={handleAdminLogin} className="space-y-4 text-xs">
+                {loginError && (
+                  <div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold rounded-xl text-center flex items-center justify-center gap-2">
+                    <span>⚠️</span>
+                    <span>{loginError}</span>
+                  </div>
+                )}
+
+                <div className="space-y-1.5">
+                  <label className="font-extrabold uppercase text-[10px] tracking-wider text-slate-600 flex items-center justify-between">
+                    <span>Admin Username</span>
+                    <span className="text-[9px] text-[#00A79D] font-mono">REQUIRED</span>
+                  </label>
+                  <div className="relative">
+                    <div className="absolute left-3.5 top-3.5 text-slate-400 pointer-events-none">
+                      <Icons.User />
+                    </div>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. admin"
+                      value={usernameInput}
+                      onChange={(e) => setUsernameInput(e.target.value)}
+                      className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:outline-none focus:border-[#00A79D] focus:ring-4 focus:ring-[#00A79D]/15 text-[#052742] font-semibold placeholder:text-slate-400 transition-all text-xs"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="font-extrabold uppercase text-[10px] tracking-wider text-slate-600 flex items-center justify-between">
+                    <span>Master Password</span>
+                    <span className="text-[9px] text-[#00A79D] font-mono">ENCRYPTED</span>
+                  </label>
+                  <div className="relative">
+                    <div className="absolute left-3.5 top-3.5 text-slate-400 pointer-events-none">
+                      <Icons.Lock />
+                    </div>
+                    <input
+                      type="password"
+                      required
+                      placeholder="••••••••"
+                      value={passwordInput}
+                      onChange={(e) => setPasswordInput(e.target.value)}
+                      className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:outline-none focus:border-[#00A79D] focus:ring-4 focus:ring-[#00A79D]/15 text-[#052742] font-semibold placeholder:text-slate-400 transition-all text-xs"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-3.5 rounded-xl bg-[#052742] hover:bg-[#09365b] text-white font-black text-xs uppercase tracking-widest shadow-lg shadow-[#052742]/20 transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer mt-2 flex items-center justify-center gap-2"
+                >
+                  <span>Sign In to Admin Dashboard</span>
+                  <span>→</span>
+                </button>
+              </form>
+
+              {/* Quick Auto-Fill / Credentials Helper */}
+              <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2.5 text-[11px] text-center">
+                <div className="flex items-center justify-between text-slate-500 font-bold px-1 text-[10px] uppercase tracking-wider">
+                  <span>🔑 Demo Credentials</span>
+                  <span className="text-[#00A79D] font-extrabold">Instant Access</span>
+                </div>
+                <div className="flex items-center justify-center gap-3 font-mono text-[#052742] font-extrabold bg-white p-2.5 rounded-xl border border-slate-200 shadow-xs">
+                  <span>User: <strong className="text-[#00A79D]">admin</strong></span>
+                  <span className="text-slate-300">•</span>
+                  <span>Pass: <strong className="text-[#00A79D]">admin123</strong></span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUsernameInput('admin');
+                    setPasswordInput('admin123');
+                    showToast('Demo Credentials Auto-Filled!');
+                  }}
+                  className="w-full py-2 rounded-xl bg-[#00A79D]/10 hover:bg-[#00A79D]/20 text-[#00A79D] border border-[#00A79D]/30 text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer"
+                >
+                  ⚡ One-Click Auto-Fill Demo Credentials
+                </button>
+              </div>
+
+              {/* Footer Security Note */}
+              <div className="text-center text-[10px] text-slate-400 font-semibold flex items-center justify-center gap-1.5 pt-1">
+                <span>🛡️ Secured 256-Bit SSL Session</span>
+                <span>•</span>
+                <span>St. Xavier's TPO</span>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      // PAGE 2: DASHBOARD SCREEN WITH SLIDE-OVER NAVIGATION DRAWER & FULL-WIDTH CANVAS
+      return (
+        <div className="h-screen w-screen bg-[#F5F7FA] text-[#052742] flex flex-col relative overflow-hidden font-sans">
+
+          {/* SLIDE-OVER SIDEBAR DRAWER BACKDROP OVERLAY */}
+          {isSidebarOpen && (
+            <div
+              onClick={() => setIsSidebarOpen(false)}
+              className="fixed inset-0 bg-[#052742]/60 backdrop-blur-xs z-40 transition-opacity duration-300"
+            />
+          )}
+
+          {/* SLIDE-OVER SIDEBAR DRAWER */}
+          <aside className={`fixed top-0 left-0 h-screen w-72 bg-[#052742] text-white z-50 transition-transform duration-300 ease-in-out flex flex-col justify-between shadow-2xl border-r border-slate-800/90 overflow-y-auto ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+            <div>
+              <div className="h-20 px-6 flex items-center justify-between border-b border-slate-800/80">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#00A79D] to-[#00D2C4] text-[#052742] font-black text-xl flex items-center justify-center shrink-0 shadow-md">P</div>
+                  <div className="flex flex-col truncate">
+                    <span className="font-black tracking-wider text-lg text-white">PLACED</span>
+                    <span className="text-[10px] text-[#00A79D] font-extrabold uppercase tracking-widest">Portal System</span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setIsSidebarOpen(false)}
+                  className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-rose-500 text-slate-300 hover:text-white flex items-center justify-center font-black transition-colors"
+                  title="Close Navigation Drawer"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* TRACK SELECTOR BUTTONS */}
+              <div className="p-4 border-b border-slate-800/80">
+                <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-2 px-1">TRACK SELECTOR</span>
+                <div className="space-y-1.5">
+                  <button onClick={() => { setCurrentTrack('student'); showToast('Switched to Student Track'); setIsSidebarOpen(false); }} className={`w-full p-2.5 rounded-xl text-xs font-bold flex items-center gap-3 transition-all ${currentTrack === 'student' ? 'bg-gradient-to-r from-[#00A79D] to-[#00D2C4] text-[#052742] font-black shadow-md' : 'text-slate-300 hover:bg-slate-800'}`}>
+                    <Icons.User />
+                    <span className="truncate">Student Track</span>
+                  </button>
+                  <button onClick={() => { setCurrentTrack('tpo'); showToast('Switched to TPO Track'); setIsSidebarOpen(false); }} className={`w-full p-2.5 rounded-xl text-xs font-bold flex items-center gap-3 transition-all ${currentTrack === 'tpo' ? 'bg-gradient-to-r from-[#00A79D] to-[#00D2C4] text-[#052742] font-black shadow-md' : 'text-slate-300 hover:bg-slate-800'}`}>
+                    <Icons.Building />
+                    <span className="truncate">TPO Track</span>
+                  </button>
+                  <button onClick={() => { setCurrentTrack('admin'); showToast('Switched to Admin Governance Track'); setIsSidebarOpen(false); }} className={`w-full p-2.5 rounded-xl text-xs font-bold flex items-center gap-3 transition-all ${currentTrack === 'admin' ? 'bg-gradient-to-r from-[#00A79D] to-[#00D2C4] text-[#052742] font-black shadow-md' : 'text-slate-300 hover:bg-slate-800'}`}>
+                    <Icons.Shield />
+                    <span className="truncate">Admin Track</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* TPO MODULE NAVIGATION BUTTONS */}
+              <div className="p-4 space-y-2 mt-2">
+                <span className="text-[10px] font-black uppercase tracking-wider text-[#00A79D] block mb-2 px-1">TPO MODULES</span>
+                <button onClick={() => { setActiveTab('command'); setIsSidebarOpen(false); }} className={`w-full p-3 rounded-xl text-xs font-bold flex items-center gap-3 transition-all ${activeTab === 'command' ? 'bg-gradient-to-r from-[#00A79D] to-[#00D2C4] text-[#052742] font-black shadow-lg border-l-4 border-white' : 'text-slate-300 hover:bg-slate-800'}`}>
+                  <Icons.Dashboard />
+                  <span className="truncate">Campus Command</span>
+                </button>
+                <button onClick={() => { setActiveTab('whitelist'); setIsSidebarOpen(false); }} className={`w-full p-3 rounded-xl text-xs font-bold flex items-center gap-3 transition-all ${activeTab === 'whitelist' ? 'bg-gradient-to-r from-[#00A79D] to-[#00D2C4] text-[#052742] font-black shadow-lg border-l-4 border-white' : 'text-slate-300 hover:bg-slate-800'}`}>
+                  <Icons.ShieldCheck />
+                  <span className="truncate">Whitelist Gate</span>
+                </button>
+                <button onClick={() => { setActiveTab('drives'); setIsSidebarOpen(false); }} className={`w-full p-3 rounded-xl text-xs font-bold flex items-center gap-3 transition-all ${activeTab === 'drives' ? 'bg-gradient-to-r from-[#00A79D] to-[#00D2C4] text-[#052742] font-black shadow-lg border-l-4 border-white' : 'text-slate-300 hover:bg-slate-800'}`}>
+                  <Icons.GraduationCap />
+                  <span className="truncate">Hiring Drives</span>
+                </button>
+                <button onClick={() => { setActiveTab('lowperformers'); setIsSidebarOpen(false); }} className={`w-full p-3 rounded-xl text-xs font-bold flex items-center gap-3 transition-all ${activeTab === 'lowperformers' ? 'bg-gradient-to-r from-[#00A79D] to-[#00D2C4] text-[#052742] font-black shadow-lg border-l-4 border-white' : 'text-slate-300 hover:bg-slate-800'}`}>
+                  <Icons.AlertTriangle />
+                  <span className="truncate">Risk Warning</span>
+                </button>
+                <button onClick={() => { setActiveTab('reports'); setIsSidebarOpen(false); }} className={`w-full p-3 rounded-xl text-xs font-bold flex items-center gap-3 transition-all ${activeTab === 'reports' ? 'bg-gradient-to-r from-[#00A79D] to-[#00D2C4] text-[#052742] font-black shadow-lg border-l-4 border-white' : 'text-slate-300 hover:bg-slate-800'}`}>
+                  <Icons.FileText />
+                  <span className="truncate">Reports Audit</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="p-4 border-t border-slate-800 space-y-2">
+              <button onClick={handleLogout} className="w-full p-2.5 rounded-xl text-xs font-bold flex items-center gap-3 bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/50">
+                <Icons.Lock />
+                <span className="truncate text-[11px]">Log Out Admin</span>
+              </button>
+            </div>
+          </aside>
+
+          {/* MAIN FLUID CONTENT CONTAINER (FILLS ENTIRE SCREEN NATURALLY) */}
+          <div className="flex-1 h-screen overflow-y-auto flex flex-col w-full relative z-10">
+
+            {/* WATERMARK: PERFECTLY CENTERED ACROSS MAIN CONTENT AREA */}
+            <div className="pointer-events-none fixed inset-0 flex items-center justify-center z-0 select-none overflow-hidden">
+              <span className="text-[120px] sm:text-[180px] md:text-[220px] lg:text-[260px] font-black text-[#052742]/[0.028] tracking-[0.25em] uppercase font-sans">
+                PLACED
+              </span>
+            </div>
+
+            {/* TOP HEADER */}
+            <header className="bg-white border-b border-[#0F172A]/[0.08] sticky top-0 z-30 shadow-xs">
+              <div className="w-full px-6 lg:px-10 h-20 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setIsSidebarOpen(true)}
+                    className="px-4 py-2.5 rounded-xl bg-[#052742] hover:bg-[#00A79D] text-white transition-all flex items-center gap-2 text-xs font-black shadow-md cursor-pointer"
+                    title="Open Navigation Menu"
+                  >
+                    <Icons.Menu />
+                    <span>MENU</span>
+                  </button>
+
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#00A79D] to-[#00D2C4] text-[#052742] font-black text-lg flex items-center justify-center shadow-md">P</div>
+                    <span className="font-black text-lg text-[#052742] tracking-wider hidden sm:inline">PLACED</span>
+                  </div>
+                </div>
+
+                <div className="relative flex-1 max-w-2xl mx-4 hidden md:block">
+                  <div className="absolute left-3.5 top-3 text-slate-400"><Icons.Search /></div>
+                  <input type="text" placeholder="Global search students, roll no, drives..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-10 pr-4 py-2.5 text-xs rounded-xl bg-[#FCFCFD] border border-[#0F172A]/[0.1] focus:outline-none focus:ring-2 focus:ring-[#00A79D] text-slate-800 font-medium" />
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <button onClick={() => showToast('Notifications: 3 new drive applications received!')} className="relative p-2.5 rounded-xl hover:bg-slate-100 border border-transparent hover:border-slate-200 cursor-pointer transition-all">
+                    <Icons.Bell />
+                    <span className="absolute top-2 right-2 w-2 h-2 bg-[#00A79D] rounded-full ring-2 ring-white"></span>
+                  </button>
+                  <div className="flex items-center gap-3 border-l border-slate-200 pl-3">
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#052742] to-[#00A79D] text-white font-black flex items-center justify-center text-xs ring-2 ring-[#00A79D]/40 shrink-0 shadow-md">TPO</div>
+                    <div className="hidden xl:flex flex-col text-left">
+                      <span className="text-xs font-black text-[#052742]">Dr. Rajesh V.</span>
+                      <span className="text-[10px] text-[#00A79D] font-bold">Head Placement Officer</span>
+                    </div>
+                    <button onClick={handleLogout} className="px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs border border-rose-200 ml-1 transition-all" title="Log Out">
+                      Log Out
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </header>
+
+            {/* PAGE TITLE BANNER (FLUID FULL-WIDTH) */}
+            <div className="bg-white border-b border-[#0F172A]/[0.08] py-6 relative">
+              <div className="w-full px-6 lg:px-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <h1 className="text-[32px] font-black text-[#052742] tracking-tight leading-tight uppercase">
+                    Placement <span className="text-[#00A79D]">Command Center</span>
+                  </h1>
+                  <span className="px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#00A79D] to-[#00D2C4] text-[#052742] font-black text-[12px] shadow-xs">
+                    St. Xavier's TPO • Batch 2026
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <button onClick={() => setIsCreateDriveOpen(true)} className="px-6 py-3 rounded-xl bg-[#052742] hover:bg-[#09365b] text-white font-extrabold text-xs tracking-wide flex items-center gap-2.5 shadow-md border border-white/10 transition-all whitespace-nowrap">
+                    <Icons.Plus /> Launch Drive
+                  </button>
+                  <button onClick={() => setIsPdfModalOpen(true)} className="px-6 py-3 rounded-xl bg-[#052742] hover:bg-[#09365b] text-white font-extrabold text-xs tracking-wide flex items-center gap-2.5 shadow-md border border-white/10 transition-all whitespace-nowrap">
+                    <Icons.FileText /> PDF Report
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* TOAST SYSTEM */}
+            {toastMessage && (
+              <div className="fixed bottom-6 right-6 z-50 bg-[#052742] text-white px-5 py-3.5 rounded-xl shadow-2xl border border-[#00A79D]/40 flex items-center gap-3">
+                <Icons.Sparkles />
+                <span className="text-xs font-bold">{toastMessage}</span>
+              </div>
+            )}
+
+            {/* MAIN CONTENT BODY CONTAINER (EXPANDED FLUID LAYOUT FILLING SCREEN PERFECTLY) */}
+            <main className="w-full px-6 lg:px-10 py-8 flex-1 space-y-8 relative z-10 max-w-[1800px]">
+
+              {/* TAB 1: CAMPUS COMMAND CENTER */}
+              {activeTab === 'command' && (
+                <div className="space-y-8">
+                  {/* 4 KPI CARDS */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div onClick={() => { setActiveTab('whitelist'); showToast('Opened Whitelisted Roster'); }} className="bg-white/95 backdrop-blur-md p-6 sm:p-7 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_28px_rgba(15,23,42,0.1)] hover:-translate-y-1.5 transition-all cursor-pointer space-y-3 group">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[12px] font-extrabold uppercase text-slate-400">Total Registered</span>
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-500 to-indigo-600 text-white flex items-center justify-center font-bold shadow-md group-hover:scale-110 transition-transform">
+                          <Icons.Users />
+                        </div>
+                      </div>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-[32px] font-black text-[#052742] leading-none">1,480</span>
+                        <span className="text-[12px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">+12.4%</span>
+                      </div>
+                      <span className="text-[12px] text-slate-400 block font-medium">Whitelisted Student Roster</span>
+                    </div>
+
+                    <div onClick={() => showToast('Aptitude Benchmark: 80.1% Pass Rate')} className="bg-white/95 backdrop-blur-md p-6 sm:p-7 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_28px_rgba(15,23,42,0.1)] hover:-translate-y-1.5 transition-all cursor-pointer space-y-3 group">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[12px] font-extrabold uppercase text-slate-400">Passed Mocks</span>
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-600 text-white flex items-center justify-center font-bold shadow-md group-hover:scale-110 transition-transform">
+                          <Icons.CheckCircle />
+                        </div>
+                      </div>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-[32px] font-black text-[#052742] leading-none">1,185</span>
+                        <span className="text-[12px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">80.1% Rate</span>
+                      </div>
+                      <span className="text-[12px] text-slate-400 block font-medium">Passed Aptitude Benchmark</span>
+                    </div>
+
+                    <div onClick={() => showToast('Interview Ready Candidates: 842 Students')} className="bg-white/95 backdrop-blur-md p-6 sm:p-7 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_28px_rgba(15,23,42,0.1)] hover:-translate-y-1.5 transition-all cursor-pointer space-y-3 group">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[12px] font-extrabold uppercase text-slate-400">Interview Ready</span>
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#00A79D] to-[#00D2C4] text-[#052742] flex items-center justify-center font-black shadow-md group-hover:scale-110 transition-transform">
+                          <Icons.Award />
+                        </div>
+                      </div>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-[32px] font-black text-[#052742] leading-none">842</span>
+                        <span className="text-[12px] font-bold text-[#00A79D] bg-[#00A79D]/10 px-2 py-0.5 rounded-full border border-[#00A79D]/30">56.9% Campus</span>
+                      </div>
+                      <span className="text-[12px] text-slate-400 block font-medium">Passed AI & Tech Panels</span>
+                    </div>
+
+                    <div onClick={() => { setActiveTab('drives'); showToast('Opened Hiring Drives Module'); }} className="bg-white/95 backdrop-blur-md p-6 sm:p-7 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_28px_rgba(15,23,42,0.1)] hover:-translate-y-1.5 transition-all cursor-pointer space-y-3 group">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[12px] font-extrabold uppercase text-slate-400">Active Drives</span>
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center font-bold shadow-md group-hover:scale-110 transition-transform">
+                          <Icons.Building />
+                        </div>
+                      </div>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-[32px] font-black text-[#052742] leading-none">{drives.length}</span>
+                        <span className="text-[12px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200">Avg ₹14.2 LPA</span>
+                      </div>
+                      <span className="text-[12px] text-slate-400 block font-medium">TCS, Amazon, Goldman Sachs</span>
+                    </div>
+                  </div>
+
+                  {/* 5-BOX GRID */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                    {/* BOX 1: DONUT CHART */}
+                    <div className="bg-white/95 backdrop-blur-md p-6 sm:p-7 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] space-y-4">
+                      <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
+                        <div className="w-10 h-10 rounded-xl bg-[#00A79D]/10 text-[#00A79D] flex items-center justify-center font-bold">
+                          <Icons.PieChart />
+                        </div>
+                        <div>
+                          <h3 className="font-black text-[#052742] text-[18px] uppercase tracking-tight">Placement Competency Breakdown</h3>
+                          <p className="text-[12px] text-slate-400">Distribution across 1,480 registered batch</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-center py-2 relative">
+                        <svg viewBox="0 0 200 200" className="w-44 h-44 transform -rotate-90">
+                          <circle cx="100" cy="100" r="70" fill="transparent" stroke={TIER_COLORS.placed} strokeWidth="24" strokeDasharray="102 440" strokeDashoffset="0" />
+                          <circle cx="100" cy="100" r="70" fill="transparent" stroke={TIER_COLORS.ready} strokeWidth="24" strokeDasharray="250 440" strokeDashoffset="-102" />
+                          <circle cx="100" cy="100" r="70" fill="transparent" stroke={TIER_COLORS.training} strokeWidth="24" strokeDasharray="53 440" strokeDashoffset="-352" />
+                          <circle cx="100" cy="100" r="70" fill="transparent" stroke={TIER_COLORS.risk} strokeWidth="24" strokeDasharray="35 440" strokeDashoffset="-405" />
+                        </svg>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
+                          <span className="text-2xl font-black text-[#052742]">23.1%</span>
+                          <span className="text-[10px] text-[#00A79D] font-black uppercase tracking-wider">Placed Rate</span>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2 text-xs">
+                        {donutData.map((item, idx) => (
+                          <div key={idx} onClick={() => showToast(`${item.label}: ${item.count} Candidates (${item.percentage})`)} className="flex items-center justify-between p-2.5 rounded-xl bg-[#FCFCFD] border border-[#0F172A]/[0.08] cursor-pointer hover:bg-slate-100 transition-colors">
+                            <div className="flex items-center gap-2">
+                              <span className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
+                              <span className="font-bold text-slate-700">{item.label}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-extrabold text-slate-500 text-[11px]">{item.percentage}</span>
+                              <span className="font-black text-[#052742] bg-white px-2 py-0.5 rounded-md border border-slate-200">{item.count}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* BOX 2: DRIVE CONVERSION */}
+                    <div className="bg-white/95 backdrop-blur-md p-6 sm:p-7 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] space-y-4">
+                      <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                            <Icons.Building />
+                          </div>
+                          <div>
+                            <h3 className="font-black text-[#052742] text-[18px] uppercase tracking-tight">Active Recruitment Drives</h3>
+                            <p className="text-[12px] text-slate-400">Shortlisted vs Placed Candidates</p>
+                          </div>
+                        </div>
+                        <span className="px-3 py-1 rounded-full bg-[#052742] text-[#00D2C4] text-[10px] font-black">4 Active</span>
+                      </div>
+
+                      <div className="space-y-3.5 pt-1">
+                        {drives.map(drive => {
+                          const pct = Math.round((drive.placedCount / (drive.shortlistedCount || 1)) * 100);
+                          return (
+                            <div key={drive.id} onClick={() => { setActiveTab('drives'); showToast(`Opening ${drive.companyName} details`); }} className="p-3.5 bg-[#FCFCFD] rounded-xl border border-[#0F172A]/[0.08] space-y-2 cursor-pointer hover:border-[#00A79D] transition-colors">
+                              <div className="flex justify-between items-center text-xs font-extrabold">
+                                <span className="text-[#052742]">{drive.companyName}</span>
+                                <span className="text-[#00A79D]">{drive.placedCount} Placed / {drive.shortlistedCount} Shortlisted ({pct}%)</span>
+                              </div>
+                              <div className="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
+                                <div className="bg-gradient-to-r from-[#00A79D] to-[#10B981] h-full rounded-full" style={{ width: `${Math.max(pct, 10)}%` }}></div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* BOX 3: AT-RISK QUEUE */}
+                    <div className="bg-white/95 backdrop-blur-md p-6 sm:p-7 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] space-y-4">
+                      <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
+                            <Icons.AlertTriangle />
+                          </div>
+                          <div>
+                            <h3 className="font-black text-[#052742] text-[18px] uppercase tracking-tight">At-Risk Remediation Queue</h3>
+                            <p className="text-[12px] text-slate-400">Students scoring &lt;50% readiness</p>
+                          </div>
+                        </div>
+                        <span className="px-2.5 py-1 rounded-full bg-rose-500 text-white text-[10px] font-black">{lowPerformers.length} Flagged</span>
+                      </div>
+
+                      <div className="space-y-3">
+                        {lowPerformers.map(s => (
+                          <div key={s.id} className="p-3.5 bg-[#FCFCFD] rounded-xl border border-[#0F172A]/[0.08] space-y-2">
+                            <div className="flex items-center justify-between text-xs">
+                              <div>
+                                <span className="font-black text-[#052742] block">{s.name}</span>
+                                <span className="text-[10px] text-rose-600 font-bold">{s.readinessScore}% Score • {s.department}</span>
+                              </div>
+                              {s.bootcampEnrolled ? (
+                                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-md">Enrolled</span>
+                              ) : (
+                                <button onClick={() => handleEnrollBootcamp(s.id)} className="px-3.5 py-1.5 bg-[#00A79D] hover:bg-[#00D2C4] text-white font-black text-[10px] rounded-lg">
+                                  Enroll
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <button onClick={handleBatchEnrollBootcamp} className="w-full py-2.5 bg-gradient-to-r from-[#052742] to-[#00A79D] text-white font-black text-xs rounded-lg shadow-xs">
+                        Batch Enroll All in Bootcamp
+                      </button>
+                    </div>
+
+                    {/* BOX 4: DEPARTMENT PLACEMENT STANDING */}
+                    <div className="lg:col-span-2 bg-white/95 backdrop-blur-md p-6 sm:p-7 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] space-y-4">
+                      <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                            <Icons.BarChart />
+                          </div>
+                          <div>
+                            <h3 className="font-black text-[#052742] text-[18px] uppercase tracking-tight">Department Placement Standing</h3>
+                            <p className="text-[12px] text-slate-400">Volume, placement conversion rate & released offers</p>
+                          </div>
+                        </div>
+                        <div className="bg-[#052742] text-white px-4 py-2 rounded-xl text-right border border-[#00A79D]/40">
+                          <span className="text-[10px] text-[#00D2C4] font-bold uppercase block">Top Performing</span>
+                          <span className="text-sm font-black">Computer Science (81.4%)</span>
+                        </div>
+                      </div>
+
+                      <div className="space-y-4 pt-2">
+                        {deptBarData.map((d, idx) => (
+                          <div key={idx} onClick={() => showToast(`Department: ${d.dept} | ${d.placed} Placed of ${d.count}`)} className="space-y-1.5 text-xs cursor-pointer">
+                            <div className="flex justify-between items-center font-bold">
+                              <span className="text-[#052742] font-black text-sm">{d.dept}</span>
+                              <div className="flex items-center gap-3 text-xs">
+                                <span className="text-slate-500 font-medium">{d.count} Students</span>
+                                <span className="px-2 py-0.5 rounded-md bg-[#00A79D]/10 text-[#00A79D] font-black border border-[#00A79D]/30">✔ {d.placed} Placed ({d.rate})</span>
+                                <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 font-bold border border-blue-200">✔ {d.offers} Offers</span>
+                              </div>
+                            </div>
+                            <div className="w-full bg-slate-100 h-3.5 rounded-full overflow-hidden flex">
+                              <div className="h-full rounded-full bg-gradient-to-r from-[#00A79D] to-[#00D2C4]" style={{ width: `${d.percentage}%` }}></div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* BOX 5: PLACEMENT VELOCITY */}
+                    <div className="lg:col-span-1 bg-white/95 backdrop-blur-md p-6 sm:p-7 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] space-y-4">
+                      <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+                            <Icons.LineChart />
+                          </div>
+                          <div>
+                            <h3 className="font-black text-[#052742] text-[18px] uppercase tracking-tight">Placement Velocity</h3>
+                            <p className="text-[12px] text-slate-400">Monthly offer progression 2026</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="w-full h-52 bg-[#FCFCFD] rounded-xl p-4 border border-[#0F172A]/[0.08] relative flex items-end justify-between px-3 pl-9">
+                        <div className="absolute left-2 top-3 bottom-8 flex flex-col justify-between text-[9px] font-bold text-slate-400">
+                          <span>400</span>
+                          <span>300</span>
+                          <span>200</span>
+                          <span>100</span>
+                          <span>0</span>
+                        </div>
+
+                        <svg className="absolute inset-0 w-full h-full p-4 pl-9" viewBox="0 0 500 150">
+                          <defs>
+                            <linearGradient id="areaGradientFill" x1="0%" y1="0%" x2="0%" y2="100%">
+                              <stop offset="0%" stopColor="#00A79D" stopOpacity="0.35" />
+                              <stop offset="100%" stopColor="#00A79D" stopOpacity="0.0" />
+                            </linearGradient>
+                          </defs>
+                          <path d="M 20 130 Q 80 110, 140 85 T 260 50 T 380 25 T 480 15 L 480 140 L 20 140 Z" fill="url(#areaGradientFill)" />
+                          <path d="M 20 130 Q 80 110, 140 85 T 260 50 T 380 25 T 480 15" fill="none" stroke="#00A79D" strokeWidth="5" strokeLinecap="round" />
+                        </svg>
+
+                        {lineData.map((pt, idx) => (
+                          <div key={idx} onMouseEnter={() => setActiveLinePoint(idx)} onClick={() => showToast(`Month ${pt.month}: ${pt.offers} Cumulative Offers`)} className="z-10 flex flex-col items-center group cursor-pointer">
+                            <div className={`text-[9px] font-black px-1.5 py-0.5 rounded mb-1 ${activeLinePoint === idx ? 'bg-[#00A79D] text-white' : 'bg-[#052742] text-[#00D2C4]'}`}>
+                              {pt.offers}
+                            </div>
+                            <div className={`w-4 h-4 rounded-full border-2 border-white shadow-md ${activeLinePoint === idx ? 'bg-[#00D2C4] ring-4 ring-[#00A79D]/40' : 'bg-[#00A79D]'}`}></div>
+                            <span className="text-[10px] font-bold text-slate-600 mt-1.5">{pt.month}</span>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="p-3.5 bg-[#FCFCFD] rounded-xl border border-[#0F172A]/[0.08] text-center text-xs flex items-center justify-between">
+                        <span className="text-slate-500 font-medium">Cumulative Offers Released: </span>
+                        <span className="font-black text-[#00A79D] bg-[#00A79D]/10 px-2.5 py-1 rounded-md border border-[#00A79D]/30">342 Offers</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* STUDENT DIRECTORY TABLE */}
+                  <div className="bg-white/95 backdrop-blur-md p-6 sm:p-7 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-black text-[24px] text-[#052742] leading-snug">Whitelisted Student Directory</h3>
+                        <p className="text-[12px] text-slate-500">Official student access records & placement readiness</p>
+                      </div>
+                    </div>
+
+                    <div className="overflow-x-auto rounded-xl border border-[#0F172A]/[0.08] max-h-[500px]">
+                      <table className="w-full text-left text-xs text-slate-600 min-w-[640px]">
+                        <thead className="bg-[#FAFBFC] text-slate-600 uppercase text-[10px] font-black tracking-wider border-b border-[#0F172A]/[0.08] sticky top-0 z-10">
+                          <tr>
+                            <th className="py-4 px-5">Student Name</th>
+                            <th className="py-4 px-5">Roll No</th>
+                            <th className="py-4 px-5">Department</th>
+                            <th className="py-4 px-5">CGPA</th>
+                            <th className="py-4 px-5">Readiness Score</th>
+                            <th className="py-4 px-5">Gate Status</th>
+                            <th className="py-4 px-5 text-right">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                          {filteredStudents.map((s, idx) => (
+                            <tr key={s.id} className={`${idx % 2 === 0 ? 'bg-white' : 'bg-[#FAFBFC]'} hover:bg-slate-100/80 transition-colors`}>
+                              <td className="py-4 px-5 font-extrabold text-[#052742]">
+                                <div>{s.name}</div>
+                                <div className="text-[10px] text-slate-400 font-normal">{s.email}</div>
+                              </td>
+                              <td className="py-4 px-5 font-mono font-medium">{s.rollNo}</td>
+                              <td className="py-4 px-5">{s.department}</td>
+                              <td className="py-4 px-5 font-bold text-slate-700">{s.cgpa}</td>
+                              <td className="py-4 px-5">
+                                <span className={`px-2.5 py-1 rounded-md text-[10px] font-black ${s.readinessScore >= 90 ? 'bg-[#00A79D]/10 text-[#00A79D]' : s.readinessScore >= 70 ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-700'}`}>
+                                  {s.readinessScore}% ({s.readinessStatus})
+                                </span>
+                              </td>
+                              <td className="py-4 px-5">
+                                <span className="px-2.5 py-1 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">Whitelisted</span>
+                              </td>
+                              <td className="py-4 px-5 text-right">
+                                <button onClick={() => setSelectedStudent(s)} className="px-3.5 py-1.5 bg-[#052742] hover:bg-[#00A79D] text-white font-bold rounded-lg text-xs">
+                                  View Profile
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 2: WHITELIST GATE */}
+              {activeTab === 'whitelist' && (
+                <div className="space-y-6">
+                  <div className="bg-white/95 backdrop-blur-md p-6 sm:p-7 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] space-y-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div>
+                        <h3 className="font-black text-[24px] text-[#052742]">Whitelisted Student Directory</h3>
+                        <p className="text-xs text-slate-500">Official student access records & placement readiness</p>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-3">
+                        <div className="relative">
+                          <div className="absolute left-3 top-2.5 text-slate-400"><Icons.Search /></div>
+                          <input type="text" placeholder="Search name, roll no..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9 pr-4 py-1.5 text-xs rounded-lg border border-slate-200 bg-[#FCFCFD] text-slate-800 w-48 sm:w-64" />
+                        </div>
+                        <select value={selectedDept} onChange={(e) => setSelectedDept(e.target.value)} className="py-1.5 px-3 text-xs font-bold rounded-lg border border-slate-200 bg-[#FCFCFD] text-slate-700">
+                          <option value="All">All Departments</option>
+                          <option value="Computer Science">Computer Science</option>
+                          <option value="Information Technology">Information Technology</option>
+                          <option value="Electronics">Electronics</option>
+                          <option value="Mechanical">Mechanical</option>
+                          <option value="Electrical">Electrical</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="overflow-x-auto rounded-xl border border-[#0F172A]/[0.08] max-h-[500px]">
+                      <table className="w-full text-left text-xs text-slate-600 min-w-[640px]">
+                        <thead className="bg-[#FAFBFC] text-slate-600 uppercase text-[10px] font-black tracking-wider border-b border-[#0F172A]/[0.08] sticky top-0 z-10">
+                          <tr>
+                            <th className="py-4 px-5">Student Name</th>
+                            <th className="py-4 px-5">Roll No</th>
+                            <th className="py-4 px-5">Department</th>
+                            <th className="py-4 px-5">CGPA</th>
+                            <th className="py-4 px-5">Readiness Score</th>
+                            <th className="py-4 px-5">Gate Status</th>
+                            <th className="py-4 px-5 text-right">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                          {filteredStudents.map((s, idx) => (
+                            <tr key={s.id} className={`${idx % 2 === 0 ? 'bg-white' : 'bg-[#FAFBFC]'} hover:bg-slate-100/80 transition-colors`}>
+                              <td className="py-4 px-5 font-extrabold text-[#052742]">
+                                <div>{s.name}</div>
+                                <div className="text-[10px] text-slate-400 font-normal">{s.email}</div>
+                              </td>
+                              <td className="py-4 px-5 font-mono font-medium">{s.rollNo}</td>
+                              <td className="py-4 px-5">{s.department}</td>
+                              <td className="py-4 px-5 font-bold text-slate-700">{s.cgpa}</td>
+                              <td className="py-4 px-5">
+                                <span className={`px-2.5 py-1 rounded-md text-[10px] font-black ${s.readinessScore >= 90 ? 'bg-[#00A79D]/10 text-[#00A79D]' : s.readinessScore >= 70 ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-700'}`}>
+                                  {s.readinessScore}% ({s.readinessStatus})
+                                </span>
+                              </td>
+                              <td className="py-4 px-5">
+                                <span className="px-2.5 py-1 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">Whitelisted</span>
+                              </td>
+                              <td className="py-4 px-5 text-right">
+                                <button onClick={() => setSelectedStudent(s)} className="px-3.5 py-1.5 bg-[#052742] hover:bg-[#00A79D] text-white font-bold rounded-lg text-xs">
+                                  View Profile
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 3: HIRING DRIVES */}
+              {activeTab === 'drives' && (
+                <div className="space-y-6">
+                  <div className="bg-white/95 backdrop-blur-md p-6 sm:p-7 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)]">
+                    <div>
+                      <h2 className="text-[24px] font-black text-[#052742]">Recruitment Drive Simulator</h2>
+                      <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                        Create new company drives (e.g. "TCS Hiring Drive 2026"), set required marks threshold (minimum 60% score required), and invite eligible students using the <strong className="text-[#00A79D]">Launch Drive</strong> button above.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {drives.map(drive => {
+                      const pct = Math.round((drive.placedCount / (drive.shortlistedCount || 1)) * 100);
+                      return (
+                        <div key={drive.id} className="bg-white/95 backdrop-blur-md p-6 sm:p-7 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)] hover:-translate-y-1 transition-all space-y-4">
+                          <div className="flex items-start justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className={`w-12 h-12 rounded-xl ${drive.logoBg} text-white font-black flex items-center justify-center text-lg shadow-xs`}>
+                                {drive.logoText}
+                              </div>
+                              <div>
+                                <h3 className="font-extrabold text-[#052742] text-base">{drive.companyName}</h3>
+                                <p className="text-xs text-slate-500 font-medium">{drive.roleTitle}</p>
+                              </div>
+                            </div>
+                            <span className="px-3 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-200">
+                              {drive.ctc}
+                            </span>
+                          </div>
+
+                          <div className="p-4 bg-[#FCFCFD] border border-[#0F172A]/[0.08] rounded-xl space-y-2 text-xs">
+                            <div className="flex items-center justify-between">
+                              <span className="text-slate-500 font-medium">Required Score Minimum:</span>
+                              <span className="font-black text-[#00A79D] bg-[#00A79D]/10 px-2.5 py-0.5 rounded-md border border-[#00A79D]/30">
+                                {drive.minReadinessScore}% Minimum
+                              </span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-slate-500 font-medium">Min CGPA Required:</span>
+                              <span className="font-bold text-slate-800">{drive.minCgpa} CGPA</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-slate-500 font-medium">Eligible Departments:</span>
+                              <span className="font-bold text-slate-700 text-[11px] truncate max-w-[200px]" title={drive.eligibleDepts.join(', ')}>
+                                {drive.eligibleDepts.join(', ')}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                            <div className="bg-[#FCFCFD] p-2.5 rounded-lg border border-slate-100">
+                              <span className="text-[10px] text-slate-400 block">Invited</span>
+                              <span className="font-black text-[#052742] text-sm">{drive.totalInvited}</span>
+                            </div>
+                            <div className="bg-[#FCFCFD] p-2.5 rounded-lg border border-slate-100">
+                              <span className="text-[10px] text-slate-400 block">Shortlisted</span>
+                              <span className="font-black text-blue-600 text-sm">{drive.shortlistedCount}</span>
+                            </div>
+                            <div className="bg-[#FCFCFD] p-2.5 rounded-lg border border-slate-100">
+                              <span className="text-[10px] text-slate-400 block">Offers Released</span>
+                              <span className="font-black text-emerald-600 text-sm">{drive.placedCount} ({pct}%)</span>
+                            </div>
+                          </div>
+
+                          <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+                            <span className="text-[11px] text-slate-400">Deadline: {drive.deadline}</span>
+                            <button onClick={() => showToast(`Automated reminder sent for ${drive.companyName}!`)} className="px-3.5 py-1.5 rounded-lg bg-[#052742] hover:bg-[#00A79D] text-white font-black text-xs flex items-center gap-1.5">
+                              <Icons.Send /> Re-invite Eligible Students
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 4: RISK WARNING */}
+              {activeTab === 'lowperformers' && (
+                <div className="space-y-6">
+                  <div className="bg-gradient-to-r from-[#F59E0B] to-[#FB7185] text-white p-6 sm:p-7 rounded-2xl shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4 border border-amber-400/20">
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+                        <Icons.AlertTriangle />
+                      </div>
+                      <div>
+                        <span className="px-2.5 py-0.5 rounded-full bg-white/20 text-white font-black text-[10px] uppercase tracking-wider">Automated Risk Warning System</span>
+                        <h2 className="text-[24px] font-black mt-1">Low-Performer Remediation System</h2>
+                        <p className="text-xs text-amber-50 mt-1 max-w-xl">Automatically highlights students scoring below 50% readiness score. Enroll them into the 14-Day Placement Recovery Bootcamp.</p>
+                      </div>
+                    </div>
+                    <button onClick={handleBatchEnrollBootcamp} className="px-5 py-3 bg-white text-[#052742] hover:bg-slate-100 font-black text-xs rounded-lg shadow-md shrink-0">
+                      Batch Enroll All ({lowPerformers.length})
+                    </button>
+                  </div>
+
+                  <div className="bg-white/95 backdrop-blur-md p-6 sm:p-7 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-[24px] font-black text-[#052742]">At-Risk Student Queue</h3>
+                        <p className="text-xs text-slate-500">Trigger: Readiness Score &lt; 50%</p>
+                      </div>
+                      <span className="px-3 py-1 rounded-full bg-rose-100 text-rose-700 font-black text-xs border border-rose-200">{lowPerformers.length} Action Needed</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                      {lowPerformers.map(s => (
+                        <div key={s.id} className="bg-[#FCFCFD] border border-slate-200 p-5 rounded-xl space-y-4">
+                          <div>
+                            <h4 className="font-black text-[#052742] text-sm">{s.name}</h4>
+                            <p className="text-xs text-slate-500">{s.rollNo} • {s.department}</p>
+                          </div>
+
+                          <div className="p-3 bg-white rounded-lg border border-slate-200 text-xs space-y-1">
+                            <div className="flex justify-between font-bold">
+                              <span className="text-slate-600">Readiness Score:</span>
+                              <span className="text-rose-600 font-black">{s.readinessScore}% (Critically Low)</span>
+                            </div>
+                            <div className="flex justify-between text-[11px] text-slate-500">
+                              <span>Mock Test: {s.mockScore}%</span>
+                              <span>CGPA: {s.cgpa}</span>
+                            </div>
+                          </div>
+
+                          <div>
+                            <span className="text-[11px] font-bold text-slate-600 block mb-1">Weakness Areas:</span>
+                            <div className="flex flex-wrap gap-1">
+                              {s.weaknessAreas.map((w, idx) => (
+                                <span key={idx} className="px-2.5 py-0.5 bg-slate-200 text-slate-800 font-bold text-[10px] rounded-md border border-slate-300">{w}</span>
+                              ))}
+                            </div>
+                          </div>
+
+                          {s.bootcampEnrolled ? (
+                            <div className="py-2.5 bg-emerald-100 text-emerald-800 text-xs font-black rounded-lg text-center border border-emerald-200 flex items-center justify-center gap-2">
+                              ✔ Enrolled in Bootcamp
+                            </div>
+                          ) : (
+                            <button onClick={() => handleEnrollBootcamp(s.id)} className="w-full py-2.5 bg-[#00A79D] hover:bg-[#00D2C4] text-white font-black text-xs rounded-lg">
+                              Enroll in Bootcamp
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 5: REPORTS AUDIT */}
+              {activeTab === 'reports' && (
+                <div className="space-y-8">
+                  <div className="bg-white/95 backdrop-blur-md p-6 sm:p-7 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                      <h2 className="text-[24px] font-black text-[#052742]">Downloadable Executive Reports & Export Audits</h2>
+                      <p className="text-xs sm:text-sm text-slate-500 mt-1">Automated & 1-click executive compliance reports formatted for College Deans & Placement Directors.</p>
+                    </div>
+                    <button onClick={() => setIsPdfModalOpen(true)} className="px-5 py-3 rounded-lg bg-[#052742] hover:bg-[#00A79D] text-white font-black text-xs flex items-center gap-2 shadow-xs shrink-0">
+                      <Icons.FileText /> Preview Dean PDF Report
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="bg-white/95 backdrop-blur-md p-6 sm:p-7 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)] transition-all space-y-4">
+                      <div className="w-12 h-12 rounded-xl bg-[#00A79D]/10 text-[#00A79D] flex items-center justify-center">
+                        <Icons.FileText />
+                      </div>
+                      <div>
+                        <h3 className="font-extrabold text-[#052742] text-base">Executive Dean & Director Report (PDF)</h3>
+                        <p className="text-xs text-slate-500 mt-1 leading-relaxed">1-click clean PDF report formatted for college deans and directors with campus readiness benchmarks.</p>
+                      </div>
+                      <button onClick={() => setIsPdfModalOpen(true)} className="w-full py-2.5 bg-[#052742] text-white hover:bg-[#00A79D] font-black text-xs rounded-lg flex items-center justify-center gap-2">
+                        <Icons.Printer /> Download / Print PDF Report
+                      </button>
+                    </div>
+
+                    <div className="bg-white/95 backdrop-blur-md p-6 sm:p-7 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)] transition-all space-y-4">
+                      <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                        <Icons.FileText />
+                      </div>
+                      <div>
+                        <h3 className="font-extrabold text-[#052742] text-base">Master Student Data Export (Excel / CSV)</h3>
+                        <p className="text-xs text-slate-500 mt-1 leading-relaxed">1-click raw CSV dataset including roll numbers, readiness scores, whitelist status, and drive applications.</p>
+                      </div>
+                      <button onClick={() => handleMockDownload('Master_Student_Placement_Data_2026.csv')} className="w-full py-2.5 bg-blue-600 text-white hover:bg-blue-700 font-black text-xs rounded-lg flex items-center justify-center gap-2">
+                        <Icons.Download /> Download CSV File
+                      </button>
+                    </div>
+
+                    <div className="bg-white/95 backdrop-blur-md p-6 sm:p-7 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)] transition-all space-y-4">
+                      <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                        <Icons.AlertTriangle />
+                      </div>
+                      <div>
+                        <h3 className="font-extrabold text-[#052742] text-base">Low-Performer Remediation Audit</h3>
+                        <p className="text-xs text-slate-500 mt-1 leading-relaxed">Detailed audit report of low-performing students and 14-day bootcamp recovery progress.</p>
+                      </div>
+                      <button onClick={() => handleMockDownload('Low_Performer_Remediation_Audit_2026.pdf')} className="w-full py-2.5 bg-amber-600 text-white hover:bg-amber-700 font-black text-xs rounded-lg flex items-center justify-center gap-2">
+                        <Icons.Download /> Download Audit PDF
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* RECENT DOWNLOADS TABLE */}
+                  <div className="bg-white/95 backdrop-blur-md p-6 sm:p-7 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] space-y-4">
+                    <h3 className="font-black text-[24px] text-[#052742]">Recent Export & Download Audit History</h3>
+                    <div className="overflow-x-auto rounded-xl border border-[#0F172A]/[0.08]">
+                      <table className="w-full text-left text-xs text-slate-600 min-w-[640px]">
+                        <thead className="bg-[#FAFBFC] text-slate-600 uppercase text-[10px] font-black tracking-wider border-b border-[#0F172A]/[0.08]">
+                          <tr>
+                            <th className="py-4 px-5">Report Document Name</th>
+                            <th className="py-4 px-5">Format</th>
+                            <th className="py-4 px-5">Generated Timestamp</th>
+                            <th className="py-4 px-5">Generated By</th>
+                            <th className="py-4 px-5">File Size</th>
+                            <th className="py-4 px-5 text-right">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                          {recentReportsList.map((item, idx) => (
+                            <tr key={idx} className={`${idx % 2 === 0 ? 'bg-white' : 'bg-[#FAFBFC]'} hover:bg-slate-100/80 transition-colors`}>
+                              <td className="py-4 px-5 font-black text-[#052742]">{item.name}</td>
+                              <td className="py-4 px-5"><span className="px-2 py-0.5 rounded text-[10px] font-black bg-rose-100 text-rose-800">{item.format}</span></td>
+                              <td className="py-4 px-5 font-mono text-[11px]">{item.date}</td>
+                              <td className="py-4 px-5 font-bold">{item.generatedBy}</td>
+                              <td className="py-4 px-5">{item.size}</td>
+                              <td className="py-4 px-5 text-right">
+                                <button onClick={() => handleMockDownload(item.name)} className="px-3 py-1.5 bg-[#052742] text-white font-bold text-xs rounded-lg">
+                                  Re-download
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+            </main>
+          </div>
+
+          {/* MODALS */}
+
+          {/* CREATE DRIVE MODAL */}
+          {isCreateDriveOpen && (
+            <div className="fixed inset-0 z-50 bg-[#052742]/70 backdrop-blur-sm flex items-center justify-center p-4">
+              <div className="bg-white rounded-2xl p-8 max-w-lg w-full shadow-2xl relative text-[#052742]">
+                <button onClick={() => setIsCreateDriveOpen(false)} className="absolute top-4 right-4 text-slate-400 bg-slate-100 hover:bg-slate-200 rounded-full p-2 text-xs font-black">✕</button>
+                <h3 className="text-xl font-black mb-4">Create New Company Drive</h3>
+                <form onSubmit={handleCreateDriveSubmit} className="space-y-4 text-xs">
+                  <div>
+                    <label className="font-extrabold block mb-1">Company Drive Name</label>
+                    <input type="text" required placeholder="e.g. TCS Hiring Drive 2026" value={newDrive.companyName} onChange={(e) => setNewDrive({ ...newDrive, companyName: e.target.value })} className="w-full p-2.5 rounded-lg border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#00A79D]" />
+                  </div>
+                  <div>
+                    <label className="font-extrabold block mb-1">Role Title</label>
+                    <input type="text" required placeholder="e.g. Software Developer" value={newDrive.roleTitle} onChange={(e) => setNewDrive({ ...newDrive, roleTitle: e.target.value })} className="w-full p-2.5 rounded-lg border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#00A79D]" />
+                  </div>
+                  <div>
+                    <label className="font-extrabold block mb-1">Package (CTC)</label>
+                    <input type="text" placeholder="e.g. ₹14.0 LPA" value={newDrive.ctc} onChange={(e) => setNewDrive({ ...newDrive, ctc: e.target.value })} className="w-full p-2.5 rounded-lg border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#00A79D]" />
+                  </div>
+                  <div>
+                    <label className="font-extrabold block mb-1">Minimum Readiness Score Threshold ({newDrive.minReadinessScore}%)</label>
+                    <input type="range" min="40" max="95" value={newDrive.minReadinessScore} onChange={(e) => setNewDrive({ ...newDrive, minReadinessScore: e.target.value })} className="w-full accent-[#00A79D]" />
+                  </div>
+                  <div className="pt-2 flex justify-end gap-3">
+                    <button type="button" onClick={() => setIsCreateDriveOpen(false)} className="px-4 py-2.5 rounded-lg bg-slate-100 text-slate-700 font-bold">Cancel</button>
+                    <button type="submit" className="px-5 py-2.5 rounded-lg bg-[#00A79D] hover:bg-[#00D2C4] text-white font-black">Create & Invite Students</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* PDF REPORT MODAL */}
+          {isPdfModalOpen && (
+            <div className="fixed inset-0 z-50 bg-[#052742]/80 backdrop-blur-md flex items-center justify-center p-4">
+              <div className="bg-white rounded-2xl p-8 max-w-3xl w-full shadow-2xl relative text-[#052742]">
+                <button onClick={() => setIsPdfModalOpen(false)} className="absolute top-4 right-4 text-slate-400 bg-slate-100 hover:bg-slate-200 rounded-full p-2 text-xs font-black">✕</button>
+                <div className="border border-slate-300 p-8 rounded-xl bg-white space-y-6">
+                  <div className="flex justify-between items-start border-b pb-4">
+                    <div>
+                      <h2 className="font-black text-2xl text-[#052742]">PLACED Executive Audit Report</h2>
+                      <p className="text-xs text-slate-500 font-bold mt-1">St. Xavier's Institute of Technology • Batch 2026</p>
+                    </div>
+                    <span className="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full font-black text-xs">Official Compliance Report</span>
+                  </div>
+
+                  <div className="grid grid-cols-4 gap-3 text-center text-xs">
+                    <div className="p-3 bg-slate-50 rounded-lg border">
+                      <span className="text-[10px] text-slate-400 block font-bold">Total Batch</span>
+                      <span className="font-black text-lg">1,480</span>
+                    </div>
+                    <div className="p-3 bg-slate-50 rounded-lg border">
+                      <span className="text-[10px] text-slate-400 block font-bold">Passed Mocks</span>
+                      <span className="font-black text-lg text-emerald-600">1,185</span>
+                    </div>
+                    <div className="p-3 bg-slate-50 rounded-lg border">
+                      <span className="text-[10px] text-slate-400 block font-bold">Interview Ready</span>
+                      <span className="font-black text-lg text-[#00A79D]">842</span>
+                    </div>
+                    <div className="p-3 bg-slate-50 rounded-lg border">
+                      <span className="text-[10px] text-slate-400 block font-bold">Placed Students</span>
+                      <span className="font-black text-lg text-blue-600">342</span>
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    This official audit report summarizes student placement readiness benchmarks, department conversion rates, and recruitment drive engagement for the 2026 batch. Formatted for Dean & Board review.
+                  </p>
+
+                  <div className="flex justify-end gap-3 pt-2">
+                    <button onClick={() => setIsPdfModalOpen(false)} className="px-4 py-2.5 rounded-lg bg-slate-100 text-slate-700 font-bold text-xs">Close</button>
+                    <button onClick={() => { window.print(); showToast('Triggered PDF Print Dialog'); }} className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-lg flex items-center gap-2">
+                      <Icons.Printer /> Print / Export PDF
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* STUDENT PROFILE DRAWER */}
+          {selectedStudent && (
+            <div className="fixed inset-0 z-50 bg-[#052742]/70 backdrop-blur-sm flex justify-end">
+              <div className="w-full max-w-md bg-white h-full p-8 shadow-2xl overflow-y-auto space-y-6">
+                <div className="flex items-center justify-between border-b pb-4">
+                  <h3 className="font-black text-lg text-[#052742]">Student Profile Details</h3>
+                  <button onClick={() => setSelectedStudent(null)} className="text-slate-400 bg-slate-100 hover:bg-slate-200 p-2 rounded-full text-xs font-black">✕</button>
+                </div>
+
+                <div className="space-y-4 text-xs">
+                  <div className="p-4 bg-[#FCFCFD] rounded-xl border border-[#0F172A]/[0.08]">
+                    <span className="text-[10px] text-slate-400 uppercase font-black">Full Name</span>
+                    <h4 className="font-black text-lg text-[#052742] mt-0.5">{selectedStudent.name}</h4>
+                    <p className="text-slate-500 font-mono mt-1">{selectedStudent.rollNo}</p>
+                    <p className="text-slate-500">{selectedStudent.email}</p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 text-center">
+                    <div className="p-3 bg-slate-50 rounded-xl border">
+                      <span className="text-[10px] text-slate-400 font-bold block">Department</span>
+                      <span className="font-extrabold text-[#052742]">{selectedStudent.department}</span>
+                    </div>
+                    <div className="p-3 bg-slate-50 rounded-xl border">
+                      <span className="text-[10px] text-slate-400 font-bold block">CGPA</span>
+                      <span className="font-extrabold text-[#052742]">{selectedStudent.cgpa}</span>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-[#00A79D]/10 rounded-xl border border-[#00A79D]/30 space-y-2">
+                    <span className="text-[10px] text-[#00A79D] font-black uppercase">Readiness Score Benchmark</span>
+                    <div className="flex items-baseline justify-between">
+                      <span className="text-2xl font-black text-[#052742]">{selectedStudent.readinessScore}%</span>
+                      <span className="text-xs font-bold text-[#00A79D]">{selectedStudent.readinessStatus}</span>
+                    </div>
+                  </div>
+
+                  {selectedStudent.readinessScore < 50 && (
+                    <div className="p-4 bg-rose-50 rounded-xl border border-rose-200 space-y-3">
+                      <span className="text-xs font-black text-rose-700 block">At-Risk Student Actions</span>
+                      {selectedStudent.bootcampEnrolled ? (
+                        <div className="p-2.5 bg-emerald-100 text-emerald-800 font-bold rounded-lg text-center">
+                          ✔ Enrolled in Placement Bootcamp
+                        </div>
+                      ) : (
+                        <button onClick={() => { handleEnrollBootcamp(selectedStudent.id); setSelectedStudent(null); }} className="w-full py-2.5 bg-[#00A79D] text-white font-black rounded-lg">
+                          Enroll in 14-Day Recovery Bootcamp
+                        </button>
+                      )}
+                    </div>
+                  )}
+
+                  <button onClick={() => setSelectedStudent(null)} className="w-full py-3 bg-[#052742] text-[#fff] font-bold rounded-lg text-xs mt-4">
+                    Close Drawer
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+
+</html>
