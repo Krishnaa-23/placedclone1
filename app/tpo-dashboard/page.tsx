@@ -38,7 +38,9 @@ import {
   LayoutDashboard,
   Eye,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Video,
+  ClipboardCheck
 } from 'lucide-react'
 
 import { INITIAL_STUDENTS, INITIAL_DRIVES, Student, Drive } from './data'
@@ -369,9 +371,9 @@ export default function TPODashboard() {
     }
   }
 
-  // Consistent Color Palette
+  // Consistent Color Palette Matching Current Theme
   const TIER_COLORS = {
-    placed: '#00A79D',    // Cyan Teal (Placed)
+    placed: '#2563EB',    // Royal Blue (Super Coder / Placed)
     ready: '#10B981',     // Emerald Green (Interview Ready)
     training: '#F59E0B',  // Amber Gold (Need Training)
     risk: '#EF4444'       // Rose Red (At Risk)
@@ -416,6 +418,13 @@ export default function TPODashboard() {
       : 0
     return { month, offers: cumulativeOffers }
   })
+
+  // Dynamic Top Performing Department calculation
+  const sortedDepts = [...deptBarData].sort((a, b) => b.percentage - a.percentage)
+  const topDept = sortedDepts[0]
+  const topPerformingDeptText = (totalRegistered > 0 && topDept && topDept.placed > 0)
+    ? `${topDept.dept} (${topDept.rate})`
+    : 'No Placements Yet'
 
   if (!isLoggedIn) {
     return (
@@ -512,43 +521,58 @@ export default function TPODashboard() {
     <div className="min-h-screen bg-[#F5F7FA] text-[#052742] font-sans selection:bg-[#00A79D] selection:text-white flex relative overflow-x-hidden">
       
       {/* ========================================================================= */}
-      {/* REQUIREMENT 6: SIDEBAR (POLISHED ACTIVE GLOW, ICON ALIGNMENT, 250MS EASE) */}
+      {/* ========================================================================= */}
+      {/* SIDEBAR (MATCHING SCREENSHOT MEDIA_1788019645555.PNG EXACTLY) */}
       {/* ========================================================================= */}
       <aside
-        className={`fixed top-0 left-0 h-screen bg-[#0B1727] text-white z-40 transition-all duration-250 ease-in-out flex flex-col justify-between shadow-2xl border-r border-slate-800/80 overflow-hidden ${
+        className={`fixed top-0 left-0 h-screen bg-[#0B132A] text-white z-40 transition-all duration-250 ease-in-out flex flex-col justify-between shadow-2xl border-r border-slate-800/60 overflow-hidden ${
           isSidebarCollapsed ? 'w-20' : 'w-64'
         } hidden md:flex`}
       >
         <div>
-          {/* Sidebar Top Header (Matching Student Dashboard Profile Badge) */}
-          <div className="h-20 px-4 flex items-center justify-between border-b border-slate-800/80">
-            <Link href="/" className="flex items-center gap-3 overflow-hidden">
-              <div className="w-12 h-10 rounded-xl bg-white p-1 shrink-0 shadow-md relative border border-slate-200 flex items-center justify-center">
+          {/* Sidebar Header Profile (Official PLACED Image Logo) */}
+          <div className={`h-20 border-b border-white/10 flex items-center ${isSidebarCollapsed ? 'justify-center px-2' : 'justify-between px-4'}`}>
+            {isSidebarCollapsed ? (
+              <button
+                onClick={() => setIsSidebarCollapsed(false)}
+                className="w-10 h-10 rounded-xl bg-white p-1 shadow-md relative border border-slate-200 flex items-center justify-center group hover:scale-105 transition-all shrink-0"
+                title="Expand Sidebar"
+              >
                 <Image src="/placeduplogo.jpg" alt="Placed Logo" fill className="object-contain p-0.5" priority />
-              </div>
-              {!isSidebarCollapsed && (
-                <div className="flex flex-col truncate">
-                  <span className="font-black text-sm text-white tracking-tight">TPO Profile</span>
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                    <span className="text-[10px] text-slate-400 font-bold">Officer | Active</span>
-                  </div>
+                <div className="absolute inset-0 bg-blue-600/90 rounded-xl opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity">
+                  <ChevronRight className="w-5 h-5 font-black" />
                 </div>
-              )}
-            </Link>
+              </button>
+            ) : (
+              <>
+                <Link href="/" className="flex items-center gap-3 overflow-hidden">
+                  <div className="w-10 h-10 rounded-xl bg-white p-1 shrink-0 shadow-md relative border border-slate-200 flex items-center justify-center">
+                    <Image src="/placeduplogo.jpg" alt="Placed Logo" fill className="object-contain p-0.5" priority />
+                  </div>
+                  <div className="flex flex-col truncate">
+                    <span className="font-bold text-sm text-white tracking-tight">TPO Profile</span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                      <span className="text-[10px] text-slate-400 font-bold">Officer | Active</span>
+                    </div>
+                  </div>
+                </Link>
 
-            <button
-              onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-              className="w-7 h-7 rounded-lg bg-slate-800/80 hover:bg-[#00A79D] text-slate-300 hover:text-[#052742] flex items-center justify-center transition-all duration-250 ease-in-out shrink-0"
-            >
-              {isSidebarCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-            </button>
+                <button
+                  onClick={() => setIsSidebarCollapsed(true)}
+                  className="w-8 h-8 rounded-xl bg-slate-800/60 hover:bg-slate-700/60 text-slate-400 hover:text-white flex items-center justify-center border border-white/10 transition-all shrink-0"
+                  title="Collapse Sidebar"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+              </>
+            )}
           </div>
 
-          {/* Track Selector */}
-          <div className="p-4 border-b border-slate-800/80">
+          {/* Track Selector Section */}
+          <div className="p-4 border-b border-white/10">
             {!isSidebarCollapsed && (
-              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-2 px-1">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-[#475569] block mb-2 px-1">
                 TRACK SELECTOR
               </span>
             )}
@@ -559,13 +583,13 @@ export default function TPODashboard() {
                   setCurrentTrack('student')
                   showToast('Switched to Student Portal Track')
                 }}
-                className={`w-full p-2.5 rounded-lg text-xs font-bold flex items-center gap-3 transition-all duration-250 ease-in-out ${
+                className={`w-full p-2.5 rounded-xl text-sm font-semibold flex items-center gap-3 transition-all ${
                   currentTrack === 'student'
-                    ? 'bg-gradient-to-r from-[#00A79D] to-[#00D2C4] text-[#052742] font-black shadow-md'
-                    : 'text-slate-300 hover:bg-slate-800'
+                    ? 'bg-slate-800/80 text-white font-bold shadow-xs'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 font-medium'
                 } ${isSidebarCollapsed ? 'justify-center' : ''}`}
               >
-                <User className="w-4 h-4 shrink-0" />
+                <User className={`w-4 h-4 shrink-0 ${currentTrack === 'student' ? 'text-slate-300' : 'text-slate-500'}`} />
                 {!isSidebarCollapsed && <span className="truncate">Student Track</span>}
               </button>
 
@@ -574,18 +598,20 @@ export default function TPODashboard() {
                   setCurrentTrack('tpo')
                   showToast('Switched to TPO Placement Officer Track')
                 }}
-                className={`w-full p-2.5 rounded-lg text-xs font-bold flex items-center justify-between transition-all duration-250 ease-in-out ${
+                className={`w-full p-2.5 rounded-xl text-sm font-semibold flex items-center justify-between transition-all ${
                   currentTrack === 'tpo'
-                    ? 'bg-gradient-to-r from-[#00A79D] to-[#00D2C4] text-[#052742] font-black shadow-md'
-                    : 'text-slate-300 hover:bg-slate-800'
+                    ? 'bg-slate-800/80 text-white font-bold shadow-xs'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 font-medium'
                 } ${isSidebarCollapsed ? 'justify-center' : ''}`}
               >
                 <div className="flex items-center gap-3 truncate">
-                  <Building2 className="w-4 h-4 shrink-0" />
+                  <Building2 className={`w-4 h-4 shrink-0 ${currentTrack === 'tpo' ? 'text-slate-300' : 'text-slate-500'}`} />
                   {!isSidebarCollapsed && <span className="truncate">TPO Track</span>}
                 </div>
                 {!isSidebarCollapsed && (
-                  <span className="w-2 h-2 rounded-full bg-[#052742] ring-2 ring-white"></span>
+                  <span className="w-5 h-5 rounded-full bg-slate-700/60 text-slate-300 flex items-center justify-center text-[10px]">
+                    ✓
+                  </span>
                 )}
               </button>
 
@@ -594,52 +620,52 @@ export default function TPODashboard() {
                   setCurrentTrack('admin')
                   showToast('Switched to Admin Governance Track')
                 }}
-                className={`w-full p-2.5 rounded-lg text-xs font-bold flex items-center gap-3 transition-all duration-250 ease-in-out ${
+                className={`w-full p-2.5 rounded-xl text-sm font-semibold flex items-center gap-3 transition-all ${
                   currentTrack === 'admin'
-                    ? 'bg-gradient-to-r from-[#00A79D] to-[#00D2C4] text-[#052742] font-black shadow-md'
-                    : 'text-slate-300 hover:bg-slate-800'
+                    ? 'bg-slate-800/80 text-white font-bold shadow-xs'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 font-medium'
                 } ${isSidebarCollapsed ? 'justify-center' : ''}`}
               >
-                <Shield className="w-4 h-4 shrink-0" />
+                <Shield className={`w-4 h-4 shrink-0 ${currentTrack === 'admin' ? 'text-slate-300' : 'text-slate-500'}`} />
                 {!isSidebarCollapsed && <span className="truncate">Admin Track</span>}
               </button>
             </div>
           </div>
 
           {/* MAIN TPO TRACK NAVIGATION MENU */}
-          <div className="p-4 space-y-2 mt-2">
+          <div className="p-4 space-y-1.5 mt-1">
             {!isSidebarCollapsed && (
-              <span className="text-[10px] font-black uppercase tracking-wider text-[#00A79D] block mb-2 px-1">
+              <span className="text-[11px] font-bold uppercase tracking-widest text-[#475569] block mb-2 px-1">
                 TPO MODULES
               </span>
             )}
 
             <button
               onClick={() => setActiveTab('command')}
-              className={`w-full p-3 rounded-xl text-xs font-bold flex items-center gap-3 transition-all duration-250 ease-in-out ${
+              className={`w-full p-2.5 rounded-xl text-sm font-semibold flex items-center gap-3 transition-all ${
                 activeTab === 'command'
-                  ? 'bg-gradient-to-r from-[#00A79D] to-[#00D2C4] text-[#052742] font-black shadow-[0_4px_20px_rgba(0,167,157,0.5)] border-l-4 border-white'
-                  : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                  ? 'bg-slate-800/80 text-white font-bold shadow-xs'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 font-medium'
               } ${isSidebarCollapsed ? 'justify-center' : ''}`}
             >
-              <LayoutDashboard className={`w-5 h-5 shrink-0 ${activeTab === 'command' ? 'text-[#052742]' : 'text-slate-400'}`} />
+              <LayoutDashboard className={`w-5 h-5 shrink-0 ${activeTab === 'command' ? 'text-slate-300' : 'text-slate-500'}`} />
               {!isSidebarCollapsed && <span className="truncate">Campus Command</span>}
             </button>
 
             <button
               onClick={() => setActiveTab('whitelist')}
-              className={`w-full p-3 rounded-xl text-xs font-bold flex items-center justify-between transition-all duration-250 ease-in-out ${
+              className={`w-full p-2.5 rounded-xl text-sm font-semibold flex items-center justify-between transition-all ${
                 activeTab === 'whitelist'
-                  ? 'bg-gradient-to-r from-[#00A79D] to-[#00D2C4] text-[#052742] font-black shadow-[0_4px_20px_rgba(0,167,157,0.5)] border-l-4 border-white'
-                  : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                  ? 'bg-slate-800/80 text-white font-bold shadow-xs'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 font-medium'
               } ${isSidebarCollapsed ? 'justify-center' : ''}`}
             >
               <div className="flex items-center gap-3 truncate">
-                <ShieldCheck className={`w-5 h-5 shrink-0 ${activeTab === 'whitelist' ? 'text-[#052742]' : 'text-slate-400'}`} />
+                <ShieldCheck className={`w-5 h-5 shrink-0 ${activeTab === 'whitelist' ? 'text-slate-300' : 'text-slate-500'}`} />
                 {!isSidebarCollapsed && <span className="truncate">Whitelist Gate</span>}
               </div>
               {!isSidebarCollapsed && (
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-[#052742] text-[#00D2C4]">
+                <span className="w-5 h-5 rounded-full bg-slate-700/60 text-slate-300 flex items-center justify-center text-[10px] font-bold">
                   {students.length}
                 </span>
               )}
@@ -647,37 +673,37 @@ export default function TPODashboard() {
 
             <button
               onClick={() => setActiveTab('drives')}
-              className={`w-full p-3 rounded-xl text-xs font-bold flex items-center justify-between transition-all duration-250 ease-in-out ${
+              className={`w-full p-2.5 rounded-xl text-sm font-semibold flex items-center justify-between transition-all ${
                 activeTab === 'drives'
-                  ? 'bg-gradient-to-r from-[#00A79D] to-[#00D2C4] text-[#052742] font-black shadow-[0_4px_20px_rgba(0,167,157,0.5)] border-l-4 border-white'
-                  : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                  ? 'bg-slate-800/80 text-white font-bold shadow-xs'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 font-medium'
               } ${isSidebarCollapsed ? 'justify-center' : ''}`}
             >
               <div className="flex items-center gap-3 truncate">
-                <GraduationCap className={`w-5 h-5 shrink-0 ${activeTab === 'drives' ? 'text-[#052742]' : 'text-slate-400'}`} />
+                <Building2 className={`w-5 h-5 shrink-0 ${activeTab === 'drives' ? 'text-slate-300' : 'text-slate-500'}`} />
                 {!isSidebarCollapsed && <span className="truncate">Hiring Drives</span>}
               </div>
               {!isSidebarCollapsed && (
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-[#052742] text-emerald-400">
-                  {drives.length}
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-700/60 text-slate-300">
+                  {drives.length} Active
                 </span>
               )}
             </button>
 
             <button
               onClick={() => setActiveTab('lowperformers')}
-              className={`w-full p-3 rounded-xl text-xs font-bold flex items-center justify-between transition-all duration-250 ease-in-out ${
+              className={`w-full p-2.5 rounded-xl text-sm font-semibold flex items-center justify-between transition-all ${
                 activeTab === 'lowperformers'
-                  ? 'bg-gradient-to-r from-[#00A79D] to-[#00D2C4] text-[#052742] font-black shadow-[0_4px_20px_rgba(0,167,157,0.5)] border-l-4 border-white'
-                  : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                  ? 'bg-slate-800/80 text-white font-bold shadow-xs'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 font-medium'
               } ${isSidebarCollapsed ? 'justify-center' : ''}`}
             >
               <div className="flex items-center gap-3 truncate">
-                <AlertTriangle className={`w-5 h-5 shrink-0 ${activeTab === 'lowperformers' ? 'text-[#052742]' : 'text-amber-400'}`} />
+                <AlertTriangle className={`w-5 h-5 shrink-0 ${activeTab === 'lowperformers' ? 'text-slate-300' : 'text-rose-400'}`} />
                 {!isSidebarCollapsed && <span className="truncate">Risk Warning</span>}
               </div>
               {!isSidebarCollapsed && (
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-500 text-white animate-pulse">
+                <span className="w-5 h-5 rounded-full bg-rose-500/20 text-rose-300 flex items-center justify-center text-[10px] font-bold">
                   {lowPerformers.length}
                 </span>
               )}
@@ -794,64 +820,49 @@ export default function TPODashboard() {
         isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'
       }`}>
         
-        {/* TOP HEADER BAR */}
-        <header className="bg-white border-b border-[#0F172A]/[0.08] sticky top-0 z-30 shadow-[0_6px_20px_rgba(15,23,42,0.05)]">
-          <div className="max-w-7xl mx-auto px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+        {/* TOP HEADER BAR (MATCHING STUDENT DASHBOARD IMAGE 2 - NO GAP NEXT TO SIDEBAR) */}
+        <header className="bg-white border-b border-slate-200/80 sticky top-0 z-30 shadow-xs">
+          <div className="w-full px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
             
-            {/* BRAND LOGO & MENU TOGGLE */}
-            <div className="flex items-center gap-3">
+            {/* LEFT SIDE: MOBILE MENU + GLOBAL SEARCH BAR (DIRECTLY ADJACENT TO SIDEBAR) */}
+            <div className="flex items-center gap-3 flex-1 max-w-lg">
               <button
                 onClick={() => setIsMobileSidebarOpen(true)}
-                className="p-2.5 rounded-lg bg-slate-100 text-[#052742] md:hidden"
+                className="p-2 rounded-lg bg-slate-100 text-[#052742] md:hidden"
               >
                 <Menu className="w-5 h-5" />
               </button>
 
-              <button
-                onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-                className="hidden md:flex p-2 rounded-lg bg-slate-100 hover:bg-[#00A79D]/10 text-[#052742] hover:text-[#00A79D] transition-all duration-250 ease-in-out items-center gap-2 text-xs font-bold"
-              >
-                <Menu className="w-4 h-4" />
-                <span className="text-[11px] uppercase tracking-wider font-extrabold">Menu</span>
-              </button>
-
-              <Link href="/" className="flex items-center gap-3 group">
-                <div className="relative w-40 h-11 bg-white p-1 rounded-xl shadow-xs border border-slate-200/80 flex items-center shrink-0">
-                  <Image src="/placeduplogo.jpg" alt="Placed Official Logo" fill className="object-contain p-0.5" priority />
-                </div>
-              </Link>
+              <div className="relative w-full">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                <input
+                  type="text"
+                  placeholder="Search pages, assessments, drives, classes..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 text-xs rounded-xl bg-slate-100/80 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 text-slate-800 font-medium transition-all"
+                />
+              </div>
             </div>
 
-            {/* GLOBAL SEARCH INPUT BAR */}
-            <div className="relative flex-1 max-w-xl mx-4 hidden sm:block">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
-              <input
-                type="text"
-                placeholder="Global search students, roll no, drives..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 text-xs rounded-lg bg-[#FCFCFD] border border-[#0F172A]/[0.08] focus:outline-none focus:ring-2 focus:ring-[#00A79D] text-slate-800 font-medium transition-all duration-250 ease-in-out"
-              />
-            </div>
-
-            {/* NOTIFICATIONS & PROFILE BADGE */}
-            <div className="flex items-center gap-3">
-              <div className="relative cursor-pointer p-2 rounded-lg hover:bg-slate-100 transition-colors" title="Notifications">
+            {/* RIGHT SIDE: NOTIFICATIONS & PROFILE BADGE */}
+            <div className="flex items-center gap-3 shrink-0">
+              <div className="relative cursor-pointer p-2 rounded-xl hover:bg-slate-100 transition-colors" title="Notifications">
                 <Bell className="w-5 h-5 text-slate-600" />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#00A79D] rounded-full ring-2 ring-white"></span>
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-blue-600 rounded-full ring-2 ring-white"></span>
               </div>
 
               <div className="flex items-center gap-2.5 border-l border-slate-200 pl-3">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#052742] to-[#00A79D] text-white font-black flex items-center justify-center text-xs ring-2 ring-[#00A79D]/40 shrink-0 shadow-md">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-slate-900 to-blue-600 text-white font-black flex items-center justify-center text-xs ring-2 ring-blue-500/20 shrink-0 shadow-xs">
                   TPO
                 </div>
                 <div className="hidden lg:flex flex-col text-left">
-                  <span className="text-xs font-black text-[#052742]">{TPO_CONFIG.officerName}</span>
-                  <span className="text-[10px] text-[#00A79D] font-bold">{TPO_CONFIG.officerRole}</span>
+                  <span className="text-xs font-bold text-slate-900">{TPO_CONFIG.officerName}</span>
+                  <span className="text-[10px] text-blue-600 font-bold">{TPO_CONFIG.officerRole}</span>
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs border border-rose-200 ml-2 transition-all"
+                  className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 text-slate-700 font-bold text-xs border border-slate-200 ml-2 transition-all shadow-2xs"
                   title="Log Out of Admin Session"
                 >
                   Log Out
@@ -862,67 +873,17 @@ export default function TPODashboard() {
           </div>
         </header>
 
-        {/* SINGLE CLEAN PAGE HEADER ROW */}
-        <div className="bg-white border-b border-[#0F172A]/[0.08] py-6 relative overflow-hidden">
-          <div className="max-w-7xl mx-auto px-6 lg:px-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
-            
-            <div className="space-y-1">
-              <div className="flex items-center gap-3">
-                <div className="w-2.5 h-8 bg-gradient-to-b from-[#00A79D] to-[#00D2C4] rounded-full"></div>
-                <h1 className="text-[32px] font-black text-[#052742] tracking-tight leading-tight uppercase">
-                  Placement <span className="text-[#00A79D]">Command Center</span>
-                </h1>
-                <span className="px-3 py-1 rounded-full bg-gradient-to-r from-[#00A79D] to-[#00D2C4] text-[#052742] font-black text-[12px] shadow-xs">
-                  {TPO_CONFIG.institutionName} • {TPO_CONFIG.batchYear}
-                </span>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-3 shrink-0">
-              <button
-                onClick={() => setIsCreateDriveOpen(true)}
-                className="px-4.5 py-2.5 rounded-lg bg-gradient-to-r from-[#00A79D] to-[#00D2C4] hover:opacity-95 text-[#052742] font-black text-xs flex items-center gap-1.5 transition-all duration-250 ease-in-out hover:-translate-y-[2px] shadow-md hover:shadow-lg"
-              >
-                <Plus className="w-4 h-4 text-[#052742]" /> Launch Drive
-              </button>
-
-              <button
-                onClick={() => setIsPdfModalOpen(true)}
-                className="px-4 py-2.5 rounded-lg bg-[#052742] hover:bg-slate-800 text-white font-bold text-xs flex items-center gap-1.5 transition-all duration-250 ease-in-out hover:-translate-y-[2px] shadow-md hover:shadow-lg"
-              >
-                <FileText className="w-4 h-4 text-[#00D2C4]" /> PDF Report
-              </button>
-            </div>
-
-          </div>
-        </div>
-
-        {/* TOAST SYSTEM */}
-        <AnimatePresence>
-          {toastMessage && (
-            <motion.div
-              initial={{ opacity: 0, y: 50, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 20, scale: 0.9 }}
-              className="fixed bottom-6 right-6 z-50 bg-[#052742] text-white px-5 py-3.5 rounded-xl shadow-2xl border border-[#00A79D]/40 flex items-center gap-3"
-            >
-              <Sparkles className="w-5 h-5 text-[#00A79D] animate-spin" />
-              <span className="text-xs font-bold">{toastMessage}</span>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* ELEGANT VISIBLE BACKGROUND WATERMARK - ALWAYS VISIBLE WHETHER SIDEBAR IS OPEN OR COLLAPSED */}
-        <div className={`fixed inset-0 flex items-center justify-center pointer-events-none z-0 overflow-hidden select-none transition-all duration-250 ease-in-out ${
-          isSidebarCollapsed ? 'md:pl-20' : 'md:pl-64'
+        {/* ELEGANT BACKGROUND WATERMARK (DYNAMIC SMOOTH TRANSITION ON SIDEBAR OPEN/COLLAPSE MATCHING SCREENSHOTS) */}
+        <div className={`fixed top-0 bottom-0 right-0 flex items-center justify-center pointer-events-none z-0 overflow-hidden select-none transition-all duration-300 ease-in-out ${
+          isSidebarCollapsed ? 'left-0 md:left-20' : 'left-0 md:left-64'
         }`}>
-          <span className="text-[18vw] font-black text-slate-300/50 tracking-wider uppercase font-sans">
+          <span className="text-[16vw] font-black text-[#E2E8F0]/75 tracking-widest uppercase font-sans pointer-events-none select-none">
             PLACED
           </span>
         </div>
 
-        {/* MAIN CONTENT BODY (REQUIREMENT 2: SPACING SCALE 32PX/48PX py-12 space-y-8) */}
-        <main className="max-w-7xl mx-auto px-6 lg:px-8 py-12 flex-1 w-full space-y-8 relative z-10">
+        {/* MAIN CONTENT BODY (EXPANDS FULL WIDTH & MOVES LEFT ON SIDEBAR COLLAPSE) */}
+        <main className="w-full px-6 lg:px-8 py-8 flex-1 space-y-8 relative z-10">
           
           {/* ========================================================================= */}
           {/* TAB 1: CAMPUS COMMAND CENTER */}
@@ -930,92 +891,169 @@ export default function TPODashboard() {
           {activeTab === 'command' && (
             <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
               
-              {/* 4 KPI METRIC CARDS (REQUIREMENT 4: PRIMARY CARD ELEVATION shadow-[0_6px_20px_rgba(15,23,42,0.05)], 250MS HOVER LIFT) */}
+              {/* HERO BANNER CARD (PLACEMENT COMMAND CENTER) */}
+              <div className="rounded-3xl bg-gradient-to-r from-[#1e3a8a] via-[#2563eb] to-[#7c3aed] text-white p-8 lg:p-10 shadow-[0_8px_32px_rgba(37,99,235,0.25)] relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 z-20">
+                {/* Ambient Background Glows */}
+                <div className="absolute -top-16 -right-16 w-72 h-72 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+                <div className="absolute -bottom-20 left-1/3 w-52 h-52 bg-white/5 rounded-full blur-2xl pointer-events-none"></div>
+
+                <div className="space-y-2.5 relative z-10 max-w-xl">
+                  <div className="text-sm font-semibold text-white/90 flex items-center gap-2">
+                    <span>Welcome to PLACED! 👋</span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-white/20 text-white font-bold text-[10px] backdrop-blur-md">
+                      {TPO_CONFIG.institutionName} • {TPO_CONFIG.batchYear}
+                    </span>
+                  </div>
+                  <h1 className="text-3xl lg:text-4xl font-bold text-white tracking-tight leading-tight">
+                    Placement Command Center
+                  </h1>
+                  <p className="text-sm text-white/90 font-medium leading-relaxed">
+                    Monitor campus recruitment health, launch corporate hiring drives, auto-flag low performers, and export executive PDF reports.
+                  </p>
+
+                  <div className="flex flex-wrap items-center gap-3 pt-2">
+                    <button
+                      onClick={() => setIsCreateDriveOpen(true)}
+                      className="px-4 py-2 rounded-xl bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/25 text-white font-bold text-xs shadow-md flex items-center gap-2 transition-all hover:-translate-y-0.5"
+                    >
+                      <Plus className="w-4 h-4 text-white" />
+                      <span>+ Launch Corporate Drive</span>
+                    </button>
+
+                    <button
+                      onClick={() => setIsPdfModalOpen(true)}
+                      className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/15 text-white font-bold text-xs flex items-center gap-2 transition-all hover:-translate-y-0.5"
+                    >
+                      <FileText className="w-4 h-4 text-blue-200" />
+                      <span>Executive PDF Audit</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Visual Placement Ring & Stat Counters */}
+                <div className="flex items-center gap-6 relative z-10 shrink-0">
+                  {/* Circular Score Ring */}
+                  <div className="relative w-24 h-24 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-md border border-white/20">
+                    <svg viewBox="0 0 100 100" className="w-24 h-24 transform -rotate-90 absolute inset-0">
+                      <circle cx="50" cy="50" r="38" fill="transparent" stroke="rgba(255,255,255,0.2)" strokeWidth="8" />
+                      <circle cx="50" cy="50" r="38" fill="transparent" stroke="#ffffff" strokeWidth="8" strokeDasharray="238" strokeDashoffset={238 - (238 * (totalRegistered > 0 ? (placedCount / totalRegistered) : 0))} strokeLinecap="round" className="transition-all duration-1000" />
+                    </svg>
+                    <div className="flex flex-col items-center justify-center text-center z-10">
+                      <span className="text-xl font-extrabold text-white leading-none">
+                        {totalRegistered > 0 ? `${((placedCount / totalRegistered) * 100).toFixed(0)}%` : '0%'}
+                      </span>
+                      <span className="text-[9px] text-white/70 font-medium">Placed Rate</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 4 KPI METRIC CARDS */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 
-                <motion.div whileHover={{ y: -3 }} className="bg-white p-6 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)] transition-all duration-250 ease-in-out space-y-3 relative overflow-hidden group">
+                {/* CARD 1: TOTAL REGISTERED (USERS ICON) */}
+                <motion.div whileHover={{ y: -3 }} className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition-all space-y-3 relative overflow-hidden group">
                   <div className="flex items-center justify-between">
-                    <span className="text-[12px] font-extrabold uppercase text-slate-400 tracking-wider">Total Registered</span>
-                    {/* Requirement 12: Standardized 12px Icon Container */}
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-500 to-indigo-600 text-white flex items-center justify-center font-bold shadow-md">
-                      <Users className="w-5 h-5" />
+                    <span className="text-xs font-semibold text-slate-500">Total Registered</span>
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                      <Users className="w-5 h-5 text-blue-600" />
                     </div>
                   </div>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-[32px] font-black text-[#052742] leading-none">{totalRegistered.toLocaleString()}</span>
-                    <span className="text-[12px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">{totalRegistered > 0 ? '+12.4%' : 'Live DB'}</span>
+                    <span className="text-3xl font-extrabold text-slate-900 tracking-tight leading-none">{totalRegistered.toLocaleString()}</span>
                   </div>
-                  <span className="text-[12px] text-slate-400 block font-medium">Whitelisted Student Roster</span>
+                  <div className="pt-1">
+                    <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full">
+                      {totalRegistered > 0 ? '+12.4% Active' : 'Live DB'}
+                    </span>
+                  </div>
                 </motion.div>
 
-                <motion.div whileHover={{ y: -3 }} className="bg-white p-6 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)] transition-all duration-250 ease-in-out space-y-3 relative overflow-hidden group">
+                {/* CARD 2: PASSED MOCKS (CHECK BENCHMARK ICON) */}
+                <motion.div whileHover={{ y: -3 }} className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition-all space-y-3 relative overflow-hidden group">
                   <div className="flex items-center justify-between">
-                    <span className="text-[12px] font-extrabold uppercase text-slate-400 tracking-wider">Passed Mocks</span>
-                    {/* Requirement 12: Standardized 12px Icon Container */}
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-600 text-white flex items-center justify-center font-bold shadow-md">
-                      <CheckCircle2 className="w-5 h-5" />
+                    <span className="text-xs font-semibold text-slate-500">Passed Mocks</span>
+                    <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
+                      <CheckCircle2 className="w-5 h-5 text-purple-600" />
                     </div>
                   </div>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-[32px] font-black text-[#052742] leading-none">{mockPassed.toLocaleString()}</span>
-                    <span className="text-[12px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">{mockPassRate}% Rate</span>
+                    <span className="text-3xl font-extrabold text-slate-900 tracking-tight leading-none">{mockPassed.toLocaleString()}</span>
                   </div>
-                  <span className="text-[12px] text-slate-400 block font-medium">Passed Aptitude Benchmark</span>
+                  <div className="pt-1">
+                    <span className="text-xs font-medium text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full">
+                      {mockPassRate}% Pass Benchmark
+                    </span>
+                  </div>
                 </motion.div>
 
-                <motion.div whileHover={{ y: -3 }} className="bg-white p-6 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)] transition-all duration-250 ease-in-out space-y-3 relative overflow-hidden group">
+                {/* CARD 3: INTERVIEW READY (AWARD / QUALIFIED ICON) */}
+                <motion.div whileHover={{ y: -3 }} className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition-all space-y-3 relative overflow-hidden group">
                   <div className="flex items-center justify-between">
-                    <span className="text-[12px] font-extrabold uppercase text-slate-400 tracking-wider">Interview Ready</span>
-                    {/* Requirement 12: Standardized 12px Icon Container */}
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#00A79D] to-[#00D2C4] text-[#052742] flex items-center justify-center font-black shadow-md">
-                      <Award className="w-5 h-5" />
+                    <span className="text-xs font-semibold text-slate-500">Interview Ready</span>
+                    <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+                      <Award className="w-5 h-5 text-amber-600" />
                     </div>
                   </div>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-[32px] font-black text-[#052742] leading-none">{readyForInterview.toLocaleString()}</span>
-                    <span className="text-[12px] font-bold text-[#00A79D] bg-[#00A79D]/10 px-2 py-0.5 rounded-full border border-[#00A79D]/30">{readyPercentage}% Campus</span>
+                    <span className="text-3xl font-extrabold text-slate-900 tracking-tight leading-none">{readyForInterview.toLocaleString()}</span>
                   </div>
-                  <span className="text-[12px] text-slate-400 block font-medium">Passed AI & Tech Panels</span>
+                  <div className="pt-1">
+                    <span className="text-xs font-medium text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full">
+                      {readyPercentage}% Campus Panel
+                    </span>
+                  </div>
                 </motion.div>
 
-                <motion.div whileHover={{ y: -3 }} className="bg-white p-6 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)] transition-all duration-250 ease-in-out space-y-3 relative overflow-hidden group">
+                {/* CARD 4: ACTIVE DRIVES (CORPORATE BUILDING ICON) */}
+                <motion.div whileHover={{ y: -3 }} className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition-all space-y-3 relative overflow-hidden group">
                   <div className="flex items-center justify-between">
-                    <span className="text-[12px] font-extrabold uppercase text-slate-400 tracking-wider">Active Drives</span>
-                    {/* Requirement 12: Standardized 12px Icon Container */}
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center font-bold shadow-md">
-                      <Building2 className="w-5 h-5" />
+                    <span className="text-xs font-semibold text-slate-500">Active Drives</span>
+                    <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                      <Building2 className="w-5 h-5 text-emerald-600" />
                     </div>
                   </div>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-[32px] font-black text-[#052742] leading-none">{activeDrivesCount}</span>
-                    <span className="text-[12px] font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200">{activeDrivesCount > 0 ? 'Active Drives' : '0 Drives'}</span>
+                    <span className="text-3xl font-extrabold text-slate-900 tracking-tight leading-none">{activeDrivesCount}</span>
                   </div>
-                  <span className="text-[12px] text-slate-400 block font-medium">{drives.length > 0 ? drives.map(d => d.companyName).slice(0,3).join(', ') : 'Corporate Partners'}</span>
+                  <div className="pt-1">
+                    <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full">
+                      {activeDrivesCount > 0 ? `${activeDrivesCount} Corporate Drives` : '0 Drives'}
+                    </span>
+                  </div>
                 </motion.div>
 
               </div>
 
-              {/* 5-BOX MODULAR GRID */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* MODULAR SECTION GRID */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 
-                {/* BOX 1: DONUT CHART (REQUIREMENT 9: PLACED %, READY %, NEED TRAINING %, AT RISK %) */}
-                <motion.div whileHover={{ y: -3 }} className="bg-white p-6 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)] transition-all duration-250 ease-in-out space-y-4">
-                  <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
-                    <div className="w-10 h-10 rounded-xl bg-[#00A79D]/10 text-[#00A79D] flex items-center justify-center font-bold">
-                      <PieChartIcon className="w-5 h-5" />
+                {/* BOX 1: DONUT CHART (ENHANCED EXECUTIVE UI & FAINT TRACK RING) */}
+                <motion.div whileHover={{ y: -3 }} className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all space-y-5">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold shadow-2xs">
+                        <PieChartIcon className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-slate-900 text-base tracking-tight">Placement Competency Breakdown</h3>
+                        <p className="text-xs text-slate-400 font-medium">Distribution across {totalRegistered} registered batch</p>
+                      </div>
                     </div>
-                    <div>
-                      {/* Requirement 3: Section Title 24px */}
-                      <h3 className="font-black text-[#052742] text-[18px] uppercase tracking-tight">Placement Competency Breakdown</h3>
-                      <p className="text-[12px] text-slate-400">Distribution across {totalRegistered} registered batch</p>
-                    </div>
+                    <span className="text-xs font-bold text-blue-600 hover:underline cursor-pointer flex items-center gap-1">
+                      Details <ChevronRight className="w-3.5 h-3.5 text-blue-600" />
+                    </span>
                   </div>
 
                   <div className="flex items-center justify-center py-2 relative">
-                    <svg viewBox="0 0 200 200" className="w-44 h-44 transform -rotate-90">
+                    <svg viewBox="0 0 200 200" className="w-48 h-48 transform -rotate-90">
+                      {/* Faint Background Track Ring */}
+                      <circle cx="100" cy="100" r="70" fill="transparent" stroke="#F1F5F9" strokeWidth="22" />
+                      
+                      {/* Interactive Segment Rings */}
                       <circle
                         cx="100" cy="100" r="70" fill="transparent" stroke={TIER_COLORS.placed}
-                        strokeWidth={activeDonutSegment === 0 ? "30" : "24"}
+                        strokeWidth={activeDonutSegment === 0 ? "28" : "22"}
                         strokeDasharray="102 440" strokeDashoffset="0"
                         className="transition-all duration-250 ease-in-out cursor-pointer hover:opacity-90"
                         onMouseEnter={() => setActiveDonutSegment(0)}
@@ -1023,7 +1061,7 @@ export default function TPODashboard() {
                       />
                       <circle
                         cx="100" cy="100" r="70" fill="transparent" stroke={TIER_COLORS.ready}
-                        strokeWidth={activeDonutSegment === 1 ? "30" : "24"}
+                        strokeWidth={activeDonutSegment === 1 ? "28" : "22"}
                         strokeDasharray="250 440" strokeDashoffset="-102"
                         className="transition-all duration-250 ease-in-out cursor-pointer hover:opacity-90"
                         onMouseEnter={() => setActiveDonutSegment(1)}
@@ -1031,7 +1069,7 @@ export default function TPODashboard() {
                       />
                       <circle
                         cx="100" cy="100" r="70" fill="transparent" stroke={TIER_COLORS.training}
-                        strokeWidth={activeDonutSegment === 2 ? "30" : "24"}
+                        strokeWidth={activeDonutSegment === 2 ? "28" : "22"}
                         strokeDasharray="53 440" strokeDashoffset="-352"
                         className="transition-all duration-250 ease-in-out cursor-pointer hover:opacity-90"
                         onMouseEnter={() => setActiveDonutSegment(2)}
@@ -1039,61 +1077,78 @@ export default function TPODashboard() {
                       />
                       <circle
                         cx="100" cy="100" r="70" fill="transparent" stroke={TIER_COLORS.risk}
-                        strokeWidth={activeDonutSegment === 3 ? "30" : "24"}
+                        strokeWidth={activeDonutSegment === 3 ? "28" : "22"}
                         strokeDasharray="35 440" strokeDashoffset="-405"
                         className="transition-all duration-250 ease-in-out cursor-pointer hover:opacity-90"
                         onMouseEnter={() => setActiveDonutSegment(3)}
                         onMouseLeave={() => setActiveDonutSegment(null)}
                       />
                     </svg>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
-                      <span className="text-2xl font-black text-[#052742]">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none px-4">
+                      <span className="text-3xl font-black text-slate-900 tracking-tight leading-none">
                         {activeDonutSegment !== null 
                           ? donutData[activeDonutSegment].percentage 
                           : (totalRegistered > 0 ? `${((placedCount / totalRegistered) * 100).toFixed(1)}%` : '0.0%')}
                       </span>
-                      <span className="text-[10px] text-[#00A79D] font-black uppercase tracking-wider">
-                        {activeDonutSegment !== null ? donutData[activeDonutSegment].label : 'Placed Rate'}
+                      <span className="text-[10px] text-blue-600 font-extrabold uppercase tracking-wider mt-1 max-w-[100px] truncate">
+                        {activeDonutSegment !== null 
+                          ? (activeDonutSegment === 0 ? 'Super Coder' : activeDonutSegment === 1 ? 'Interview Ready' : activeDonutSegment === 2 ? 'Need Training' : 'At Risk') 
+                          : 'Placed Rate'}
                       </span>
                     </div>
                   </div>
 
-                  <div className="space-y-2 text-xs">
-                    {donutData.map((item, idx) => (
-                      <div
-                        key={idx}
-                        onMouseEnter={() => setActiveDonutSegment(idx)}
-                        onMouseLeave={() => setActiveDonutSegment(null)}
-                        className={`flex items-center justify-between p-2.5 rounded-xl transition-all duration-250 ease-in-out cursor-pointer ${
-                          activeDonutSegment === idx ? 'bg-[#00A79D]/10 border border-[#00A79D]/40' : 'bg-[#FCFCFD] border border-[#0F172A]/[0.08]'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="w-3 h-3 rounded-full shadow-xs" style={{ backgroundColor: item.color }} />
-                          <span className="font-bold text-slate-700">{item.label}</span>
+                  {/* SLEEK 2x2 LEGEND GRID WITH COLOR TINTS */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-1">
+                    {donutData.map((item, idx) => {
+                      const isHovered = activeDonutSegment === idx
+                      let bgTint = 'bg-slate-50/70 border-slate-200/70'
+                      if (idx === 0) bgTint = isHovered ? 'bg-blue-100/80 border-blue-300' : 'bg-blue-50/60 border-blue-200/60'
+                      if (idx === 1) bgTint = isHovered ? 'bg-emerald-100/80 border-emerald-300' : 'bg-emerald-50/60 border-emerald-200/60'
+                      if (idx === 2) bgTint = isHovered ? 'bg-amber-100/80 border-amber-300' : 'bg-amber-50/60 border-amber-200/60'
+                      if (idx === 3) bgTint = isHovered ? 'bg-rose-100/80 border-rose-300' : 'bg-rose-50/60 border-rose-200/60'
+
+                      return (
+                        <div
+                          key={idx}
+                          onMouseEnter={() => setActiveDonutSegment(idx)}
+                          onMouseLeave={() => setActiveDonutSegment(null)}
+                          className={`p-3 rounded-xl border transition-all cursor-pointer space-y-1.5 ${bgTint}`}
+                        >
+                          <div className="flex items-center justify-between gap-1">
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-xs" style={{ backgroundColor: item.color }} />
+                              <span className="font-bold text-slate-800 text-[11px] truncate" title={item.label}>
+                                {item.label}
+                              </span>
+                            </div>
+                            <span className="font-extrabold text-slate-900 bg-white px-2 py-0.5 rounded-md border border-slate-200 text-[10px] shadow-2xs shrink-0">
+                              {item.count}
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center text-[10px] text-slate-500 font-semibold">
+                            <span>Share</span>
+                            <span className="font-bold text-slate-700">{item.percentage}</span>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-extrabold text-slate-500 text-[11px]">{item.percentage}</span>
-                          <span className="font-black text-[#052742] bg-white px-2 py-0.5 rounded-md border border-slate-200">{item.count}</span>
-                        </div>
-                      </div>
-                    ))}
+                      )
+                    })}
                   </div>
                 </motion.div>
 
                 {/* BOX 2: RECRUITMENT DRIVE CONVERSION */}
-                <motion.div whileHover={{ y: -3 }} className="bg-white p-6 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)] transition-all duration-250 ease-in-out space-y-4">
+                <motion.div whileHover={{ y: -3 }} className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all space-y-4">
                   <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
-                        <Building2 className="w-5 h-5" />
+                      <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                        <Building2 className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-black text-[#052742] text-[18px] uppercase tracking-tight">Active Recruitment Drives</h3>
-                        <p className="text-[12px] text-slate-400">Shortlisted vs Placed Candidates</p>
+                        <h3 className="font-bold text-slate-900 text-base tracking-tight">Active Recruitment Drives</h3>
+                        <p className="text-xs text-slate-400 font-medium">Shortlisted vs Placed Candidates</p>
                       </div>
                     </div>
-                    <span className="px-3 py-1 rounded-full bg-[#052742] text-[#00D2C4] text-[10px] font-black">
+                    <span className="px-2.5 py-1 rounded-full bg-slate-900 text-blue-300 text-[10px] font-bold">
                       {activeDrivesCount} Active
                     </span>
                   </div>
@@ -1103,130 +1158,51 @@ export default function TPODashboard() {
                       drives.map(drive => {
                         const pct = drive.shortlistedCount > 0 ? Math.round((drive.placedCount / drive.shortlistedCount) * 100) : 0
                         return (
-                          <div key={drive.id} className="p-3.5 bg-[#FCFCFD] rounded-xl border border-[#0F172A]/[0.08] space-y-2">
-                            <div className="flex justify-between items-center text-xs font-extrabold">
-                              <span className="text-[#052742]">{drive.companyName}</span>
-                              <span className="text-[#00A79D]">{drive.placedCount} Placed / {drive.shortlistedCount} Shortlisted ({pct}%)</span>
+                          <div key={drive.id} className="p-3.5 bg-slate-50/60 rounded-xl border border-slate-200/60 space-y-2">
+                            <div className="flex justify-between items-center text-xs font-bold">
+                              <span className="text-slate-900">{drive.companyName}</span>
+                              <span className="text-blue-600">{drive.placedCount} Placed / {drive.shortlistedCount} Shortlisted ({pct}%)</span>
                             </div>
-                            {/* Requirement 10: Progress Bars Animated Smooth Width Transition */}
                             <div className="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden relative">
                               <motion.div
                                 initial={{ width: 0 }}
                                 animate={{ width: `${Math.max(pct, 4)}%` }}
                                 transition={{ duration: 0.8, ease: 'easeOut' }}
-                                className="bg-gradient-to-r from-[#00A79D] to-[#00D2C4] h-full rounded-full"
+                                className="bg-blue-600 h-full rounded-full"
                               />
                             </div>
                           </div>
                         )
                       })
                     ) : (
-                      <div className="p-6 text-center bg-[#FCFCFD] rounded-xl border border-dashed border-slate-200 text-xs text-slate-400 font-medium">
+                      <div className="p-6 text-center bg-slate-50/60 rounded-xl border border-dashed border-slate-200 text-xs text-slate-400 font-medium">
                         No active hiring drives created yet. Click "+ Launch Drive" to create your first drive.
                       </div>
                     )}
                   </div>
                 </motion.div>
 
-                {/* BOX 3: AT-RISK QUEUE */}
-                <motion.div whileHover={{ y: -3 }} className="bg-white p-6 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)] transition-all duration-250 ease-in-out space-y-4">
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
-                        <AlertTriangle className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h3 className="font-black text-[#052742] text-[18px] uppercase tracking-tight">At-Risk Remediation Queue</h3>
-                        <p className="text-[12px] text-slate-400">Students scoring &lt;50% readiness</p>
-                      </div>
-                    </div>
+              </div>
 
-                    <span className="px-2.5 py-1 rounded-full bg-rose-500 text-white text-[10px] font-black animate-pulse">
-                      {lowPerformers.length} Flagged
-                    </span>
-                  </div>
-
-                  <div className="space-y-3">
-                    {lowPerformers.map(s => {
-                      const isExpanded = expandedRiskStudentId === s.id
-                      return (
-                        <div key={s.id} className="p-3.5 bg-[#FCFCFD] rounded-xl border border-[#0F172A]/[0.08] space-y-2.5">
-                          <div className="flex items-center justify-between text-xs">
-                            <div>
-                              <span className="font-black text-[#052742] block">{s.name}</span>
-                              <span className="text-[10px] text-rose-600 font-bold">{s.readinessScore}% Score • {s.department}</span>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                              <button
-                                onClick={() => setExpandedRiskStudentId(isExpanded ? null : s.id)}
-                                className="p-1 rounded bg-slate-200 hover:bg-slate-300 text-slate-700 text-[10px] font-bold flex items-center gap-1 transition-all duration-250 ease-in-out"
-                              >
-                                {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-                              </button>
-
-                              {s.bootcampEnrolled ? (
-                                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-md">Enrolled</span>
-                              ) : (
-                                <button
-                                  onClick={() => handleEnrollBootcamp(s.id)}
-                                  className="px-3.5 py-1.5 bg-[#00A79D] hover:bg-[#00D2C4] text-white font-black text-[10px] rounded-lg shadow-xs transition-all duration-250 ease-in-out hover:-translate-y-[2px] flex items-center gap-1"
-                                >
-                                  <BookOpen className="w-3.5 h-3.5" /> Enroll
-                                </button>
-                              )}
-                            </div>
-                          </div>
-
-                          <AnimatePresence>
-                            {isExpanded && (
-                              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="pt-2 border-t border-slate-200 space-y-2 text-xs">
-                                <div className="flex justify-between text-[11px] text-slate-600 font-medium">
-                                  <span>Mock Aptitude: <strong>{s.mockScore}%</strong></span>
-                                  <span>CGPA: <strong>{s.cgpa}</strong></span>
-                                </div>
-                                <div>
-                                  <span className="text-[10px] font-bold text-slate-500 block mb-1">Weakness Areas:</span>
-                                  <div className="flex flex-wrap gap-1">
-                                    {s.weaknessAreas.map((w, idx) => (
-                                      <span key={idx} className="px-2 py-0.5 bg-rose-100 text-rose-800 font-bold text-[9px] rounded border border-rose-200">
-                                        {w}
-                                      </span>
-                                    ))}
-                                  </div>
-                                </div>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </div>
-                      )
-                    })}
-                  </div>
-
-                  <button
-                    onClick={handleBatchEnrollBootcamp}
-                    className="w-full py-2.5 bg-gradient-to-r from-[#052742] to-[#00A79D] text-white font-black text-xs rounded-lg transition-all duration-250 ease-in-out hover:-translate-y-[2px] shadow-xs"
-                  >
-                    Batch Enroll All in Bootcamp
-                  </button>
-                </motion.div>
+              {/* LOWER ROW: DEPARTMENT STANDING & PLACEMENT VELOCITY */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                 {/* BOX 4: DEPARTMENT PLACEMENT STANDING */}
-                <motion.div whileHover={{ y: -3 }} className="lg:col-span-2 bg-white p-6 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)] transition-all duration-250 ease-in-out space-y-4">
+                <motion.div whileHover={{ y: -3 }} className="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all space-y-4">
                   <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
-                        <BarChart3 className="w-5 h-5" />
+                        <BarChart3 className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <h3 className="font-black text-[#052742] text-[18px] uppercase tracking-tight">Department Placement Standing</h3>
-                        <p className="text-[12px] text-slate-400">Volume, placement conversion rate & released offers</p>
+                        <h3 className="font-bold text-slate-900 text-base tracking-tight">Department Placement Standing</h3>
+                        <p className="text-xs text-slate-400 font-medium">Volume, placement conversion rate & released offers</p>
                       </div>
                     </div>
 
-                    <div className="bg-[#052742] text-white px-4 py-2 rounded-xl text-right border border-[#00A79D]/40">
-                      <span className="text-[10px] text-[#00D2C4] font-bold uppercase block">Top Performing</span>
-                      <span className="text-sm font-black">Computer Science (81.4%)</span>
+                    <div className="bg-slate-900 text-white px-3.5 py-1.5 rounded-xl text-right">
+                      <span className="text-[10px] text-blue-300 font-bold block uppercase">Top Performing</span>
+                      <span className="text-xs font-bold">{topPerformingDeptText}</span>
                     </div>
                   </div>
 
@@ -1234,10 +1210,10 @@ export default function TPODashboard() {
                     {deptBarData.map((d, idx) => (
                       <div key={idx} className="space-y-1.5 text-xs">
                         <div className="flex justify-between items-center font-bold">
-                          <span className="text-[#052742] font-black text-sm">{d.dept}</span>
+                          <span className="text-slate-900 font-bold text-sm">{d.dept}</span>
                           <div className="flex items-center gap-3 text-xs">
                             <span className="text-slate-500 font-medium">{d.count} Students</span>
-                            <span className="px-2 py-0.5 rounded-md bg-[#00A79D]/10 text-[#00A79D] font-black border border-[#00A79D]/30">
+                            <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-bold border border-emerald-200">
                               ✔ {d.placed} Placed ({d.rate})
                             </span>
                             <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 font-bold border border-blue-200">
@@ -1250,7 +1226,7 @@ export default function TPODashboard() {
                             initial={{ width: 0 }}
                             animate={{ width: `${d.percentage}%` }}
                             transition={{ duration: 1, ease: "easeOut" }}
-                            className="h-full rounded-full bg-gradient-to-r from-[#00A79D] to-[#00D2C4] shadow-xs"
+                            className="h-full rounded-full bg-blue-600"
                           ></motion.div>
                         </div>
                       </div>
@@ -1258,19 +1234,19 @@ export default function TPODashboard() {
                   </div>
                 </motion.div>
 
-                {/* BOX 5: PLACEMENT VELOCITY LINE CHART (REQUIREMENT 8: THICKER LINES, GRADIENT FILL, SOFT GRID LINES) */}
-                <motion.div whileHover={{ y: -3 }} className="lg:col-span-1 bg-white p-6 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)] transition-all duration-250 ease-in-out space-y-4">
+                {/* BOX 5: PLACEMENT VELOCITY LINE CHART */}
+                <motion.div whileHover={{ y: -3 }} className="lg:col-span-1 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all space-y-4">
                   <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
-                    <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
-                      <LineChartIcon className="w-5 h-5" />
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                      <LineChartIcon className="w-5 h-5 text-blue-600" />
                     </div>
                     <div>
-                      <h3 className="font-black text-[#052742] text-[18px] uppercase tracking-tight">Placement Velocity</h3>
-                      <p className="text-[12px] text-slate-400">Monthly offer progression 2026</p>
+                      <h3 className="font-bold text-slate-900 text-base tracking-tight">Placement Velocity</h3>
+                      <p className="text-xs text-slate-400 font-medium">Monthly offer progression 2026</p>
                     </div>
                   </div>
 
-                  <div className="w-full h-52 bg-[#FCFCFD] rounded-xl p-4 border border-[#0F172A]/[0.08] relative flex items-end justify-between px-3 pl-9">
+                  <div className="w-full h-52 bg-slate-50/60 rounded-xl p-4 border border-slate-200/60 relative flex items-end justify-between px-3 pl-9">
                     
                     {/* Y-Axis Label Scale & Reference Gridlines */}
                     <div className="absolute left-2 top-3 bottom-8 flex flex-col justify-between text-[9px] font-bold text-slate-400">
@@ -1283,62 +1259,59 @@ export default function TPODashboard() {
 
                     {/* Faint Horizontal Reference Gridlines */}
                     <div className="absolute inset-x-8 top-4 bottom-8 flex flex-col justify-between pointer-events-none">
-                      <div className="border-b border-[#0F172A]/[0.05] w-full"></div>
-                      <div className="border-b border-[#0F172A]/[0.05] w-full"></div>
-                      <div className="border-b border-[#0F172A]/[0.05] w-full"></div>
-                      <div className="border-b border-[#0F172A]/[0.05] w-full"></div>
+                      <div className="border-b border-slate-200/60 w-full"></div>
+                      <div className="border-b border-slate-200/60 w-full"></div>
+                      <div className="border-b border-slate-200/60 w-full"></div>
+                      <div className="border-b border-slate-200/60 w-full"></div>
                     </div>
 
-                    {/* Requirement 8: Thicker Line, Gradient Area Fill, Soft Gridlines */}
                     <svg className="absolute inset-0 w-full h-full p-4 pl-9" viewBox="0 0 500 150">
                       <defs>
                         <linearGradient id="areaGradientFill" x1="0%" y1="0%" x2="0%" y2="100%">
-                          <stop offset="0%" stopColor="#00A79D" stopOpacity="0.35" />
-                          <stop offset="100%" stopColor="#00A79D" stopOpacity="0.0" />
+                          <stop offset="0%" stopColor="#2563eb" stopOpacity="0.25" />
+                          <stop offset="100%" stopColor="#2563eb" stopOpacity="0.0" />
                         </linearGradient>
                       </defs>
                       
                       <path d="M 20 130 Q 80 110, 140 85 T 260 50 T 380 25 T 480 15 L 480 140 L 20 140 Z" fill="url(#areaGradientFill)" />
-                      <path d="M 20 130 Q 80 110, 140 85 T 260 50 T 380 25 T 480 15" fill="none" stroke="#00A79D" strokeWidth="5" strokeLinecap="round" />
+                      <path d="M 20 130 Q 80 110, 140 85 T 260 50 T 380 25 T 480 15" fill="none" stroke="#2563eb" strokeWidth="4" strokeLinecap="round" />
                     </svg>
 
                     {/* Data Points */}
                     {lineData.map((pt, idx) => (
                       <div key={idx} className="z-10 flex flex-col items-center group">
-                        <div className="bg-[#052742] text-[#00D2C4] text-[9px] font-black px-1.5 py-0.5 rounded shadow-xs mb-1 group-hover:scale-110 transition-transform">
+                        <div className="bg-slate-900 text-blue-300 text-[9px] font-bold px-1.5 py-0.5 rounded shadow-xs mb-1 group-hover:scale-110 transition-transform">
                           {pt.offers}
                         </div>
-                        <div className="w-4 h-4 rounded-full bg-[#00A79D] border-2 border-white shadow-md ring-2 ring-[#00A79D]/30 group-hover:scale-125 transition-transform cursor-pointer"></div>
+                        <div className="w-4 h-4 rounded-full bg-blue-600 border-2 border-white shadow-md ring-2 ring-blue-300/40 group-hover:scale-125 transition-transform cursor-pointer"></div>
                         <span className="text-[10px] font-bold text-slate-600 mt-1.5">{pt.month}</span>
                       </div>
                     ))}
                   </div>
 
-                  <div className="p-3.5 bg-[#FCFCFD] rounded-xl border border-[#0F172A]/[0.08] text-center text-xs">
+                  <div className="p-3.5 bg-slate-50/60 rounded-xl border border-slate-200/60 text-center text-xs">
                     <span className="text-slate-500 font-medium">Cumulative Offers Released: </span>
-                    <span className="font-black text-[#00A79D]">342 Offers</span>
+                    <span className="font-bold text-blue-600">{totalOffersCount} Offers</span>
                   </div>
                 </motion.div>
 
               </div>
 
-              {/* STUDENT DIRECTORY TABLE (REQUIREMENT 7: STICKY HEADER, ALTERNATING ROWS, SMOOTH HOVER) */}
-              <div className="bg-white p-6 sm:p-8 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] space-y-4">
+              {/* STUDENT DIRECTORY TABLE */}
+              <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    {/* Requirement 3: Section Title 24px */}
-                    <h3 className="font-black text-[24px] text-[#052742] leading-snug">Whitelisted Student Directory</h3>
-                    <p className="text-[12px] text-slate-500">Official student access records & placement readiness</p>
+                    <h3 className="font-bold text-xl text-slate-900 tracking-tight">Whitelisted Student Directory</h3>
+                    <p className="text-xs text-slate-500 font-medium">Official student access records & placement readiness</p>
                   </div>
-                  <button onClick={() => setActiveTab('whitelist')} className="text-xs font-bold text-[#00A79D] hover:underline flex items-center gap-1">
-                    Full Roster <ChevronRight className="w-4 h-4" />
+                  <button onClick={() => setActiveTab('whitelist')} className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-1">
+                    Full Roster <ChevronRight className="w-4 h-4 text-blue-600" />
                   </button>
                 </div>
 
-                <div className="overflow-x-auto rounded-xl border border-[#0F172A]/[0.08] max-h-[500px]">
+                <div className="overflow-x-auto rounded-xl border border-slate-200 max-h-[500px]">
                   <table className="w-full text-left text-xs text-slate-600 min-w-[640px]">
-                    {/* Requirement 7: Sticky Header #FAFBFC */}
-                    <thead className="bg-[#FAFBFC] text-slate-600 uppercase text-[10px] font-black tracking-wider border-b border-[#0F172A]/[0.08] sticky top-0 z-10">
+                    <thead className="bg-[#F8FAFC] text-slate-600 uppercase text-[10px] font-black tracking-wider border-b border-slate-200 sticky top-0 z-10">
                       <tr>
                         <th className="py-4 px-5">Student Name</th>
                         <th className="py-4 px-5">Roll No</th>
@@ -1349,36 +1322,34 @@ export default function TPODashboard() {
                         <th className="py-4 px-5 text-right">Actions</th>
                       </tr>
                     </thead>
-                    {/* Requirement 7: Alternating rows #FFFFFF and #FAFBFC */}
                     <tbody className="divide-y divide-slate-100">
                       {filteredStudents.map((s, idx) => {
                         let scoreBadgeClass = ''
                         let tierLabel = ''
                         if (s.readinessScore >= 90) {
-                          scoreBadgeClass = 'bg-[#00A79D]/10 text-[#00A79D] border border-[#00A79D]/30'
+                          scoreBadgeClass = 'bg-blue-50 text-[#2563EB] border border-blue-200'
                           tierLabel = 'Super Coder'
                         } else if (s.readinessScore >= 70) {
-                          scoreBadgeClass = 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                          scoreBadgeClass = 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                           tierLabel = 'Interview Ready'
                         } else if (s.readinessScore >= 50) {
-                          scoreBadgeClass = 'bg-amber-100 text-amber-800 border border-amber-200'
+                          scoreBadgeClass = 'bg-amber-50 text-amber-700 border border-amber-200'
                           tierLabel = 'Moderate'
                         } else {
-                          scoreBadgeClass = 'bg-rose-100 text-rose-700 border border-rose-200'
+                          scoreBadgeClass = 'bg-rose-50 text-rose-700 border border-rose-200'
                           tierLabel = 'At Risk'
                         }
 
                         return (
-                          <tr key={s.id} className={`${idx % 2 === 0 ? 'bg-white' : 'bg-[#FAFBFC]'} hover:bg-slate-100/80 transition-colors duration-250 ease-in-out`}>
-                            <td className="py-4 px-5 font-extrabold text-[#052742]">
+                          <tr key={s.id} className={`${idx % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'} hover:bg-slate-100/80 transition-colors duration-250 ease-in-out`}>
+                            <td className="py-4 px-5 font-extrabold text-[#0F172A]">
                               <div>{s.name}</div>
                               <div className="text-[10px] text-slate-400 font-normal">{s.email}</div>
                             </td>
-                            <td className="py-4 px-5 font-mono font-medium">{s.rollNo}</td>
-                            <td className="py-4 px-5">{s.department}</td>
-                            <td className="py-4 px-5 font-bold text-slate-700">{s.cgpa}</td>
+                            <td className="py-4 px-5 font-mono font-medium text-slate-700">{s.rollNo}</td>
+                            <td className="py-4 px-5 font-medium">{s.department}</td>
+                            <td className="py-4 px-5 font-bold text-slate-800">{s.cgpa}</td>
                             <td className="py-4 px-5">
-                              {/* Requirement 13: Soft, less saturated Status Badges */}
                               <span className={`px-2.5 py-1 rounded-md text-[10px] font-black ${scoreBadgeClass}`}>
                                 {s.readinessScore}% ({tierLabel})
                               </span>
@@ -1391,9 +1362,9 @@ export default function TPODashboard() {
                             <td className="py-4 px-5 text-right">
                               <button
                                 onClick={() => setSelectedStudent(s)}
-                                className="px-3.5 py-1.5 bg-[#052742] hover:bg-[#00A79D] text-white font-bold rounded-lg transition-all duration-250 ease-in-out hover:-translate-y-[2px] flex items-center gap-1.5 ml-auto"
+                                className="px-3.5 py-1.5 bg-[#0F172A] hover:bg-[#2563EB] text-white font-bold rounded-lg transition-all duration-250 ease-in-out hover:-translate-y-[2px] flex items-center gap-1.5 ml-auto"
                               >
-                                <Eye className="w-3.5 h-3.5 text-[#00D2C4]" /> View
+                                <Eye className="w-3.5 h-3.5 text-blue-200" /> View
                               </button>
                             </td>
                           </tr>
@@ -1414,11 +1385,11 @@ export default function TPODashboard() {
             <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
               
               {/* WHITELISTED DIRECTORY TABLE */}
-              <div className="bg-white p-6 sm:p-8 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] space-y-4">
+              <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
-                    <h3 className="font-black text-[24px] text-[#052742]">Whitelisted Student Directory</h3>
-                    <p className="text-xs text-slate-500">Official student access records & placement readiness</p>
+                    <h3 className="font-black text-[24px] text-[#0F172A] leading-snug">Whitelisted Student Directory</h3>
+                    <p className="text-[12px] text-slate-500">Official student access records & placement readiness</p>
                   </div>
 
                   <div className="flex flex-wrap items-center gap-3">
@@ -1429,14 +1400,14 @@ export default function TPODashboard() {
                         placeholder="Search name, roll no..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-9 pr-4 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#00A79D] bg-[#FCFCFD] text-slate-800 w-48 sm:w-64"
+                        className="pl-9 pr-4 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#2563EB] bg-[#F1F5F9] text-slate-800 w-48 sm:w-64 font-medium"
                       />
                     </div>
 
                     <select
                       value={selectedDept}
                       onChange={(e) => setSelectedDept(e.target.value)}
-                      className="py-1.5 px-3 text-xs font-bold rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#00A79D] bg-[#FCFCFD] text-slate-700"
+                      className="py-2 px-3 text-xs font-bold rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#2563EB] bg-[#F1F5F9] text-slate-700"
                     >
                       <option value="All">All Departments</option>
                       <option value="Computer Science">Computer Science</option>
@@ -1445,12 +1416,18 @@ export default function TPODashboard() {
                       <option value="Mechanical">Mechanical</option>
                       <option value="Electrical">Electrical</option>
                     </select>
+
+                    <label className="cursor-pointer px-4 py-2 bg-gradient-to-r from-[#2563EB] to-[#4F46E5] hover:opacity-95 text-white font-bold text-xs rounded-xl shadow-sm flex items-center gap-1.5 transition-all">
+                      <Upload className="w-4 h-4" />
+                      <span>Upload CSV</span>
+                      <input type="file" accept=".csv" onChange={handleFileUploadSim} className="hidden" />
+                    </label>
                   </div>
                 </div>
 
-                <div className="overflow-x-auto rounded-xl border border-[#0F172A]/[0.08] max-h-[500px]">
+                <div className="overflow-x-auto rounded-xl border border-slate-200 max-h-[500px]">
                   <table className="w-full text-left text-xs text-slate-600 min-w-[640px]">
-                    <thead className="bg-[#FAFBFC] text-slate-600 uppercase text-[10px] font-black tracking-wider border-b border-[#0F172A]/[0.08] sticky top-0 z-10">
+                    <thead className="bg-[#F8FAFC] text-slate-600 uppercase text-[10px] font-black tracking-wider border-b border-slate-200 sticky top-0 z-10">
                       <tr>
                         <th className="py-4 px-5">Student Name</th>
                         <th className="py-4 px-5">Roll No</th>
@@ -1466,28 +1443,28 @@ export default function TPODashboard() {
                         let scoreBadgeClass = ''
                         let tierLabel = ''
                         if (s.readinessScore >= 90) {
-                          scoreBadgeClass = 'bg-[#00A79D]/10 text-[#00A79D] border border-[#00A79D]/30'
+                          scoreBadgeClass = 'bg-blue-50 text-[#2563EB] border border-blue-200'
                           tierLabel = 'Super Coder'
                         } else if (s.readinessScore >= 70) {
-                          scoreBadgeClass = 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                          scoreBadgeClass = 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                           tierLabel = 'Interview Ready'
                         } else if (s.readinessScore >= 50) {
-                          scoreBadgeClass = 'bg-amber-100 text-amber-800 border border-amber-200'
+                          scoreBadgeClass = 'bg-amber-50 text-amber-700 border border-amber-200'
                           tierLabel = 'Moderate'
                         } else {
-                          scoreBadgeClass = 'bg-rose-100 text-rose-700 border border-rose-200'
+                          scoreBadgeClass = 'bg-rose-50 text-rose-700 border border-rose-200'
                           tierLabel = 'At Risk'
                         }
 
                         return (
-                          <tr key={s.id} className={`${idx % 2 === 0 ? 'bg-white' : 'bg-[#FAFBFC]'} hover:bg-slate-100/80 transition-colors duration-250 ease-in-out`}>
-                            <td className="py-4 px-5 font-extrabold text-[#052742]">
+                          <tr key={s.id} className={`${idx % 2 === 0 ? 'bg-white' : 'bg-[#F8FAFC]'} hover:bg-slate-100/80 transition-colors duration-250 ease-in-out`}>
+                            <td className="py-4 px-5 font-extrabold text-[#0F172A]">
                               <div>{s.name}</div>
                               <div className="text-[10px] text-slate-400 font-normal">{s.email}</div>
                             </td>
-                            <td className="py-4 px-5 font-mono font-medium">{s.rollNo}</td>
-                            <td className="py-4 px-5">{s.department}</td>
-                            <td className="py-4 px-5 font-bold text-slate-700">{s.cgpa}</td>
+                            <td className="py-4 px-5 font-mono font-medium text-slate-700">{s.rollNo}</td>
+                            <td className="py-4 px-5 font-medium">{s.department}</td>
+                            <td className="py-4 px-5 font-bold text-slate-800">{s.cgpa}</td>
                             <td className="py-4 px-5">
                               <span className={`px-2.5 py-1 rounded-md text-[10px] font-black ${scoreBadgeClass}`}>
                                 {s.readinessScore}% ({tierLabel})
@@ -1501,9 +1478,9 @@ export default function TPODashboard() {
                             <td className="py-4 px-5 text-right">
                               <button
                                 onClick={() => setSelectedStudent(s)}
-                                className="px-3.5 py-1.5 bg-[#052742] hover:bg-[#00A79D] text-white font-bold rounded-lg transition-all duration-250 ease-in-out hover:-translate-y-[2px] flex items-center gap-1.5 ml-auto"
+                                className="px-3.5 py-1.5 bg-[#0F172A] hover:bg-[#2563EB] text-white font-bold rounded-lg transition-all duration-250 ease-in-out hover:-translate-y-[2px] flex items-center gap-1.5 ml-auto"
                               >
-                                <Eye className="w-3.5 h-3.5 text-[#00D2C4]" /> View
+                                <Eye className="w-3.5 h-3.5 text-blue-200" /> View
                               </button>
                             </td>
                           </tr>
@@ -1512,7 +1489,6 @@ export default function TPODashboard() {
                     </tbody>
                   </table>
                 </div>
-
               </div>
 
             </motion.div>
@@ -1524,11 +1500,11 @@ export default function TPODashboard() {
           {activeTab === 'drives' && (
             <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
               
-              <div className="bg-white p-6 sm:p-8 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)]">
+              <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/80 shadow-xs space-y-2">
                 <div>
-                  <h2 className="text-[24px] font-black text-[#052742]">Recruitment Drive Simulator</h2>
-                  <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                    Create new company drives (e.g. "TCS Hiring Drive 2026"), set required marks threshold (minimum 60% score required), and invite eligible students using the <strong className="text-[#00A79D]">+ Launch Drive</strong> button above.
+                  <h2 className="text-xl font-bold text-slate-900 tracking-tight">Recruitment Drive Simulator</h2>
+                  <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">
+                    Create new company drives (e.g. "TCS Hiring Drive 2026"), set required marks threshold (minimum 60% score required), and invite eligible students using the <strong className="text-blue-600 font-bold">+ Launch Drive</strong> button above.
                   </p>
                 </div>
               </div>
@@ -1537,28 +1513,28 @@ export default function TPODashboard() {
                 {drives.map(drive => {
                   const pct = Math.round((drive.placedCount / (drive.shortlistedCount || 1)) * 100)
                   return (
-                    <motion.div whileHover={{ y: -3 }} key={drive.id} className="bg-white p-6 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_28px_rgba(15,23,42,0.08)] transition-all duration-250 ease-in-out space-y-4">
+                    <motion.div whileHover={{ y: -3 }} key={drive.id} className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all space-y-4">
                       
                       <div className="flex items-start justify-between">
                         <div className="flex items-center gap-3">
-                          <div className={`w-12 h-12 rounded-xl ${drive.logoBg} text-white font-black flex items-center justify-center text-lg shadow-xs`}>
+                          <div className="w-12 h-12 rounded-xl bg-blue-600 text-white font-extrabold flex items-center justify-center text-lg shadow-xs">
                             {drive.logoText}
                           </div>
                           <div>
-                            <h3 className="font-extrabold text-[#052742] text-base">{drive.companyName}</h3>
+                            <h3 className="font-bold text-slate-900 text-base">{drive.companyName}</h3>
                             <p className="text-xs text-slate-500 font-medium">{drive.roleTitle}</p>
                           </div>
                         </div>
 
-                        <span className="px-3 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-200">
+                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
                           {drive.ctc}
                         </span>
                       </div>
 
-                      <div className="p-4 bg-[#FCFCFD] border border-[#0F172A]/[0.08] rounded-xl space-y-2 text-xs">
+                      <div className="p-4 bg-slate-50/60 border border-slate-200/60 rounded-xl space-y-2 text-xs">
                         <div className="flex items-center justify-between">
                           <span className="text-slate-500 font-medium">Required Score Minimum:</span>
-                          <span className="font-black text-[#00A79D] bg-[#00A79D]/10 px-2.5 py-0.5 rounded-md border border-[#00A79D]/30">
+                          <span className="font-bold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-md border border-blue-200">
                             {drive.minReadinessScore}% Minimum
                           </span>
                         </div>
@@ -1575,25 +1551,25 @@ export default function TPODashboard() {
                       </div>
 
                       <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                        <div className="bg-[#FCFCFD] p-2.5 rounded-lg border border-slate-100">
-                          <span className="text-[10px] text-slate-400 block">Invited</span>
-                          <span className="font-black text-[#052742] text-sm">{drive.totalInvited}</span>
+                        <div className="bg-slate-50/80 p-2.5 rounded-xl border border-slate-200/60">
+                          <span className="text-[10px] text-slate-400 block font-medium">Invited</span>
+                          <span className="font-bold text-slate-900 text-sm">{drive.totalInvited}</span>
                         </div>
-                        <div className="bg-[#FCFCFD] p-2.5 rounded-lg border border-slate-100">
-                          <span className="text-[10px] text-slate-400 block">Shortlisted</span>
-                          <span className="font-black text-blue-600 text-sm">{drive.shortlistedCount}</span>
+                        <div className="bg-slate-50/80 p-2.5 rounded-xl border border-slate-200/60">
+                          <span className="text-[10px] text-slate-400 block font-medium">Shortlisted</span>
+                          <span className="font-bold text-blue-600 text-sm">{drive.shortlistedCount}</span>
                         </div>
-                        <div className="bg-[#FCFCFD] p-2.5 rounded-lg border border-slate-100">
-                          <span className="text-[10px] text-slate-400 block">Offers Released</span>
-                          <span className="font-black text-emerald-600 text-sm">{drive.placedCount} ({pct}%)</span>
+                        <div className="bg-slate-50/80 p-2.5 rounded-xl border border-slate-200/60">
+                          <span className="text-[10px] text-slate-400 block font-medium">Offers Released</span>
+                          <span className="font-bold text-emerald-600 text-sm">{drive.placedCount} ({pct}%)</span>
                         </div>
                       </div>
 
                       <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
-                        <span className="text-[11px] text-slate-400">Deadline: {drive.deadline}</span>
+                        <span className="text-[11px] text-slate-400 font-medium">Deadline: {drive.deadline}</span>
                         <button
                           onClick={() => showToast(`Automated reminder sent for ${drive.companyName}!`)}
-                          className="px-3.5 py-1.5 rounded-lg bg-[#052742] hover:bg-[#00A79D] text-white font-black text-xs transition-all duration-250 ease-in-out hover:-translate-y-[2px] flex items-center gap-1.5"
+                          className="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition-all shadow-xs flex items-center gap-1.5"
                         >
                           <Send className="w-3.5 h-3.5" /> Re-invite Eligible Students
                         </button>
@@ -1613,17 +1589,17 @@ export default function TPODashboard() {
           {activeTab === 'lowperformers' && (
             <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
               
-              <div className="bg-gradient-to-r from-[#F59E0B] to-[#FB7185] text-white p-6 sm:p-8 rounded-2xl shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4 border border-amber-400/20">
+              <div className="bg-gradient-to-r from-slate-900 via-blue-900 to-blue-600 text-white p-6 sm:p-8 rounded-2xl shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
-                    <AlertTriangle className="w-7 h-7 text-white" />
+                    <AlertTriangle className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <span className="px-2.5 py-0.5 rounded-full bg-white/20 text-white font-black text-[10px] uppercase tracking-wider">
+                    <span className="px-2.5 py-0.5 rounded-full bg-white/20 text-white font-bold text-[10px] uppercase tracking-wider">
                       Automated Risk Warning System
                     </span>
-                    <h2 className="text-[24px] font-black mt-1">Low-Performer Remediation System</h2>
-                    <p className="text-xs text-amber-50 mt-1 max-w-xl">
+                    <h2 className="text-2xl font-bold tracking-tight mt-1">Low-Performer Remediation System</h2>
+                    <p className="text-xs text-blue-100 font-medium mt-1 max-w-xl">
                       Automatically highlights students scoring below 50% readiness score. Enroll them into the 14-Day Placement Recovery Bootcamp.
                     </p>
                   </div>
@@ -1631,68 +1607,74 @@ export default function TPODashboard() {
 
                 <button
                   onClick={handleBatchEnrollBootcamp}
-                  className="px-5 py-3 bg-white text-[#052742] hover:bg-slate-100 font-black text-xs rounded-lg shadow-md transition-all duration-250 ease-in-out hover:-translate-y-[2px] shrink-0 flex items-center justify-center gap-2"
+                  className="px-5 py-3 bg-white text-slate-900 hover:bg-slate-50 font-bold text-xs rounded-xl shadow-md transition-all shrink-0 flex items-center justify-center gap-2"
                 >
-                  <BookOpen className="w-4 h-4 text-[#00A79D]" /> Batch Enroll All ({lowPerformers.length})
+                  <BookOpen className="w-4 h-4 text-blue-600" /> Batch Enroll All ({lowPerformers.length})
                 </button>
               </div>
 
-              <div className="bg-white p-6 sm:p-8 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] space-y-4">
+              <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-[24px] font-black text-[#052742]">At-Risk Student Queue</h3>
-                    <p className="text-xs text-slate-500">Trigger: Readiness Score &lt; 50%</p>
+                    <h3 className="text-xl font-bold text-slate-900 tracking-tight">At-Risk Student Queue</h3>
+                    <p className="text-xs text-slate-500 font-medium">Trigger: Readiness Score &lt; 50%</p>
                   </div>
-                  <span className="px-3 py-1 rounded-full bg-rose-100 text-rose-700 font-black text-xs border border-rose-200">
+                  <span className="px-3 py-1 rounded-full bg-rose-50 text-rose-700 font-bold text-xs border border-rose-200">
                     {lowPerformers.length} Action Needed
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                  {lowPerformers.map(s => (
-                    <div key={s.id} className="bg-[#FCFCFD] border border-slate-200 p-5 rounded-xl space-y-4 relative overflow-hidden">
-                      <div>
-                        <h4 className="font-black text-[#052742] text-sm">{s.name}</h4>
-                        <p className="text-xs text-slate-500">{s.rollNo} • {s.department}</p>
-                      </div>
+                {lowPerformers.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    {lowPerformers.map(s => (
+                      <div key={s.id} className="bg-slate-50/60 border border-slate-200/80 p-5 rounded-2xl space-y-4 relative overflow-hidden">
+                        <div>
+                          <h4 className="font-bold text-slate-900 text-sm">{s.name}</h4>
+                          <p className="text-xs text-slate-500 font-medium">{s.rollNo} • {s.department}</p>
+                        </div>
 
-                      <div className="p-3 bg-white rounded-lg border border-slate-200 text-xs space-y-1">
-                        <div className="flex justify-between font-bold">
-                          <span className="text-slate-600">Readiness Score:</span>
-                          <span className="text-rose-600 font-black">{s.readinessScore}% (Critically Low)</span>
+                        <div className="p-3 bg-white rounded-xl border border-slate-200/80 text-xs space-y-1">
+                          <div className="flex justify-between font-bold">
+                            <span className="text-slate-600">Readiness Score:</span>
+                            <span className="text-rose-600 font-bold">{s.readinessScore}% (Critically Low)</span>
+                          </div>
+                          <div className="flex justify-between text-[11px] text-slate-500">
+                            <span>Mock Test: {s.mockScore}%</span>
+                            <span>CGPA: {s.cgpa}</span>
+                          </div>
                         </div>
-                        <div className="flex justify-between text-[11px] text-slate-500">
-                          <span>Mock Test: {s.mockScore}%</span>
-                          <span>CGPA: {s.cgpa}</span>
-                        </div>
-                      </div>
 
-                      <div>
-                        <span className="text-[11px] font-bold text-slate-600 block mb-1">Weakness Areas:</span>
-                        <div className="flex flex-wrap gap-1">
-                          {s.weaknessAreas.map((w, idx) => (
-                            <span key={idx} className="px-2.5 py-0.5 bg-slate-200 text-slate-800 font-bold text-[10px] rounded-md border border-slate-300">
-                              {w}
-                            </span>
-                          ))}
+                        <div>
+                          <span className="text-[11px] font-bold text-slate-600 block mb-1">Weakness Areas:</span>
+                          <div className="flex flex-wrap gap-1">
+                            {s.weaknessAreas.map((w, idx) => (
+                              <span key={idx} className="px-2.5 py-0.5 bg-slate-200/80 text-slate-800 font-bold text-[10px] rounded-md border border-slate-300/60">
+                                {w}
+                              </span>
+                            ))}
+                          </div>
                         </div>
-                      </div>
 
-                      {s.bootcampEnrolled ? (
-                        <div className="py-2.5 bg-emerald-100 text-emerald-800 text-xs font-black rounded-lg text-center border border-emerald-200 flex items-center justify-center gap-2">
-                          <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Enrolled in Bootcamp
-                        </div>
-                      ) : (
-                        <button
-                          onClick={() => handleEnrollBootcamp(s.id)}
-                          className="w-full py-2.5 bg-[#00A79D] hover:bg-[#00D2C4] text-white font-black text-xs rounded-lg shadow-xs transition-all duration-250 ease-in-out hover:-translate-y-[2px] flex items-center justify-center gap-2"
-                        >
-                          <BookOpen className="w-4 h-4" /> Enroll in Bootcamp
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
+                        {s.bootcampEnrolled ? (
+                          <div className="py-2.5 bg-emerald-50 text-emerald-800 text-xs font-bold rounded-xl text-center border border-emerald-200 flex items-center justify-center gap-2">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Enrolled in Bootcamp
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => handleEnrollBootcamp(s.id)}
+                            className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition-all flex items-center justify-center gap-2"
+                          >
+                            <BookOpen className="w-4 h-4" /> Enroll in Bootcamp
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-10 text-center bg-slate-50/60 rounded-2xl border border-dashed border-slate-200 text-xs text-slate-400 font-medium">
+                    No students currently flagged as At-Risk (&lt;50% readiness score). All batch students meet or exceed readiness thresholds!
+                  </div>
+                )}
               </div>
 
             </motion.div>
@@ -1704,10 +1686,10 @@ export default function TPODashboard() {
           {activeTab === 'reports' && (
             <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
               
-              <div className="bg-white p-6 sm:p-8 rounded-2xl border border-[#0F172A]/[0.08] shadow-[0_6px_20px_rgba(15,23,42,0.05)] flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-[24px] font-black text-[#052742]">Downloadable Executive Reports</h2>
-                  <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                  <h2 className="text-xl font-bold text-slate-900 tracking-tight">Downloadable Executive Reports</h2>
+                  <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">
                     1-click reports formatted for College Deans & Placement Directors.
                   </p>
                 </div>
