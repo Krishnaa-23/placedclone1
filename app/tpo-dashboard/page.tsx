@@ -572,69 +572,6 @@ export default function TPODashboard() {
             )}
           </div>
 
-          {/* Track Selector Section */}
-          <div className="p-4 border-b border-white/10">
-            {!isSidebarCollapsed && (
-              <span className="text-[11px] font-bold uppercase tracking-widest text-[#475569] block mb-2 px-1">
-                TRACK SELECTOR
-              </span>
-            )}
-            
-            <div className="space-y-1.5">
-              <button
-                onClick={() => {
-                  setCurrentTrack('student')
-                  showToast('Switched to Student Portal Track')
-                }}
-                className={`w-full p-2.5 rounded-xl text-sm font-semibold flex items-center gap-3 transition-all ${
-                  currentTrack === 'student'
-                    ? 'bg-slate-800/80 text-white font-bold shadow-xs'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 font-medium'
-                } ${isSidebarCollapsed ? 'justify-center' : ''}`}
-              >
-                <User className={`w-4 h-4 shrink-0 ${currentTrack === 'student' ? 'text-slate-300' : 'text-slate-500'}`} />
-                {!isSidebarCollapsed && <span className="truncate">Student Track</span>}
-              </button>
-
-              <button
-                onClick={() => {
-                  setCurrentTrack('tpo')
-                  showToast('Switched to TPO Placement Officer Track')
-                }}
-                className={`w-full p-2.5 rounded-xl text-sm font-semibold flex items-center justify-between transition-all ${
-                  currentTrack === 'tpo'
-                    ? 'bg-slate-800/80 text-white font-bold shadow-xs'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 font-medium'
-                } ${isSidebarCollapsed ? 'justify-center' : ''}`}
-              >
-                <div className="flex items-center gap-3 truncate">
-                  <Building2 className={`w-4 h-4 shrink-0 ${currentTrack === 'tpo' ? 'text-slate-300' : 'text-slate-500'}`} />
-                  {!isSidebarCollapsed && <span className="truncate">TPO Track</span>}
-                </div>
-                {!isSidebarCollapsed && (
-                  <span className="w-5 h-5 rounded-full bg-slate-700/60 text-slate-300 flex items-center justify-center text-[10px]">
-                    ✓
-                  </span>
-                )}
-              </button>
-
-              <button
-                onClick={() => {
-                  setCurrentTrack('admin')
-                  showToast('Switched to Admin Governance Track')
-                }}
-                className={`w-full p-2.5 rounded-xl text-sm font-semibold flex items-center gap-3 transition-all ${
-                  currentTrack === 'admin'
-                    ? 'bg-slate-800/80 text-white font-bold shadow-xs'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 font-medium'
-                } ${isSidebarCollapsed ? 'justify-center' : ''}`}
-              >
-                <Shield className={`w-4 h-4 shrink-0 ${currentTrack === 'admin' ? 'text-slate-300' : 'text-slate-500'}`} />
-                {!isSidebarCollapsed && <span className="truncate">Admin Track</span>}
-              </button>
-            </div>
-          </div>
-
           {/* MAIN TPO TRACK NAVIGATION MENU */}
           <div className="p-4 space-y-1.5 mt-1">
             {!isSidebarCollapsed && (
