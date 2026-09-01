@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Users,
@@ -58,6 +59,7 @@ export const TPO_CONFIG = {
 }
 
 export default function TPODashboard() {
+  const router = useRouter()
   // Admin Login Authentication State (Bypassed for Direct Access)
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true)
   const [usernameInput, setUsernameInput] = useState<string>('')
@@ -101,6 +103,7 @@ export default function TPODashboard() {
     setUsernameInput('')
     setPasswordInput('')
     showToast('Logged out of Admin Officer Session')
+    router.push('/login')
   }
 
   // Collapsible Sidebar State - OPEN BY DEFAULT

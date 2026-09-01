@@ -1,7 +1,7 @@
 'use client'
 
-import TPODashboard from './tpo-dashboard/page'
+import LoginPage from './login/page'
 
 export default function Home() {
-  return <TPODashboard />
-}
+  return <LoginPage />
+}
