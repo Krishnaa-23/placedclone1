@@ -35,7 +35,7 @@ const ROLES = [
     icon: GraduationCap,
     demoUser: '2026CS108',
     demoPass: 'student123',
-    route: '/student-dashboard'
+    route: 'https://placed-student-dashboard.vercel.app/'
   },
   {
     id: 'admin' as RoleType,
@@ -74,15 +74,21 @@ export default function LoginPage() {
     e.preventDefault()
     setErrorMsg('')
 
-    if (selectedRole === 'student' || selectedRole === 'admin') {
-      setErrorMsg('This portal is coming soon. Dashboard will be available once integrated by the respective team.')
+    if (selectedRole === 'admin') {
+      setErrorMsg('Admin Governance Dashboard integration in progress by Team A.')
       return
     }
 
     setIsLoading(true)
     setTimeout(() => {
       setIsLoading(false)
-      if (activeRole) router.push(activeRole.route)
+      if (activeRole) {
+        if (activeRole.route.startsWith('http')) {
+          window.location.href = activeRole.route
+        } else {
+          router.push(activeRole.route)
+        }
+      }
     }, 700)
   }
 
