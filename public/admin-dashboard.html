@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PLACED — Admin Governance Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root{
+    --bg:#F8FAFC;
+    --surface:#FFFFFF;
+    --surface-alt:#F1F5F9;
+    --ink:#111827;
+    --ink-soft:#6B7280;
+    --ink-faint:#9CA3AF;
+    --border:#E5E7EB;
+    --border-soft:#F3F4F6;
+    --brand:#052742;
+    --brand-2:#00A79D;
+    --brand-soft:#EFF6FF;
+    --good:#22C55E;
+    --good-soft:#F0FDF4;
+    --warn:#F59E0B;
+    --warn-soft:#FFF7ED;
+    --bad:#EF4444;
+    --bad-soft:#FEF2F2;
+    --r-lg:20px;
+    --r-md:16px;
+    --r-sm:10px;
+    --sh-sm:0 1px 2px rgba(15,23,42,.05);
+    --sh-md:0 6px 20px rgba(15,23,42,.07), 0 1px 3px rgba(15,23,42,.04);
+    --sh-lg:0 20px 48px rgba(15,23,42,.14), 0 4px 10px rgba(15,23,42,.05);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    font-size:14px;
+  }
+  .mono{ font-family:'IBM Plex Mono', ui-monospace, monospace; font-feature-settings:"tnum";}
+  ::-webkit-scrollbar{width:8px;height:8px;}
+  ::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:999px;}
+  ::-webkit-scrollbar-thumb:hover{background:#94A3B8;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+  const { useState, useEffect } = React;
+
+  function AdminDashboardApp() {
+    const [activeTab, setActiveTab] = useState('overview');
+
+    return (
+      <div style={{ display: 'flex', minHeight: '100vh', background: '#F8FAFC' }}>
+        {/* Sidebar */}
+        <aside style={{ width: '260px', background: '#052742', color: '#fff', padding: '24px 20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#00A79D', display: 'flex', alignItems: 'center', justifyCenter: 'center', fontWeight: '900', color: '#052742', fontSize: '18px' }}>
+                P
+              </div>
+              <div>
+                <div style={{ fontWeight: '900', fontSize: '16px', letterSpacing: '0.05em' }}>PLACED</div>
+                <div style={{ fontSize: '10px', color: '#00A79D', fontWeight: '700', textTransform: 'uppercase' }}>Admin Governance</div>
+              </div>
+            </div>
+
+            <nav style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              {[
+                { id: 'overview', label: '📊 System Overview', badge: 'Live' },
+                { id: 'users', label: '👥 User Management', badge: '1,240' },
+                { id: 'colleges', label: '🏛️ Institutional Settings' },
+                { id: 'security', label: '🛡️ Audit & Security Logs' },
+                { id: 'analytics', label: '📈 Placement Reports' }
+              ].map(item => (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '12px 14px',
+                    borderRadius: '12px',
+                    border: 'none',
+                    background: activeTab === item.id ? '#00A79D' : 'transparent',
+                    color: activeTab === item.id ? '#052742' : '#94A3B8',
+                    fontWeight: activeTab === item.id ? '800' : '600',
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                    textAlign: 'left',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  <span>{item.label}</span>
+                  {item.badge && (
+                    <span style={{ fontSize: '10px', background: activeTab === item.id ? '#052742' : '#1E293B', color: activeTab === item.id ? '#fff' : '#94A3B8', padding: '2px 8px', borderRadius: '999px' }}>
+                      {item.badge}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </nav>
+          </div>
+
+          <div style={{ fontSize: '11px', color: '#64748B', borderTop: '1px solid #1E293B', paddingTop: '16px' }}>
+            👑 System Superadmin<br />St. Xavier's TPO Network
+          </div>
+        </aside>
+
+        {/* Main Content Area */}
+        <main style={{ flex: 1, padding: '32px 40px', overflowY: 'auto' }}>
+          
+          {/* Header */}
+          <div style={{ display: 'flex', itemsCenter: 'center', justifyContent: 'space-between', marginBottom: '32px' }}>
+            <div>
+              <h1 style={{ margin: 0, fontSize: '28px', fontWeight: '900', color: '#052742' }}>
+                Institutional Governance Console
+              </h1>
+              <p style={{ margin: '4px 0 0', color: '#64748B', fontSize: '13px', fontWeight: '500' }}>
+                Monitor system health, manage role permissions, and view campus-wide placement metrics.
+              </p>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button style={{ padding: '10px 18px', background: '#052742', color: '#fff', border: 'none', borderRadius: '12px', fontWeight: '700', fontSize: '12px', cursor: 'pointer' }}>
+                + Add New Officer
+              </button>
+              <button style={{ padding: '10px 18px', background: '#00A79D', color: '#fff', border: 'none', borderRadius: '12px', fontWeight: '700', fontSize: '12px', cursor: 'pointer' }}>
+                Export System Log (PDF)
+              </button>
+            </div>
+          </div>
+
+          {/* Top Metrics Cards */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '32px' }}>
+            {[
+              { title: 'Total Registered Students', count: '1,240', sub: 'Across 6 Departments', color: '#052742' },
+              { title: 'Active Hiring Drives', count: '18', sub: '4 Drives closing this week', color: '#00A79D' },
+              { title: 'Placement Officer Roles', count: '12', sub: 'Active TPO Accounts', color: '#2563EB' },
+              { title: 'System Health & Security', count: '99.9%', sub: '256-Bit SSL Secured', color: '#16A34A' }
+            ].map((card, idx) => (
+              <div key={idx} style={{ background: '#fff', padding: '24px', borderRadius: '20px', border: '1px solid #E2E8F0', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+                <div style={{ fontSize: '12px', fontWeight: '700', color: '#64748B', textTransform: 'uppercase' }}>{card.title}</div>
+                <div style={{ fontSize: '32px', fontWeight: '900', color: card.color, margin: '8px 0 4px' }}>{card.count}</div>
+                <div style={{ fontSize: '11px', color: '#94A3B8', fontWeight: '600' }}>{card.sub}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* User Management Table */}
+          <div style={{ background: '#fff', borderRadius: '20px', border: '1px solid #E2E8F0', padding: '24px', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+            <div style={{ display: 'flex', itemsCenter: 'center', justifyCenter: 'space-between', marginBottom: '20px' }}>
+              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '800', color: '#052742' }}>
+                Recent Security & User Logs
+              </h3>
+              <span style={{ fontSize: '12px', background: '#F1F5F9', padding: '4px 12px', borderRadius: '999px', fontWeight: '700', color: '#475569' }}>
+                ⚡ Supabase Real-Time Connected
+              </span>
+            </div>
+
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
+              <thead>
+                <tr style={{ borderBottom: '2px solid #F1F5F9', color: '#64748B', fontSize: '11px', textTransform: 'uppercase' }}>
+                  <th style={{ padding: '12px 16px' }}>User / ID</th>
+                  <th style={{ padding: '12px 16px' }}>Role</th>
+                  <th style={{ padding: '12px 16px' }}>Department</th>
+                  <th style={{ padding: '12px 16px' }}>Status</th>
+                  <th style={{ padding: '12px 16px' }}>Last Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { name: 'Dr. Ramesh Kumar', role: 'Head TPO Officer', dept: 'Computer Science', status: 'Active', action: 'Created Amazon Drive' },
+                  { name: 'Prof. Anita Sharma', role: 'Placement Officer', dept: 'Electronics (ECE)', status: 'Active', action: 'Whitelisted 42 Students' },
+                  { name: 'System Auditor', role: 'Security Admin', dept: 'Institutional IT', status: 'Verified', action: 'Exported PDF Audit Log' },
+                  { name: 'Kavya K', role: 'Student Candidate', dept: 'Information Technology', status: 'Active', action: 'Updated Readiness Test' }
+                ].map((row, idx) => (
+                  <tr key={idx} style={{ borderBottom: '1px solid #F8FAFC' }}>
+                    <td style={{ padding: '14px 16px', fontWeight: '700', color: '#052742' }}>{row.name}</td>
+                    <td style={{ padding: '14px 16px', color: '#475569', fontWeight: '600' }}>{row.role}</td>
+                    <td style={{ padding: '14px 16px', color: '#64748B' }}>{row.dept}</td>
+                    <td style={{ padding: '14px 16px' }}>
+                      <span style={{ background: '#DCFCE7', color: '#15803D', padding: '4px 10px', borderRadius: '999px', fontSize: '11px', fontWeight: '800' }}>
+                        {row.status}
+                      </span>
+                    </td>
+                    <td style={{ padding: '14px 16px', color: '#00A79D', fontWeight: '600' }}>{row.action}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+        </main>
+      </div>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<AdminDashboardApp />);
+</script>
+</body>
+</html>

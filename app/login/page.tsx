@@ -74,11 +74,6 @@ export default function LoginPage() {
     e.preventDefault()
     setErrorMsg('')
 
-    if (selectedRole === 'admin') {
-      setErrorMsg('Admin Governance Dashboard integration in progress by Team A.')
-      return
-    }
-
     setIsLoading(true)
     setTimeout(() => {
       setIsLoading(false)
