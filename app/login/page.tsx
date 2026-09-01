@@ -35,7 +35,7 @@ const ROLES = [
     icon: GraduationCap,
     demoUser: '2026CS108',
     demoPass: 'student123',
-    route: 'https://placed-student-dashboard.vercel.app/'
+    route: '/student-dashboard'
   },
   {
     id: 'admin' as RoleType,
@@ -83,11 +83,7 @@ export default function LoginPage() {
     setTimeout(() => {
       setIsLoading(false)
       if (activeRole) {
-        if (activeRole.route.startsWith('http')) {
-          window.location.href = activeRole.route
-        } else {
-          router.push(activeRole.route)
-        }
+        router.push(activeRole.route)
       }
     }, 700)
   }
