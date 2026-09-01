@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>PLACED — Admin Governance Command Center</title>
+<title>PLACED — Placement &amp; Assessment Intelligence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<!-- Supabase JS Client & PapaParse for CSV processing -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-<script src="https://cdn.tailwindcss.com"></script>
 <style>
   :root{
     --bg:#F8FAFC;
@@ -23,8 +23,8 @@
     --ink-faint:#9CA3AF;
     --border:#E5E7EB;
     --border-soft:#F3F4F6;
-    --brand:#052742;
-    --brand-2:#00A79D;
+    --brand:#2563EB;
+    --brand-2:#3B82F6;
     --brand-soft:#EFF6FF;
     --good:#22C55E;
     --good-soft:#F0FDF4;
@@ -50,167 +50,441 @@
   }
   .mono{ font-family:'IBM Plex Mono', ui-monospace, monospace; font-feature-settings:"tnum";}
   ::-webkit-scrollbar{width:8px;height:8px;}
-  ::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:999px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:8px;}
   ::-webkit-scrollbar-thumb:hover{background:#94A3B8;}
+  button{font-family:inherit;cursor:pointer;}
+  input,select,textarea{font-family:inherit;}
+  a{color:inherit;text-decoration:none;}
+  :focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:6px;}
+
+  /* ---------- shell ---------- */
+  .shell{display:flex;min-height:100vh;}
+  /* ---------- dark navy sidebar to match placed-student-dashboard ---------- */
+  .sidebar{
+    width:248px;flex-shrink:0;
+    background:#0F172A;
+    border-right:1px solid #1E293B;
+    display:flex;flex-direction:column;
+    position:fixed;top:0;left:0;bottom:0;z-index:40;
+    transition:transform .25s ease;
+  }
+  .brand{
+    display:flex;align-items:center;gap:10px;
+    padding:20px 18px 16px 18px;
+    cursor:pointer;
+    border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+  .brand-mark{
+    width:34px;height:34px;border-radius:10px;
+    background:linear-gradient(135deg,#1E3A8A 0%,#2563EB 50%,#7C3AED 100%);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 4px 14px rgba(37,99,235,.4);
+    flex-shrink:0;
+  }
+  .brand-name{font-weight:800;font-size:16.5px;letter-spacing:-.02em;line-height:1;color:#FFFFFF;}
+  .brand-sub{font-size:10.5px;color:#94A3B8;letter-spacing:.06em;text-transform:uppercase;margin-top:3px;font-weight:600;}
+  
+  .conn-badge{
+    margin:12px 14px 8px 14px;padding:7px 10px;border-radius:8px;
+    font-size:11.5px;font-weight:600;display:flex;align-items:center;gap:7px;cursor:pointer;
+    transition:all .15s;
+  }
+  .conn-badge.live{background:rgba(34,197,94,0.15);color:#4ADE80;border:1px solid rgba(34,197,94,0.25);}
+  .conn-badge.offline{background:rgba(245,158,11,0.15);color:#FBBF24;border:1px solid rgba(245,158,11,0.25);}
+  .conn-badge:hover{opacity:.9;}
+  .conn-dot{width:7px;height:7px;border-radius:50%;background:currentColor;animation:pulseDot 2s infinite;}
+  @keyframes pulseDot{0%{opacity:1}50%{opacity:.4}100%{opacity:1}}
+
+  .nav{flex:1;overflow-y:auto;padding:6px 10px;}
+  .nav::-webkit-scrollbar{width:4px;}
+  .nav::-webkit-scrollbar-thumb{background:#1E293B;border-radius:4px;}
+  .nav-item{
+    display:flex;align-items:center;gap:11px;
+    padding:9px 12px;border-radius:8px;margin-bottom:3px;
+    color:#94A3B8;font-weight:500;font-size:13.5px;
+    border:none;background:transparent;width:100%;text-align:left;
+    transition:all .15s;
+    position:relative;
+  }
+  .nav-item:hover{background:rgba(255,255,255,0.06);color:#F1F5F9;}
+  .nav-item.active{
+    background:linear-gradient(135deg,rgba(37,99,235,0.25) 0%,rgba(124,58,237,0.15) 100%);
+    color:#60A5FA;
+    font-weight:600;
+    border:1px solid rgba(37,99,235,0.3);
+  }
+  .nav-item.active:before{
+    content:"";
+    background:linear-gradient(#2563EB,#7C3AED);
+    border-radius:0 3px 3px 0;
+    width:3px;height:60%;
+    position:absolute;top:50%;left:0;
+    transform:translateY(-50%);
+  }
+  .nav-item.active svg{stroke:#60A5FA;}
+  .nav-item svg{stroke:#64748B;flex-shrink:0;transition:stroke .15s;}
+  .nav-item:hover svg{stroke:#94A3B8;}
+  .nav-item.active .nav-badge{background:#2563EB;color:#fff;}
+  .nav-badge{
+    margin-left:auto;background:#EF4444;color:#fff;font-size:10px;font-weight:700;
+    padding:1px 6px;border-radius:20px;
+  }
+  .nav-section-label{
+    font-size:10px;font-weight:700;letter-spacing:.08em;color:#64748B;
+    text-transform:uppercase;padding:16px 12px 6px 12px;
+  }
+  .sidebar-foot{
+    padding:14px 16px;border-top:1px solid #1E293B;
+    background:#0B1120;
+    display:flex;align-items:center;gap:10px;
+  }
+  .avatar{
+    width:34px;height:34px;border-radius:10px;
+    background:linear-gradient(135deg,rgba(37,99,235,0.3),rgba(124,58,237,0.2));
+    border:1.5px solid rgba(37,99,235,0.6);
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;
+    color:#93C5FD;flex-shrink:0;
+  }
+  .sidebar-foot div:nth-child(2) div:first-child{color:#F1F5F9;font-weight:600;font-size:13px;}
+  .sidebar-foot div:nth-child(2) div:last-child{color:#94A3B8;font-size:11px;}
+  .main{flex:1;margin-left:248px;display:flex;flex-direction:column;min-width:0;}
+  .header{
+    height:64px;background:rgba(248,250,252,.85);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);
+    display:flex;align-items:center;gap:14px;
+    padding:0 24px;position:sticky;top:0;z-index:30;
+  }
+  .hamburger{display:none;background:none;border:none;padding:6px;border-radius:8px;}
+  .hamburger:hover{background:var(--surface-alt);}
+  .search-box{
+    display:flex;align-items:center;gap:8px;background:var(--surface);
+    border:1px solid var(--border);border-radius:10px;padding:8px 12px;
+    width:320px;max-width:40vw;cursor:pointer;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  .search-box:hover{border-color:#CBD5E1;box-shadow:var(--sh-sm);}
+  .search-box input{border:none;outline:none;background:transparent;width:100%;font-size:13px;color:var(--ink);cursor:pointer;}
+  .search-box input::placeholder{color:var(--ink-faint);}
+  .kbd{font-size:10.5px;color:var(--ink-faint);border:1px solid var(--border);border-radius:5px;padding:1px 5px;font-family:'IBM Plex Mono',monospace;}
+  .switcher{
+    display:flex;align-items:center;gap:8px;background:var(--surface);
+    border:1px solid var(--border);border-radius:10px;padding:7px 12px;
+    font-size:13px;font-weight:600;color:var(--ink);
+  }
+  .switcher:hover{border-color:#CBD5E1;}
+  .header-spacer{flex:1;}
+  .icon-btn{
+    width:36px;height:36px;border-radius:10px;border:1px solid var(--border);
+    background:var(--surface);display:flex;align-items:center;justify-content:center;
+    position:relative;flex-shrink:0;
+  }
+  .icon-btn:hover{background:var(--surface-alt);}
+  .dot-flag{
+    position:absolute;top:7px;right:7px;width:7px;height:7px;border-radius:50%;
+    background:var(--bad);border:1.5px solid var(--surface);
+  }
+  .content{padding:24px 28px 60px 28px;max-width:1500px;width:100%;margin:0 auto;}
+  .page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;}
+  .page-title{font-size:22px;font-weight:800;letter-spacing:-.02em;}
+  .page-desc{color:var(--ink-soft);font-size:13.5px;margin-top:3px;}
+  .btn{
+    display:inline-flex;align-items:center;gap:7px;border-radius:10px;
+    padding:9px 15px;font-weight:600;font-size:13px;border:1px solid transparent;
+    transition:transform .08s, box-shadow .12s, background .12s;
+  }
+  .btn:active{transform:scale(.97);}
+  .btn-primary{background:var(--ink);color:#fff;}
+  .btn-primary:hover{box-shadow:var(--sh-md);background:#1E293B;}
+  .btn-brand{background:var(--brand);color:#fff;}
+  .btn-brand:hover{box-shadow:0 8px 20px rgba(37,99,235,.28);background:#1D4ED8;}
+  .btn-ghost{background:var(--surface);color:var(--ink);border-color:var(--border);}
+  .btn-ghost:hover{background:var(--surface-alt);}
+  .btn-sm{padding:6px 11px;font-size:12px;border-radius:8px;}
+
+  /* ---------- cards / grid ---------- */
+  .grid{display:grid;gap:16px;}
+  .grid-kpi{grid-template-columns:repeat(5,1fr);}
+  .grid-2{grid-template-columns:1.3fr 1fr;}
+  .grid-4chart{grid-template-columns:1.5fr 1fr;}
+  .card{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--r-lg);box-shadow:var(--sh-sm);
+    padding:18px 18px;
+  }
+  .card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .card-title{font-weight:700;font-size:14px;letter-spacing:-.01em;}
+  .card-sub{font-size:11.5px;color:var(--ink-faint);margin-top:2px;}
+
+  .kpi-card{position:relative;overflow:hidden;padding:16px 16px 14px 16px;}
+  .kpi-top{display:flex;align-items:flex-start;justify-content:space-between;}
+  .kpi-label{font-size:11.5px;color:var(--ink-soft);font-weight:600;text-transform:uppercase;letter-spacing:.04em;}
+  .kpi-value{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:26px;margin-top:8px;letter-spacing:-.01em;}
+  .kpi-icon-wrap{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead th{
+    text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;
+    color:var(--ink-faint);font-weight:700;padding:0 12px 10px 12px;border-bottom:1px solid var(--border);
+    user-select:none;
+  }
+  tbody td{padding:11px 12px;border-bottom:1px solid var(--border-soft);vertical-align:middle;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:var(--surface-alt);}
+  .cell-strong{font-weight:600;}
+  .cell-mono{font-family:'IBM Plex Mono',monospace;font-weight:600;}
+  .table-wrap{overflow-x:auto;}
+
+  .pill{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;font-family:'IBM Plex Mono',monospace;}
+  .pill-good{background:var(--good-soft);color:var(--good);}
+  .pill-warn{background:var(--warn-soft);color:var(--warn);}
+  .pill-bad{background:var(--bad-soft);color:var(--bad);}
+  .pill-neutral{background:var(--surface-alt);color:var(--ink-soft);}
+  .pill-brand{background:var(--brand-soft);color:var(--brand);}
+  .pill-dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+
+  .avatar-sm{
+    width:30px;height:30px;border-radius:9px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11.5px;
+    color:#fff;
+  }
+  .row-user{display:flex;align-items:center;gap:10px;cursor:pointer;}
+  .row-user-name{font-weight:600;font-size:13px;}
+  .row-user-sub{font-size:11.5px;color:var(--ink-faint);}
+
+  .quick-actions{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+  .qa-btn{
+    background:var(--surface-alt);border:1px solid var(--border-soft);border-radius:var(--r-md);
+    padding:14px 10px;text-align:left;display:flex;flex-direction:column;gap:9px;
+    transition:transform .1s, border-color .1s, background .1s;
+  }
+  .qa-btn:hover{background:var(--surface);border-color:var(--brand);transform:translateY(-2px);box-shadow:var(--sh-sm);}
+  .qa-icon{width:30px;height:30px;border-radius:9px;background:var(--brand-soft);display:flex;align-items:center;justify-content:center;}
+  .qa-icon svg{stroke:var(--brand);}
+  .qa-label{font-size:12px;font-weight:700;line-height:1.25;}
+
+  .filters-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center;}
+  .select-field{
+    border:1px solid var(--border);background:var(--surface);border-radius:9px;
+    padding:8px 10px;font-size:12.5px;color:var(--ink-soft);font-weight:500;min-width:130px;
+    outline:none;
+  }
+  .select-field:focus{border-color:var(--brand);}
+  .search-inline{
+    display:flex;align-items:center;gap:7px;border:1px solid var(--border);background:var(--surface);
+    border-radius:9px;padding:8px 11px;flex:1;min-width:180px;max-width:280px;
+  }
+  .search-inline input{border:none;outline:none;background:transparent;font-size:12.5px;width:100%;}
+
+  .gauge-wrap{position:relative;display:flex;align-items:center;justify-content:center;}
+  .gauge-label{position:absolute;font-family:'IBM Plex Mono',monospace;font-weight:700;text-align:center;}
+
+  /* modal */
+  .overlay{
+    position:fixed;inset:0;background:rgba(15,17,25,.45);backdrop-filter:blur(2px);
+    display:flex;align-items:center;justify-content:center;z-index:100;padding:20px;
+    animation:fadeIn .15s ease;
+  }
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .modal{
+    background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--sh-lg);
+    width:100%;max-width:560px;max-height:88vh;overflow-y:auto;
+    animation:pop .18s cubic-bezier(.2,.9,.3,1.2);
+  }
+  @keyframes pop{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+  .modal-head{display:flex;align-items:flex-start;justify-content:space-between;padding:20px 22px 14px 22px;border-bottom:1px solid var(--border-soft);}
+  .modal-title{font-size:16px;font-weight:800;letter-spacing:-.01em;}
+  .modal-desc{font-size:12.5px;color:var(--ink-soft);margin-top:3px;}
+  .modal-body{padding:18px 22px;display:flex;flex-direction:column;gap:14px;}
+  .modal-foot{padding:16px 22px 20px 22px;display:flex;justify-content:flex-end;gap:10px;border-top:1px solid var(--border-soft);}
+  .field-label{font-size:12px;font-weight:700;color:var(--ink-soft);margin-bottom:6px;display:block;}
+  .field-input{
+    width:100%;border:1px solid var(--border);border-radius:9px;padding:9px 11px;
+    font-size:13px;outline:none;background:var(--surface);color:var(--ink);
+  }
+  .field-input:focus{border-color:var(--brand);}
+  .chip-group{display:flex;flex-wrap:wrap;gap:6px;}
+  .chip{
+    padding:6px 11px;border-radius:8px;font-size:12px;font-weight:600;border:1px solid var(--border);
+    background:var(--surface-alt);color:var(--ink-soft);cursor:pointer;transition:all .1s;
+  }
+  .chip.selected{background:var(--brand-soft);border-color:var(--brand);color:var(--brand);}
+  .dropzone{
+    border:1.5px dashed var(--border);border-radius:var(--r-md);padding:26px 16px;
+    text-align:center;color:var(--ink-soft);font-size:12.5px;background:var(--surface-alt);
+    transition:border-color .15s, background .15s;
+  }
+  .dropzone:hover{border-color:var(--brand);background:var(--brand-soft);}
+  .close-x{background:none;border:none;padding:6px;border-radius:8px;flex-shrink:0;}
+  .close-x:hover{background:var(--surface-alt);}
+  .step-track{display:flex;gap:6px;margin-bottom:4px;}
+  .step-dot{flex:1;height:4px;border-radius:4px;background:var(--border);transition:background .2s;}
+  .step-dot.done{background:var(--brand);}
+
+  /* toasts */
+  .toast-stack{position:fixed;bottom:22px;right:22px;z-index:200;display:flex;flex-direction:column;gap:10px;align-items:flex-end;}
+  .toast{
+    background:var(--ink);color:#fff;padding:12px 16px;border-radius:12px;box-shadow:var(--sh-lg);
+    display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;max-width:340px;
+    animation:toastIn .22s cubic-bezier(.2,.9,.3,1.2);
+  }
+  @keyframes toastIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:translateX(0)}}
+  .toast-icon{width:22px;height:22px;border-radius:7px;background:var(--good);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+  .progress-track{height:6px;border-radius:6px;background:var(--surface-alt);overflow:hidden;}
+  .progress-fill{height:100%;border-radius:6px;transition:width .4s ease;}
+
+  .empty-state{padding:40px 20px;text-align:center;color:var(--ink-faint);}
+  .empty-state svg{stroke:var(--ink-faint);margin-bottom:10px;}
+  .empty-title{font-weight:700;color:var(--ink-soft);font-size:14px;margin-bottom:4px;}
+
+  .notif-row{display:flex;gap:12px;padding:14px 4px;border-bottom:1px solid var(--border-soft);align-items:flex-start;}
+  .notif-row:last-child{border-bottom:none;}
+  .notif-dot{width:9px;height:9px;border-radius:50%;margin-top:5px;flex-shrink:0;}
+  .notif-time{font-size:11px;color:var(--ink-faint);margin-top:2px;}
+
+  .tabs{display:flex;gap:4px;background:var(--surface-alt);padding:4px;border-radius:11px;width:fit-content;margin-bottom:18px;flex-wrap:wrap;}
+  .tab-btn{padding:7px 14px;border:none;background:transparent;border-radius:8px;font-size:12.5px;font-weight:600;color:var(--ink-soft);}
+  .tab-btn.active{background:var(--surface);color:var(--ink);box-shadow:var(--sh-sm);}
+
+  .mobile-scrim{display:none;position:fixed;inset:0;background:rgba(15,17,25,.4);z-index:39;}
+
+  /* Quick search modal */
+  .search-palette{
+    background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--sh-lg);
+    width:100%;max-width:580px;overflow:hidden;
+    animation:pop .18s cubic-bezier(.2,.9,.3,1.2);
+  }
+  .palette-input-wrap{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--border-soft);}
+  .palette-input{border:none;outline:none;background:transparent;font-size:15px;width:100%;color:var(--ink);font-weight:500;}
+  .palette-results{max-height:360px;overflow-y:auto;padding:8px 10px;}
+  .palette-item{
+    display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;
+    cursor:pointer;border:none;background:transparent;width:100%;text-align:left;
+  }
+  .palette-item:hover{background:var(--surface-alt);}
+  .palette-item-icon{width:28px;height:28px;border-radius:8px;background:var(--surface-alt);display:flex;align-items:center;justify-content:center;}
+  .palette-item-title{font-weight:600;font-size:13.5px;color:var(--ink);}
+  .palette-item-sub{font-size:11.5px;color:var(--ink-faint);}
+
+  @media (max-width:1100px){
+    .grid-kpi{grid-template-columns:repeat(3,1fr);}
+    .grid-2, .grid-4chart{grid-template-columns:1fr;}
+    .quick-actions{grid-template-columns:repeat(3,1fr);}
+  }
+  @media (max-width:760px){
+    .sidebar{transform:translateX(-100%);}
+    .sidebar.open{transform:translateX(0);}
+    .main{margin-left:0;}
+    .hamburger{display:flex;align-items:center;justify-content:center;}
+    .search-box{display:none;}
+    .grid-kpi{grid-template-columns:repeat(2,1fr);}
+    .quick-actions{grid-template-columns:repeat(2,1fr);}
+    .content{padding:18px 14px 50px 14px;}
+    .mobile-scrim.show{display:block;}
+    .switcher span.sw-full{display:none;}
+  }
 </style>
 </head>
 <body>
 <div id="root"></div>
-
 <script type="text/babel">
-  const { useState, useEffect } = React;
+const {useState,useEffect,useRef,useMemo,createContext,useContext,useCallback} = React;
 
-  function AdminDashboardApp() {
-    const [activeTab, setActiveTab] = useState('overview');
+/* ============================== SUPABASE CLIENT CONFIG ============================== */
+const DEFAULT_SUPABASE_URL = localStorage.getItem("placed_supabase_url") || "https://fslpzikstscutxfrnxst.supabase.co";
+const DEFAULT_SUPABASE_KEY = localStorage.getItem("placed_supabase_key") || "sb_publishable_0u-uFjMu-4oyzzG-rVhaHg_07QaW4BQ";
 
-    return (
-      <div style={{ display: 'flex', minHeight: '100vh', background: '#F8FAFC' }}>
-        {/* Sidebar */}
-        <aside style={{ width: '260px', background: '#052742', color: '#fff', padding: '24px 20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#00A79D', display: 'flex', alignItems: 'center', justifyCenter: 'center', fontWeight: '900', color: '#052742', fontSize: '18px' }}>
-                P
-              </div>
-              <div>
-                <div style={{ fontWeight: '900', fontSize: '16px', letterSpacing: '0.05em' }}>PLACED</div>
-                <div style={{ fontSize: '10px', color: '#00A79D', fontWeight: '700', textTransform: 'uppercase' }}>Admin Governance</div>
-              </div>
-            </div>
-
-            <nav style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              {[
-                { id: 'overview', label: '📊 System Overview', badge: 'Live' },
-                { id: 'users', label: '👥 User Management', badge: '1,240' },
-                { id: 'colleges', label: '🏛️ Institutional Settings' },
-                { id: 'security', label: '🛡️ Audit & Security Logs' },
-                { id: 'analytics', label: '📈 Placement Reports' }
-              ].map(item => (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '12px 14px',
-                    borderRadius: '12px',
-                    border: 'none',
-                    background: activeTab === item.id ? '#00A79D' : 'transparent',
-                    color: activeTab === item.id ? '#052742' : '#94A3B8',
-                    fontWeight: activeTab === item.id ? '800' : '600',
-                    cursor: 'pointer',
-                    fontSize: '13px',
-                    textAlign: 'left',
-                    transition: 'all 0.2s'
-                  }}
-                >
-                  <span>{item.label}</span>
-                  {item.badge && (
-                    <span style={{ fontSize: '10px', background: activeTab === item.id ? '#052742' : '#1E293B', color: activeTab === item.id ? '#fff' : '#94A3B8', padding: '2px 8px', borderRadius: '999px' }}>
-                      {item.badge}
-                    </span>
-                  )}
-                </button>
-              ))}
-            </nav>
-          </div>
-
-          <div style={{ fontSize: '11px', color: '#64748B', borderTop: '1px solid #1E293B', paddingTop: '16px' }}>
-            👑 System Superadmin<br />St. Xavier's TPO Network
-          </div>
-        </aside>
-
-        {/* Main Content Area */}
-        <main style={{ flex: 1, padding: '32px 40px', overflowY: 'auto' }}>
-          
-          {/* Header */}
-          <div style={{ display: 'flex', itemsCenter: 'center', justifyContent: 'space-between', marginBottom: '32px' }}>
-            <div>
-              <h1 style={{ margin: 0, fontSize: '28px', fontWeight: '900', color: '#052742' }}>
-                Institutional Governance Console
-              </h1>
-              <p style={{ margin: '4px 0 0', color: '#64748B', fontSize: '13px', fontWeight: '500' }}>
-                Monitor system health, manage role permissions, and view campus-wide placement metrics.
-              </p>
-            </div>
-            
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <button style={{ padding: '10px 18px', background: '#052742', color: '#fff', border: 'none', borderRadius: '12px', fontWeight: '700', fontSize: '12px', cursor: 'pointer' }}>
-                + Add New Officer
-              </button>
-              <button style={{ padding: '10px 18px', background: '#00A79D', color: '#fff', border: 'none', borderRadius: '12px', fontWeight: '700', fontSize: '12px', cursor: 'pointer' }}>
-                Export System Log (PDF)
-              </button>
-            </div>
-          </div>
-
-          {/* Top Metrics Cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '32px' }}>
-            {[
-              { title: 'Total Registered Students', count: '1,240', sub: 'Across 6 Departments', color: '#052742' },
-              { title: 'Active Hiring Drives', count: '18', sub: '4 Drives closing this week', color: '#00A79D' },
-              { title: 'Placement Officer Roles', count: '12', sub: 'Active TPO Accounts', color: '#2563EB' },
-              { title: 'System Health & Security', count: '99.9%', sub: '256-Bit SSL Secured', color: '#16A34A' }
-            ].map((card, idx) => (
-              <div key={idx} style={{ background: '#fff', padding: '24px', borderRadius: '20px', border: '1px solid #E2E8F0', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
-                <div style={{ fontSize: '12px', fontWeight: '700', color: '#64748B', textTransform: 'uppercase' }}>{card.title}</div>
-                <div style={{ fontSize: '32px', fontWeight: '900', color: card.color, margin: '8px 0 4px' }}>{card.count}</div>
-                <div style={{ fontSize: '11px', color: '#94A3B8', fontWeight: '600' }}>{card.sub}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* User Management Table */}
-          <div style={{ background: '#fff', borderRadius: '20px', border: '1px solid #E2E8F0', padding: '24px', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
-            <div style={{ display: 'flex', itemsCenter: 'center', justifyCenter: 'space-between', marginBottom: '20px' }}>
-              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: '800', color: '#052742' }}>
-                Recent Security & User Logs
-              </h3>
-              <span style={{ fontSize: '12px', background: '#F1F5F9', padding: '4px 12px', borderRadius: '999px', fontWeight: '700', color: '#475569' }}>
-                ⚡ Supabase Real-Time Connected
-              </span>
-            </div>
-
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
-              <thead>
-                <tr style={{ borderBottom: '2px solid #F1F5F9', color: '#64748B', fontSize: '11px', textTransform: 'uppercase' }}>
-                  <th style={{ padding: '12px 16px' }}>User / ID</th>
-                  <th style={{ padding: '12px 16px' }}>Role</th>
-                  <th style={{ padding: '12px 16px' }}>Department</th>
-                  <th style={{ padding: '12px 16px' }}>Status</th>
-                  <th style={{ padding: '12px 16px' }}>Last Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  { name: 'Dr. Ramesh Kumar', role: 'Head TPO Officer', dept: 'Computer Science', status: 'Active', action: 'Created Amazon Drive' },
-                  { name: 'Prof. Anita Sharma', role: 'Placement Officer', dept: 'Electronics (ECE)', status: 'Active', action: 'Whitelisted 42 Students' },
-                  { name: 'System Auditor', role: 'Security Admin', dept: 'Institutional IT', status: 'Verified', action: 'Exported PDF Audit Log' },
-                  { name: 'Kavya K', role: 'Student Candidate', dept: 'Information Technology', status: 'Active', action: 'Updated Readiness Test' }
-                ].map((row, idx) => (
-                  <tr key={idx} style={{ borderBottom: '1px solid #F8FAFC' }}>
-                    <td style={{ padding: '14px 16px', fontWeight: '700', color: '#052742' }}>{row.name}</td>
-                    <td style={{ padding: '14px 16px', color: '#475569', fontWeight: '600' }}>{row.role}</td>
-                    <td style={{ padding: '14px 16px', color: '#64748B' }}>{row.dept}</td>
-                    <td style={{ padding: '14px 16px' }}>
-                      <span style={{ background: '#DCFCE7', color: '#15803D', padding: '4px 10px', borderRadius: '999px', fontSize: '11px', fontWeight: '800' }}>
-                        {row.status}
-                      </span>
-                    </td>
-                    <td style={{ padding: '14px 16px', color: '#00A79D', fontWeight: '600' }}>{row.action}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-        </main>
-      </div>
-    );
+let supabase = null;
+if(window.supabase && DEFAULT_SUPABASE_URL && DEFAULT_SUPABASE_KEY){
+  try {
+    supabase = window.supabase.createClient(DEFAULT_SUPABASE_URL, DEFAULT_SUPABASE_KEY);
+  } catch(err){
+    console.error("Supabase init error:", err);
   }
+}
 
-  ReactDOM.createRoot(document.getElementById('root')).render(<AdminDashboardApp />);
-</script>
-</body>
-</html>
+/* ============================== ICONS ============================== */
+function Icon({name,size=18,color="currentColor",strokeWidth=1.8}){
+  const p = {width:size,height:size,viewBox:"0 0 24 24",fill:"none",stroke:color,strokeWidth:strokeWidth,strokeLinecap:"round",strokeLinejoin:"round"};
+  switch(name){
+    case "home": return <svg {...p}><path d="M4 11.5 12 5l8 6.5"/><path d="M6 10.5V19a1 1 0 0 0 1 1h3.5v-5h3V20H17a1 1 0 0 0 1-1v-8.5"/></svg>;
+    case "users": return <svg {...p}><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c.7-3 2.8-4.5 5.5-4.5s4.8 1.5 5.5 4.5"/><circle cx="17" cy="9" r="2.3"/><path d="M15.2 14.6c2 .2 3.5 1.6 4.1 4"/></svg>;
+    case "building": return <svg {...p}><rect x="5" y="3.5" width="10" height="17" rx="1"/><path d="M15 9h4v11.5H15"/><line x1="8" y1="7" x2="8" y2="7.01"/><line x1="12" y1="7" x2="12" y2="7.01"/><line x1="8" y1="11" x2="8" y2="11.01"/><line x1="12" y1="11" x2="12" y2="11.01"/><line x1="8" y1="15" x2="8" y2="15.01"/><line x1="12" y1="15" x2="12" y2="15.01"/></svg>;
+    case "layers": return <svg {...p}><path d="M12 3.5 3.5 8 12 12.5 20.5 8 12 3.5Z"/><path d="M3.5 12 12 16.5 20.5 12"/><path d="M3.5 16 12 20.5 20.5 16"/></svg>;
+    case "check-sq": return <svg {...p}><rect x="3.5" y="3.5" width="17" height="17" rx="3.5"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>;
+    case "briefcase": return <svg {...p}><rect x="3" y="7.5" width="18" height="12" rx="2"/><path d="M8.5 7.5V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v1.5"/><line x1="3" y1="12.5" x2="21" y2="12.5"/><path d="M10.5 12.5h3v2h-3z"/></svg>;
+    case "activity": return <svg {...p}><path d="M3 12.5h4l2-7 4 14 2-9 2 2h4"/></svg>;
+    case "file": return <svg {...p}><path d="M7 3.5h7l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-16a1 1 0 0 1 1-1Z"/><path d="M14 3.5V8h4"/><line x1="8.5" y1="13" x2="15.5" y2="13"/><line x1="8.5" y1="16.5" x2="13" y2="16.5"/></svg>;
+    case "bell": return <svg {...p}><path d="M6 10.5a6 6 0 0 1 12 0c0 4 1.5 5.5 1.5 5.5H4.5S6 14.5 6 10.5Z"/><path d="M10 19a2 2 0 0 0 4 0"/></svg>;
+    case "sliders": return <svg {...p}><line x1="5" y1="5" x2="5" y2="19"/><line x1="12" y1="5" x2="12" y2="19"/><line x1="19" y1="5" x2="19" y2="19"/><circle cx="5" cy="9" r="2"/><circle cx="12" cy="15" r="2"/><circle cx="19" cy="7" r="2"/></svg>;
+    case "search": return <svg {...p}><circle cx="10.5" cy="10.5" r="6.5"/><line x1="19.5" y1="19.5" x2="15.3" y2="15.3"/></svg>;
+    case "chevron-down": return <svg {...p}><polyline points="6 9 12 15 18 9"/></svg>;
+    case "chevron-right": return <svg {...p}><polyline points="9 6 15 12 9 18"/></svg>;
+    case "x": return <svg {...p}><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>;
+    case "menu": return <svg {...p}><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>;
+    case "plus": return <svg {...p}><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>;
+    case "upload": return <svg {...p}><path d="M12 15.5V4"/><path d="M7 8.5 12 4l5 4.5"/><path d="M5 15.5v3a1.5 1.5 0 0 0 1.5 1.5h11a1.5 1.5 0 0 0 1.5-1.5v-3"/></svg>;
+    case "download": return <svg {...p}><path d="M12 4v11.5"/><path d="M7 11l5 4.5 5-4.5"/><path d="M5 19.5h14"/></svg>;
+    case "alert": return <svg {...p}><path d="M10.3 4.5 2.9 18a1.5 1.5 0 0 0 1.3 2.2h15.6a1.5 1.5 0 0 0 1.3-2.2L13.7 4.5a1.5 1.5 0 0 0-2.6 0Z"/><line x1="12" y1="10" x2="12" y2="14"/><line x1="12" y1="17" x2="12" y2="17.01"/></svg>;
+    case "mail": return <svg {...p}><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="M3.5 6.5 12 13l8.5-6.5"/></svg>;
+    case "user-check": return <svg {...p}><circle cx="9.5" cy="8" r="3.2"/><path d="M3.5 19c.6-3.2 2.9-4.8 6-4.8s5.4 1.6 6 4.8"/><polyline points="16 9 18 11 21.5 6.5"/></svg>;
+    case "arrow-up-right": return <svg {...p}><line x1="7" y1="17" x2="17" y2="7"/><polyline points="8 7 17 7 17 16"/></svg>;
+    case "arrow-down-right": return <svg {...p}><line x1="7" y1="7" x2="17" y2="17"/><polyline points="17 8 17 17 8 17"/></svg>;
+    case "gauge": return <svg {...p}><path d="M4 15.5a8 8 0 0 1 16 0"/><line x1="12" y1="15.5" x2="15.5" y2="11"/><circle cx="12" cy="15.5" r="1.4" fill={color} stroke="none"/></svg>;
+    case "target": return <svg {...p}><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill={color} stroke="none"/></svg>;
+    case "clock": return <svg {...p}><circle cx="12" cy="12" r="8.3"/><path d="M12 7.5V12l3 2"/></svg>;
+    case "check": return <svg {...p}><polyline points="5 12.5 10 17.5 19 6.5"/></svg>;
+    case "filter": return <svg {...p}><path d="M4 5.5h16l-6 7.5v6l-4 2v-8Z"/></svg>;
+    case "trend": return <svg {...p}><polyline points="4 16 9.5 10.5 13.5 14.5 20 7"/><polyline points="14.5 7 20 7 20 12.5"/></svg>;
+    case "grad": return <svg {...p}><path d="M2.5 9 12 4.5 21.5 9 12 13.5 2.5 9Z"/><path d="M6.5 11v4.8c0 1.3 2.5 2.7 5.5 2.7s5.5-1.4 5.5-2.7V11"/><path d="M21.5 9v6"/></svg>;
+    case "database": return <svg {...p}><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>;
+    case "cloud": return <svg {...p}><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>;
+    default: return null;
+  }
+}
+
+/* ============================== READINESS & RISK CALCULATION ============================== */
+function computeReadiness(a,c,comm,resume,interviewDone){
+  const base = (Number(a)||0)*0.25 + (Number(c)||0)*0.35 + (Number(comm)||0)*0.2 + (Number(resume)||0)*0.15;
+  return Math.min(100, Math.round(base + (interviewDone?5:0)));
+}
+function riskOf(score){ if(score>=75) return "Low"; if(score>=55) return "Medium"; return "High"; }
+
+const instColor = (short)=>({CIE:"#2563EB",VRTU:"#22C55E",AGCE:"#F59E0B",BIS:"#EF4444",KPC:"#06B6D4",SMCT:"#7C3AED"}[short] || "#2563EB");
+
+/* ============================== CSV DOWNLOAD HELPER ============================== */
+function exportCSV(filename, headers, rows){
+  const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+/* ============================== TOAST CONTEXT ============================== */
+const ToastCtx = createContext(null);
+function ToastProvider({children}){
+  const [toasts,setToasts] = useState([]);
+  const push = (msg)=>{
+    const id = Date.now()+Math.random();
+    setToasts(t=>[...t,{id,msg}]);
+    setTimeout(()=> setToasts(t=>t.filter(x=>x.id!==id)), 3400);
+  };
+  return <ToastCtx.Provider value={push}>
+    {children}
+    <div className="toast-stack">
+      {toasts.map(t=>(
+        <div className="toast" key={t.id}>
+          <div className="toast-icon"><Icon name="check" size={13} color="#fff" strokeWidth={2.4}/></div>
+          <span>{t.msg}</span>
+        </div>
+      ))}
+    </div>
+  </ToastCtx.Provider>;
+}
+function useToast(){ return useContext(Toast
+
