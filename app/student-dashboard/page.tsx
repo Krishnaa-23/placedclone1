@@ -12,10 +12,10 @@ export default function StudentDashboardPage() {
 
   return (
     <div className="w-full h-screen bg-slate-950 overflow-hidden relative">
-      {/* Log Out button styled identically to the Admin Log Out button image */}
+      {/* Log Out button precisely aligned to the vertical center line and border radius of the top header icon buttons */}
       <button
         onClick={handleLogout}
-        className="fixed top-3.5 right-[255px] xl:right-[265px] z-50 bg-[#FEF2F2] hover:bg-rose-100 text-[#EF4444] font-bold text-xs px-3.5 py-1.5 rounded-xl border border-rose-300 shadow-sm transition-all cursor-pointer active:scale-95"
+        className="fixed top-[15px] right-[212px] sm:right-[216px] z-50 h-[34px] bg-[#FEF2F2] hover:bg-rose-100 text-[#EF4444] font-extrabold text-xs px-3.5 rounded-xl border border-rose-200 shadow-xs transition-all flex items-center justify-center cursor-pointer active:scale-95 leading-none"
         title="Log Out of Student Session"
       >
         Log Out
