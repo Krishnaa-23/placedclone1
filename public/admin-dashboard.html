@@ -1549,7 +1549,7 @@ function Header({setOpen,setView,openModal,selectedInst,setSelectedInst,institut
         )}
       </div>
       <div className="header-spacer"></div>
-      <button className="btn btn-brand btn-sm" onClick={()=>openModal("assessment")}><Icon name="plus" size={14} color="#fff"/> New assessment</button> <button className="btn btn-ghost btn-sm" onClick={() => { if (window.top) window.top.location.href="/login"; else window.location.href="/login"; }} style={{ color: "#EF4444", borderColor: "rgba(239,68,68,0.3)", background: "#FEF2F2", fontWeight: "700", marginLeft: "8px" }}>Log Out</button>
+      <button className="btn btn-brand btn-sm" onClick={()=>openModal("assessment")}><Icon name="plus" size={14} color="#fff"/> New assessment</button>
       <div style={{position:"relative"}} ref={notifRef}>
         <button className="icon-btn" onClick={()=>{setNotifOpen(v=>!v); }}>
           <Icon name="bell" size={16} color="var(--ink-soft)"/>
