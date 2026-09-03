@@ -74,7 +74,7 @@ export default function LoginPage() {
     e.preventDefault()
     setErrorMsg('')
 
-    if (selectedRole === 'student' || selectedRole === 'admin') {
+    if (selectedRole === 'admin') {
       setErrorMsg('This portal dashboard is being updated with the latest repository changes by the team.')
       return
     }
