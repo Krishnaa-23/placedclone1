@@ -756,44 +756,45 @@ export default function TPODashboard() {
       {/* ========================================================================= */}
       {/* MAIN CONTENT WRAPPER */}
       {/* ========================================================================= */}
-      <div className={`flex-1 flex flex-col transition-all duration-250 ease-in-out ${
+      <div className={`flex-1 min-w-0 w-full flex flex-col transition-all duration-250 ease-in-out overflow-x-hidden ${
         isSidebarCollapsed ? 'md:ml-20' : 'md:ml-64'
       }`}>
         
-        {/* TOP HEADER BAR (MATCHING STUDENT DASHBOARD IMAGE 2 - NO GAP NEXT TO SIDEBAR) */}
-        <header className="bg-white border-b border-slate-200/80 sticky top-0 z-30 shadow-xs">
-          <div className="w-full px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+        {/* TOP HEADER BAR */}
+        <header className="bg-white border-b border-slate-200/80 sticky top-0 z-30 shadow-xs w-full">
+          <div className="w-full px-3.5 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2 sm:gap-4">
             
-            {/* LEFT SIDE: MOBILE MENU + GLOBAL SEARCH BAR (DIRECTLY ADJACENT TO SIDEBAR) */}
-            <div className="flex items-center gap-3 flex-1 max-w-lg">
+            {/* LEFT SIDE: MOBILE MENU + GLOBAL SEARCH BAR */}
+            <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0 max-w-lg">
               <button
                 onClick={() => setIsMobileSidebarOpen(true)}
-                className="p-2 rounded-lg bg-slate-100 text-[#052742] md:hidden"
+                className="p-2 rounded-lg bg-slate-100 text-[#052742] md:hidden shrink-0"
+                aria-label="Open Mobile Menu"
               >
                 <Menu className="w-5 h-5" />
               </button>
 
-              <div className="relative w-full">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+              <div className="relative w-full min-w-0">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
                 <input
                   type="text"
-                  placeholder="Search pages, assessments, drives, classes..."
+                  placeholder="Search pages, drives..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 text-xs rounded-xl bg-slate-100/80 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 text-slate-800 font-medium transition-all"
+                  className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-100/80 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 text-slate-800 font-medium transition-all"
                 />
               </div>
             </div>
 
             {/* RIGHT SIDE: NOTIFICATIONS & PROFILE BADGE */}
-            <div className="flex items-center gap-3 shrink-0">
-              <div className="relative cursor-pointer p-2 rounded-xl hover:bg-slate-100 transition-colors" title="Notifications">
+            <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+              <div className="relative cursor-pointer p-1.5 sm:p-2 rounded-xl hover:bg-slate-100 transition-colors" title="Notifications">
                 <Bell className="w-5 h-5 text-slate-600" />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-blue-600 rounded-full ring-2 ring-white"></span>
+                <span className="absolute top-1 right-1 w-2 h-2 bg-blue-600 rounded-full ring-2 ring-white"></span>
               </div>
 
-              <div className="flex items-center gap-2.5 border-l border-slate-200 pl-3">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-slate-900 to-blue-600 text-white font-black flex items-center justify-center text-xs ring-2 ring-blue-500/20 shrink-0 shadow-xs">
+              <div className="flex items-center gap-2 border-l border-slate-200 pl-2 sm:pl-3">
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-slate-900 to-blue-600 text-white font-black flex items-center justify-center text-xs ring-2 ring-blue-500/20 shrink-0 shadow-xs">
                   TPO
                 </div>
                 <div className="hidden lg:flex flex-col text-left">
@@ -802,7 +803,7 @@ export default function TPODashboard() {
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 text-slate-700 font-bold text-xs border border-slate-200 ml-2 transition-all shadow-2xs"
+                  className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 text-slate-700 font-bold text-[11px] sm:text-xs border border-slate-200 transition-all shadow-2xs whitespace-nowrap"
                   title="Log Out of Admin Session"
                 >
                   Log Out
@@ -813,7 +814,7 @@ export default function TPODashboard() {
           </div>
         </header>
 
-        {/* ELEGANT BACKGROUND WATERMARK (DYNAMIC SMOOTH TRANSITION ON SIDEBAR OPEN/COLLAPSE MATCHING SCREENSHOTS) */}
+        {/* ELEGANT BACKGROUND WATERMARK */}
         <div className={`fixed top-0 bottom-0 right-0 flex items-center justify-center pointer-events-none z-0 overflow-hidden select-none transition-all duration-300 ease-in-out ${
           isSidebarCollapsed ? 'left-0 md:left-20' : 'left-0 md:left-64'
         }`}>
@@ -822,67 +823,67 @@ export default function TPODashboard() {
           </span>
         </div>
 
-        {/* MAIN CONTENT BODY (EXPANDS FULL WIDTH & MOVES LEFT ON SIDEBAR COLLAPSE) */}
-        <main className="w-full px-6 lg:px-8 py-8 flex-1 space-y-8 relative z-10">
+        {/* MAIN CONTENT BODY */}
+        <main className="w-full px-3.5 sm:px-6 lg:px-8 py-5 sm:py-8 flex-1 space-y-6 sm:space-y-8 relative z-10 max-w-full overflow-x-hidden">
           
           {/* ========================================================================= */}
           {/* TAB 1: CAMPUS COMMAND CENTER */}
           {/* ========================================================================= */}
           {activeTab === 'command' && (
-            <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
+            <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="space-y-6 sm:space-y-8 w-full max-w-full">
               
               {/* HERO BANNER CARD (PLACEMENT COMMAND CENTER) */}
-              <div className="rounded-3xl bg-gradient-to-r from-[#1e3a8a] via-[#2563eb] to-[#7c3aed] text-white p-8 lg:p-10 shadow-[0_8px_32px_rgba(37,99,235,0.25)] relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 z-20">
+              <div className="rounded-2xl sm:rounded-3xl bg-gradient-to-r from-[#1e3a8a] via-[#2563eb] to-[#7c3aed] text-white p-5 sm:p-8 lg:p-10 shadow-[0_8px_32px_rgba(37,99,235,0.25)] relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-6 z-20 w-full max-w-full">
                 {/* Ambient Background Glows */}
                 <div className="absolute -top-16 -right-16 w-72 h-72 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
                 <div className="absolute -bottom-20 left-1/3 w-52 h-52 bg-white/5 rounded-full blur-2xl pointer-events-none"></div>
 
-                <div className="space-y-2.5 relative z-10 max-w-xl">
-                  <div className="text-sm font-semibold text-white/90 flex items-center gap-2">
+                <div className="space-y-2.5 relative z-10 w-full max-w-xl">
+                  <div className="text-xs sm:text-sm font-semibold text-white/90 flex flex-wrap items-center gap-2">
                     <span>Welcome to PLACED! 👋</span>
                     <span className="px-2.5 py-0.5 rounded-full bg-white/20 text-white font-bold text-[10px] backdrop-blur-md">
                       {TPO_CONFIG.institutionName} • {TPO_CONFIG.batchYear}
                     </span>
                   </div>
-                  <h1 className="text-3xl lg:text-4xl font-bold text-white tracking-tight leading-tight">
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white tracking-tight leading-tight">
                     Placement Command Center
                   </h1>
-                  <p className="text-sm text-white/90 font-medium leading-relaxed">
+                  <p className="text-xs sm:text-sm text-white/90 font-medium leading-relaxed">
                     Monitor campus recruitment health, launch corporate hiring drives, auto-flag low performers, and export executive PDF reports.
                   </p>
 
-                  <div className="flex flex-wrap items-center gap-3 pt-2">
+                  <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2.5 sm:gap-3 pt-2 w-full">
                     <button
                       onClick={() => setIsCreateDriveOpen(true)}
-                      className="px-4 py-2 rounded-xl bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/25 text-white font-bold text-xs shadow-md flex items-center gap-2 transition-all hover:-translate-y-0.5"
+                      className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/25 text-white font-bold text-xs shadow-md flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5 active:scale-95"
                     >
-                      <Plus className="w-4 h-4 text-white" />
+                      <Plus className="w-4 h-4 text-white shrink-0" />
                       <span>+ Launch Corporate Drive</span>
                     </button>
 
                     <button
                       onClick={() => setIsPdfModalOpen(true)}
-                      className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/15 text-white font-bold text-xs flex items-center gap-2 transition-all hover:-translate-y-0.5"
+                      className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/15 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5 active:scale-95"
                     >
-                      <FileText className="w-4 h-4 text-blue-200" />
+                      <FileText className="w-4 h-4 text-blue-200 shrink-0" />
                       <span>Executive PDF Audit</span>
                     </button>
                   </div>
                 </div>
 
                 {/* Visual Placement Ring & Stat Counters */}
-                <div className="flex items-center gap-6 relative z-10 shrink-0">
+                <div className="flex items-center justify-center self-center md:self-auto relative z-10 shrink-0 pt-2 md:pt-0">
                   {/* Circular Score Ring */}
-                  <div className="relative w-24 h-24 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-md border border-white/20">
-                    <svg viewBox="0 0 100 100" className="w-24 h-24 transform -rotate-90 absolute inset-0">
+                  <div className="relative w-22 h-22 sm:w-24 sm:h-24 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-md border border-white/20">
+                    <svg viewBox="0 0 100 100" className="w-22 h-22 sm:w-24 sm:h-24 transform -rotate-90 absolute inset-0">
                       <circle cx="50" cy="50" r="38" fill="transparent" stroke="rgba(255,255,255,0.2)" strokeWidth="8" />
                       <circle cx="50" cy="50" r="38" fill="transparent" stroke="#ffffff" strokeWidth="8" strokeDasharray="238" strokeDashoffset={238 - (238 * (totalRegistered > 0 ? (placedCount / totalRegistered) : 0))} strokeLinecap="round" className="transition-all duration-1000" />
                     </svg>
                     <div className="flex flex-col items-center justify-center text-center z-10">
-                      <span className="text-xl font-extrabold text-white leading-none">
+                      <span className="text-lg sm:text-xl font-extrabold text-white leading-none">
                         {totalRegistered > 0 ? `${((placedCount / totalRegistered) * 100).toFixed(0)}%` : '0%'}
                       </span>
-                      <span className="text-[9px] text-white/70 font-medium">Placed Rate</span>
+                      <span className="text-[9px] text-white/70 font-medium mt-0.5">Placed Rate</span>
                     </div>
                   </div>
                 </div>
@@ -969,24 +970,24 @@ export default function TPODashboard() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 
                 {/* BOX 1: DONUT CHART (ENHANCED EXECUTIVE UI & FAINT TRACK RING) */}
-                <motion.div whileHover={{ y: -3 }} className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all space-y-5">
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold shadow-2xs">
+                <motion.div whileHover={{ y: -3 }} className="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all space-y-4 sm:space-y-5 w-full max-w-full overflow-hidden">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-2">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold shadow-2xs shrink-0">
                         <PieChartIcon className="w-5 h-5 text-blue-600" />
                       </div>
-                      <div>
-                        <h3 className="font-bold text-slate-900 text-base tracking-tight">Placement Competency Breakdown</h3>
-                        <p className="text-xs text-slate-400 font-medium">Distribution across {totalRegistered} registered batch</p>
+                      <div className="min-w-0">
+                        <h3 className="font-bold text-slate-900 text-sm sm:text-base tracking-tight truncate">Placement Competency Breakdown</h3>
+                        <p className="text-xs text-slate-400 font-medium truncate">Distribution across {totalRegistered} registered batch</p>
                       </div>
                     </div>
-                    <span className="text-xs font-bold text-blue-600 hover:underline cursor-pointer flex items-center gap-1">
+                    <span className="text-xs font-bold text-blue-600 hover:underline cursor-pointer flex items-center gap-1 shrink-0 self-end sm:self-auto">
                       Details <ChevronRight className="w-3.5 h-3.5 text-blue-600" />
                     </span>
                   </div>
 
                   <div className="flex items-center justify-center py-2 relative">
-                    <svg viewBox="0 0 200 200" className="w-48 h-48 transform -rotate-90">
+                    <svg viewBox="0 0 200 200" className="w-40 h-40 sm:w-48 sm:h-48 transform -rotate-90">
                       {/* Faint Background Track Ring */}
                       <circle cx="100" cy="100" r="70" fill="transparent" stroke="#F1F5F9" strokeWidth="22" />
                       
@@ -1128,20 +1129,20 @@ export default function TPODashboard() {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                 {/* BOX 4: DEPARTMENT PLACEMENT STANDING */}
-                <motion.div whileHover={{ y: -3 }} className="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all space-y-4">
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                <motion.div whileHover={{ y: -3 }} className="lg:col-span-2 bg-white p-4 sm:p-6 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all space-y-4 w-full max-w-full overflow-hidden">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold shrink-0">
                         <BarChart3 className="w-5 h-5 text-blue-600" />
                       </div>
-                      <div>
-                        <h3 className="font-bold text-slate-900 text-base tracking-tight">Department Placement Standing</h3>
-                        <p className="text-xs text-slate-400 font-medium">Volume, placement conversion rate & released offers</p>
+                      <div className="min-w-0">
+                        <h3 className="font-bold text-slate-900 text-sm sm:text-base tracking-tight truncate">Department Placement Standing</h3>
+                        <p className="text-xs text-slate-400 font-medium truncate">Volume, placement conversion rate & released offers</p>
                       </div>
                     </div>
 
-                    <div className="bg-slate-900 text-white px-3.5 py-1.5 rounded-xl text-right">
-                      <span className="text-[10px] text-blue-300 font-bold block uppercase">Top Performing</span>
+                    <div className="bg-slate-900 text-white px-3 py-1.5 rounded-xl text-left sm:text-right self-start sm:self-auto shrink-0">
+                      <span className="text-[9px] text-blue-300 font-bold block uppercase">Top Performing</span>
                       <span className="text-xs font-bold">{topPerformingDeptText}</span>
                     </div>
                   </div>
@@ -1149,14 +1150,14 @@ export default function TPODashboard() {
                   <div className="space-y-4 pt-2">
                     {deptBarData.map((d, idx) => (
                       <div key={idx} className="space-y-1.5 text-xs">
-                        <div className="flex justify-between items-center font-bold">
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center font-bold gap-1">
                           <span className="text-slate-900 font-bold text-sm">{d.dept}</span>
-                          <div className="flex items-center gap-3 text-xs">
-                            <span className="text-slate-500 font-medium">{d.count} Students</span>
-                            <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-bold border border-emerald-200">
+                          <div className="flex flex-wrap items-center gap-1.5 sm:gap-3 text-xs">
+                            <span className="text-slate-500 font-medium text-[11px]">{d.count} Students</span>
+                            <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-bold border border-emerald-200 text-[10px] sm:text-xs">
                               ✔ {d.placed} Placed ({d.rate})
                             </span>
-                            <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 font-bold border border-blue-200">
+                            <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 font-bold border border-blue-200 text-[10px] sm:text-xs">
                               ✔ {d.offers} Offers
                             </span>
                           </div>
@@ -1238,19 +1239,19 @@ export default function TPODashboard() {
               </div>
 
               {/* STUDENT DIRECTORY TABLE */}
-              <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
-                <div className="flex items-center justify-between">
+              <div className="bg-white p-4 sm:p-8 rounded-2xl border border-slate-200/80 shadow-xs space-y-4 w-full max-w-full overflow-hidden">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div>
-                    <h3 className="font-bold text-xl text-slate-900 tracking-tight">Whitelisted Student Directory</h3>
+                    <h3 className="font-bold text-lg sm:text-xl text-slate-900 tracking-tight">Whitelisted Student Directory</h3>
                     <p className="text-xs text-slate-500 font-medium">Official student access records & placement readiness</p>
                   </div>
-                  <button onClick={() => setActiveTab('whitelist')} className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-1">
+                  <button onClick={() => setActiveTab('whitelist')} className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-1 self-start sm:self-auto">
                     Full Roster <ChevronRight className="w-4 h-4 text-blue-600" />
                   </button>
                 </div>
 
-                <div className="overflow-x-auto rounded-xl border border-slate-200 max-h-[500px]">
-                  <table className="w-full text-left text-xs text-slate-600 min-w-[640px]">
+                <div className="overflow-x-auto rounded-xl border border-slate-200 max-h-[500px] w-full max-w-full">
+                  <table className="w-full text-left text-xs text-slate-600 min-w-[600px]">
                     <thead className="bg-[#F8FAFC] text-slate-600 uppercase text-[10px] font-black tracking-wider border-b border-slate-200 sticky top-0 z-10">
                       <tr>
                         <th className="py-4 px-5">Student Name</th>
@@ -1325,29 +1326,29 @@ export default function TPODashboard() {
             <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
               
               {/* WHITELISTED DIRECTORY TABLE */}
-              <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+              <div className="bg-white p-4 sm:p-8 rounded-2xl border border-slate-200/80 shadow-xs space-y-4 w-full max-w-full overflow-hidden">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
-                    <h3 className="font-black text-[24px] text-[#0F172A] leading-snug">Whitelisted Student Directory</h3>
-                    <p className="text-[12px] text-slate-500">Official student access records & placement readiness</p>
+                    <h3 className="font-black text-xl sm:text-[24px] text-[#0F172A] leading-snug">Whitelisted Student Directory</h3>
+                    <p className="text-xs text-slate-500">Official student access records & placement readiness</p>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-3">
-                    <div className="relative">
+                  <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
+                    <div className="relative flex-1 sm:flex-none w-full sm:w-auto min-w-0">
                       <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
                       <input
                         type="text"
                         placeholder="Search name, roll no..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-9 pr-4 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#2563EB] bg-[#F1F5F9] text-slate-800 w-48 sm:w-64 font-medium"
+                        className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#2563EB] bg-[#F1F5F9] text-slate-800 sm:w-60 font-medium"
                       />
                     </div>
 
                     <select
                       value={selectedDept}
                       onChange={(e) => setSelectedDept(e.target.value)}
-                      className="py-2 px-3 text-xs font-bold rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#2563EB] bg-[#F1F5F9] text-slate-700"
+                      className="py-2 px-3 text-xs font-bold rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#2563EB] bg-[#F1F5F9] text-slate-700 flex-1 sm:flex-none"
                     >
                       <option value="All">All Departments</option>
                       <option value="Computer Science">Computer Science</option>
@@ -1357,7 +1358,7 @@ export default function TPODashboard() {
                       <option value="Electrical">Electrical</option>
                     </select>
 
-                    <label className="cursor-pointer px-4 py-2 bg-gradient-to-r from-[#2563EB] to-[#4F46E5] hover:opacity-95 text-white font-bold text-xs rounded-xl shadow-sm flex items-center gap-1.5 transition-all">
+                    <label className="cursor-pointer px-4 py-2 bg-gradient-to-r from-[#2563EB] to-[#4F46E5] hover:opacity-95 text-white font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-1.5 transition-all w-full sm:w-auto">
                       <Upload className="w-4 h-4" />
                       <span>Upload CSV</span>
                       <input type="file" accept=".csv" onChange={handleFileUploadSim} className="hidden" />
@@ -1365,8 +1366,8 @@ export default function TPODashboard() {
                   </div>
                 </div>
 
-                <div className="overflow-x-auto rounded-xl border border-slate-200 max-h-[500px]">
-                  <table className="w-full text-left text-xs text-slate-600 min-w-[640px]">
+                <div className="overflow-x-auto rounded-xl border border-slate-200 max-h-[500px] w-full max-w-full">
+                  <table className="w-full text-left text-xs text-slate-600 min-w-[600px]">
                     <thead className="bg-[#F8FAFC] text-slate-600 uppercase text-[10px] font-black tracking-wider border-b border-slate-200 sticky top-0 z-10">
                       <tr>
                         <th className="py-4 px-5">Student Name</th>
