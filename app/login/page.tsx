@@ -68,6 +68,7 @@ export default function LoginPage() {
     if (r) {
       setUsername(r.demoUser)
       setPassword(r.demoPass)
+      router.prefetch(r.route)
     }
   }
 
@@ -81,7 +82,7 @@ export default function LoginPage() {
       if (activeRole) {
         router.push(activeRole.route)
       }
-    }, 700)
+    }, 120)
   }
 
   return (
