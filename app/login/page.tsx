@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -99,8 +100,14 @@ export default function LoginPage() {
 
         {/* Logo */}
         <div className="relative z-10 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#00A79D] flex items-center justify-center shadow-lg shadow-[#00A79D]/30">
-            <GraduationCap className="w-6 h-6 text-[#052742]" />
+          <div className="w-11 h-11 rounded-xl bg-white p-1 shadow-lg shadow-black/20 flex items-center justify-center border border-white/20 relative overflow-hidden shrink-0">
+            <Image
+              src="/placed-official-logo.jpg"
+              alt="PLACED Logo"
+              fill
+              className="object-contain p-0.5"
+              priority
+            />
           </div>
           <div>
             <span className="text-xl font-black text-white tracking-wider">PLACED</span>
@@ -157,8 +164,14 @@ export default function LoginPage() {
           {/* Mobile-only top header */}
           <div className="flex lg:hidden items-center justify-between mb-6">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-[#00A79D] flex items-center justify-center">
-                <GraduationCap className="w-5 h-5 text-white" />
+              <div className="w-9 h-9 rounded-xl bg-white p-1 shadow-xs border border-slate-200 flex items-center justify-center relative overflow-hidden shrink-0">
+                <Image
+                  src="/placed-official-logo.jpg"
+                  alt="PLACED Logo"
+                  fill
+                  className="object-contain p-0.5"
+                  priority
+                />
               </div>
               <div>
                 <span className="text-base font-black text-[#052742] tracking-wider">PLACED</span>

@@ -99,11 +99,8 @@ export default function TPODashboard() {
   }
 
   const handleLogout = () => {
-    setIsLoggedIn(false)
-    setUsernameInput('')
-    setPasswordInput('')
-    showToast('Logged out of Admin Officer Session')
-    router.push('/login')
+    showToast('Logged out of Placement Officer Session')
+    router.replace('/login')
   }
 
   // Collapsible Sidebar State - OPEN BY DEFAULT
@@ -431,90 +428,8 @@ export default function TPODashboard() {
 
   if (!isLoggedIn) {
     return (
-      <div className="min-h-screen bg-[#052742] text-white flex items-center justify-center p-6 font-sans relative overflow-hidden">
-        {/* Ambient Glows */}
-        <div className="absolute -top-40 -left-40 w-96 h-96 bg-[#00A79D]/20 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-[#00D2C4]/15 rounded-full blur-3xl pointer-events-none"></div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20, scale: 0.96 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          className="w-full max-w-md bg-slate-900/90 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-6 z-10"
-        >
-          {/* Logo & Header */}
-          <div className="text-center space-y-3">
-            <div className="w-48 h-14 mx-auto relative flex items-center justify-center bg-white/95 rounded-2xl p-2 shadow-lg">
-              <Image src="/placeduplogo.jpg" alt="Placed Official Logo" fill className="object-contain p-1" priority />
-            </div>
-            <div>
-              <span className="px-3 py-1 rounded-full bg-[#00A79D]/10 text-[#00D2C4] font-black text-[11px] uppercase tracking-widest border border-[#00A79D]/30 inline-block mb-1">
-                Admin Officer Access Only
-              </span>
-              <h1 className="text-2xl font-black tracking-tight text-white">Placement Command Center</h1>
-              <p className="text-xs text-slate-400 font-medium">St. Xavier's TPO Officer Portal</p>
-            </div>
-          </div>
-
-          {/* Form */}
-          <form onSubmit={handleAdminLogin} className="space-y-4 text-xs">
-            {loginError && (
-              <div className="p-3.5 bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-bold rounded-xl text-center">
-                {loginError}
-              </div>
-            )}
-
-            <div>
-              <label className="font-extrabold uppercase text-[10px] tracking-wider text-slate-400 block mb-1.5">
-                Admin Username
-              </label>
-              <div className="relative">
-                <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
-                <input
-                  type="text"
-                  required
-                  placeholder="Enter admin username (admin)"
-                  value={usernameInput}
-                  onChange={(e) => setUsernameInput(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-[#00A79D] text-white font-medium placeholder:text-slate-500"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="font-extrabold uppercase text-[10px] tracking-wider text-slate-400 block mb-1.5">
-                Password
-              </label>
-              <div className="relative">
-                <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
-                <input
-                  type="password"
-                  required
-                  placeholder="Enter password (admin123)"
-                  value={passwordInput}
-                  onChange={(e) => setPasswordInput(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-[#00A79D] text-white font-medium placeholder:text-slate-500"
-                />
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#00A79D] to-[#00D2C4] hover:opacity-95 text-[#052742] font-black text-xs uppercase tracking-widest shadow-lg shadow-[#00A79D]/30 transition-all hover:-translate-y-0.5 mt-2"
-            >
-              Sign In to Admin Dashboard
-            </button>
-          </form>
-
-          {/* Credentials Helper Badge */}
-          <div className="p-3.5 bg-slate-800/50 rounded-xl border border-slate-700/50 text-center space-y-1 text-[11px]">
-            <span className="text-slate-400 font-bold block">🔑 Pre-configured Admin Credentials:</span>
-            <div className="flex justify-center gap-3 font-mono text-[#00D2C4] font-extrabold text-[12px]">
-              <span>Username: admin</span>
-              <span>•</span>
-              <span>Password: admin123</span>
-            </div>
-          </div>
-        </motion.div>
+      <div className="min-h-screen bg-[#052742] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-[#00A79D] border-t-transparent rounded-full animate-spin"></div>
       </div>
     )
   }
